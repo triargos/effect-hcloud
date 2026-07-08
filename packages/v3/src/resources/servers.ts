@@ -9,7 +9,7 @@ import { toUrlParams } from "../internal/url-params.js";
 
 
 export const AddServerToPlacementGroupRequest = Schema.Struct({
-    placement_group: Schema.Int,
+    placementGroup: Schema.propertySignature(Schema.Int).pipe(Schema.fromKey("placement_group")),
   });
 export type AddServerToPlacementGroupRequest = typeof AddServerToPlacementGroupRequest.Type;
 export const AddServerToPlacementGroupResponse = Schema.Struct({
@@ -59,8 +59,8 @@ export type AttachServerIsoResponse = typeof AttachServerIsoResponse.Type;
 export const AttachServerToNetworkRequest = Schema.Struct({
     network: Schema.Int,
     ip: Schema.optional(Schema.String),
-    alias_ips: Schema.optional(Schema.Array(Schema.String)),
-    ip_range: Schema.optional(Schema.String),
+    aliasIps: Schema.optional(Schema.Array(Schema.String)).pipe(Schema.fromKey("alias_ips")),
+    ipRange: Schema.optional(Schema.String).pipe(Schema.fromKey("ip_range")),
   });
 export type AttachServerToNetworkRequest = typeof AttachServerToNetworkRequest.Type;
 export const AttachServerToNetworkResponse = Schema.Struct({
@@ -85,7 +85,7 @@ export type AttachServerToNetworkResponse = typeof AttachServerToNetworkResponse
 
 export const ChangeServerAliasIpsRequest = Schema.Struct({
     network: Schema.Int,
-    alias_ips: Schema.Array(Schema.String),
+    aliasIps: Schema.propertySignature(Schema.Array(Schema.String)).pipe(Schema.fromKey("alias_ips")),
   });
 export type ChangeServerAliasIpsRequest = typeof ChangeServerAliasIpsRequest.Type;
 export const ChangeServerAliasIpsResponse = Schema.Struct({
@@ -110,7 +110,7 @@ export type ChangeServerAliasIpsResponse = typeof ChangeServerAliasIpsResponse.T
 
 export const ChangeServerDnsPtrRequest = Schema.Struct({
     ip: Schema.String,
-    dns_ptr: Schema.optional(Schema.NullOr(Schema.String)),
+    dnsPtr: Schema.optional(Schema.NullOr(Schema.String)).pipe(Schema.fromKey("dns_ptr")),
   });
 export type ChangeServerDnsPtrRequest = typeof ChangeServerDnsPtrRequest.Type;
 export const ChangeServerDnsPtrResponse = Schema.Struct({
@@ -159,8 +159,8 @@ export const ChangeServerProtectionResponse = Schema.Struct({
 export type ChangeServerProtectionResponse = typeof ChangeServerProtectionResponse.Type;
 
 export const ChangeServerTypeRequest = Schema.Struct({
-    upgrade_disk: Schema.Boolean,
-    server_type: Schema.String,
+    upgradeDisk: Schema.propertySignature(Schema.Boolean).pipe(Schema.fromKey("upgrade_disk")),
+    serverType: Schema.propertySignature(Schema.String).pipe(Schema.fromKey("server_type")),
   });
 export type ChangeServerTypeRequest = typeof ChangeServerTypeRequest.Type;
 export const ChangeServerTypeResponse = Schema.Struct({
@@ -186,25 +186,25 @@ export type ChangeServerTypeResponse = typeof ChangeServerTypeResponse.Type;
 export const CreateServerRequest = Schema.Struct({
     name: Schema.String,
     location: Schema.optional(Schema.String),
-    server_type: Schema.String,
-    start_after_create: Schema.optional(Schema.Boolean),
+    serverType: Schema.propertySignature(Schema.String).pipe(Schema.fromKey("server_type")),
+    startAfterCreate: Schema.optional(Schema.Boolean).pipe(Schema.fromKey("start_after_create")),
     image: Schema.String,
-    placement_group: Schema.optional(Schema.Int),
-    ssh_keys: Schema.optional(Schema.Array(Schema.String)),
+    placementGroup: Schema.optional(Schema.Int).pipe(Schema.fromKey("placement_group")),
+    sshKeys: Schema.optional(Schema.Array(Schema.String)).pipe(Schema.fromKey("ssh_keys")),
     volumes: Schema.optional(Schema.Array(Schema.Int)),
     networks: Schema.optional(Schema.Array(Schema.Int)),
     firewalls: Schema.optional(Schema.Array(Schema.Struct({
       firewall: Schema.Int,
     }))),
-    user_data: Schema.optional(Schema.String),
+    userData: Schema.optional(Schema.String).pipe(Schema.fromKey("user_data")),
     labels: Schema.optional(Schema.Record({ key: Schema.String, value: Schema.String })),
     automount: Schema.optional(Schema.Boolean),
-    public_net: Schema.optional(Schema.Struct({
-      enable_ipv4: Schema.optional(Schema.Boolean),
-      enable_ipv6: Schema.optional(Schema.Boolean),
+    publicNet: Schema.optional(Schema.Struct({
+      enableIpv4: Schema.optional(Schema.Boolean).pipe(Schema.fromKey("enable_ipv4")),
+      enableIpv6: Schema.optional(Schema.Boolean).pipe(Schema.fromKey("enable_ipv6")),
       ipv4: Schema.optional(Schema.NullOr(Schema.Int)),
       ipv6: Schema.optional(Schema.NullOr(Schema.Int)),
-    })),
+    })).pipe(Schema.fromKey("public_net")),
   });
 export type CreateServerRequest = typeof CreateServerRequest.Type;
 export const CreateServerResponse = Schema.Struct({
@@ -213,35 +213,35 @@ export const CreateServerResponse = Schema.Struct({
       name: Schema.String,
       status: Schema.Literal("running", "initializing", "starting", "stopping", "off", "deleting", "migrating", "rebuilding", "unknown"),
       created: Schema.String,
-      public_net: Schema.Struct({
+      publicNet: Schema.propertySignature(Schema.Struct({
         ipv4: Schema.NullOr(Schema.Struct({
           id: Schema.optional(Schema.Int),
           ip: Schema.String,
           blocked: Schema.Boolean,
-          dns_ptr: Schema.String,
+          dnsPtr: Schema.propertySignature(Schema.String).pipe(Schema.fromKey("dns_ptr")),
         })),
         ipv6: Schema.NullOr(Schema.Struct({
           id: Schema.optional(Schema.Int),
           ip: Schema.String,
           blocked: Schema.Boolean,
-          dns_ptr: Schema.NullOr(Schema.Array(Schema.Struct({
+          dnsPtr: Schema.propertySignature(Schema.NullOr(Schema.Array(Schema.Struct({
             ip: Schema.String,
-            dns_ptr: Schema.String,
-          }))),
+            dnsPtr: Schema.propertySignature(Schema.String).pipe(Schema.fromKey("dns_ptr")),
+          })))).pipe(Schema.fromKey("dns_ptr")),
         })),
-        floating_ips: Schema.Array(Schema.Int),
+        floatingIps: Schema.propertySignature(Schema.Array(Schema.Int)).pipe(Schema.fromKey("floating_ips")),
         firewalls: Schema.optional(Schema.Array(Schema.Struct({
           id: Schema.optional(Schema.Int),
           status: Schema.optional(Schema.Literal("applied", "pending")),
         }))),
-      }),
-      private_net: Schema.Array(Schema.Struct({
+      })).pipe(Schema.fromKey("public_net")),
+      privateNet: Schema.propertySignature(Schema.Array(Schema.Struct({
         network: Schema.optional(Schema.Int),
         ip: Schema.optional(Schema.String),
-        alias_ips: Schema.optional(Schema.Array(Schema.String)),
-        mac_address: Schema.optional(Schema.String),
-      })),
-      server_type: Schema.Struct({
+        aliasIps: Schema.optional(Schema.Array(Schema.String)).pipe(Schema.fromKey("alias_ips")),
+        macAddress: Schema.optional(Schema.String).pipe(Schema.fromKey("mac_address")),
+      }))).pipe(Schema.fromKey("private_net")),
+      serverType: Schema.propertySignature(Schema.Struct({
         id: Schema.Int,
         name: Schema.String,
         description: Schema.String,
@@ -251,39 +251,39 @@ export const CreateServerResponse = Schema.Struct({
         deprecated: Schema.Boolean,
         prices: Schema.Array(Schema.Struct({
           location: Schema.String,
-          price_hourly: Schema.Struct({
+          priceHourly: Schema.propertySignature(Schema.Struct({
             net: Schema.String,
             gross: Schema.String,
-          }),
-          price_monthly: Schema.Struct({
+          })).pipe(Schema.fromKey("price_hourly")),
+          priceMonthly: Schema.propertySignature(Schema.Struct({
             net: Schema.String,
             gross: Schema.String,
-          }),
-          included_traffic: Schema.Int,
-          price_per_tb_traffic: Schema.Struct({
+          })).pipe(Schema.fromKey("price_monthly")),
+          includedTraffic: Schema.propertySignature(Schema.Int).pipe(Schema.fromKey("included_traffic")),
+          pricePerTbTraffic: Schema.propertySignature(Schema.Struct({
             net: Schema.String,
             gross: Schema.String,
-          }),
+          })).pipe(Schema.fromKey("price_per_tb_traffic")),
         })),
-        storage_type: Schema.Literal("local", "network"),
-        cpu_type: Schema.Literal("shared", "dedicated"),
+        storageType: Schema.propertySignature(Schema.Literal("local", "network")).pipe(Schema.fromKey("storage_type")),
+        cpuType: Schema.propertySignature(Schema.Literal("shared", "dedicated")).pipe(Schema.fromKey("cpu_type")),
         category: Schema.optional(Schema.String),
         architecture: Schema.Literal("x86", "arm"),
         deprecation: Schema.optional(Schema.NullOr(Schema.Struct({
-          unavailable_after: Schema.String,
+          unavailableAfter: Schema.propertySignature(Schema.String).pipe(Schema.fromKey("unavailable_after")),
           announced: Schema.String,
         }))),
         locations: Schema.Array(Schema.Struct({
           id: Schema.Int,
           name: Schema.String,
           deprecation: Schema.NullOr(Schema.Struct({
-            unavailable_after: Schema.String,
+            unavailableAfter: Schema.propertySignature(Schema.String).pipe(Schema.fromKey("unavailable_after")),
             announced: Schema.String,
           })),
           recommended: Schema.Boolean,
           available: Schema.Boolean,
         })),
-      }),
+      })).pipe(Schema.fromKey("server_type")),
       location: Schema.Struct({
         id: Schema.Int,
         name: Schema.String,
@@ -292,7 +292,7 @@ export const CreateServerResponse = Schema.Struct({
         city: Schema.String,
         latitude: Schema.Number,
         longitude: Schema.Number,
-        network_zone: Schema.String,
+        networkZone: Schema.propertySignature(Schema.String).pipe(Schema.fromKey("network_zone")),
       }),
       image: Schema.NullOr(Schema.Struct({
         id: Schema.Int,
@@ -300,17 +300,17 @@ export const CreateServerResponse = Schema.Struct({
         status: Schema.Literal("available", "creating", "unavailable"),
         name: Schema.NullOr(Schema.String),
         description: Schema.String,
-        image_size: Schema.NullOr(Schema.Number),
-        disk_size: Schema.Number,
+        imageSize: Schema.propertySignature(Schema.NullOr(Schema.Number)).pipe(Schema.fromKey("image_size")),
+        diskSize: Schema.propertySignature(Schema.Number).pipe(Schema.fromKey("disk_size")),
         created: Schema.String,
-        created_from: Schema.NullOr(Schema.Struct({
+        createdFrom: Schema.propertySignature(Schema.NullOr(Schema.Struct({
           id: Schema.Int,
           name: Schema.String,
-        })),
-        bound_to: Schema.NullOr(Schema.Int),
-        os_flavor: Schema.Literal("ubuntu", "centos", "debian", "fedora", "rocky", "alma", "opensuse", "unknown"),
-        os_version: Schema.NullOr(Schema.String),
-        rapid_deploy: Schema.optional(Schema.Boolean),
+        }))).pipe(Schema.fromKey("created_from")),
+        boundTo: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("bound_to")),
+        osFlavor: Schema.propertySignature(Schema.Literal("ubuntu", "centos", "debian", "fedora", "rocky", "alma", "opensuse", "unknown")).pipe(Schema.fromKey("os_flavor")),
+        osVersion: Schema.propertySignature(Schema.NullOr(Schema.String)).pipe(Schema.fromKey("os_version")),
+        rapidDeploy: Schema.optional(Schema.Boolean).pipe(Schema.fromKey("rapid_deploy")),
         protection: Schema.Struct({
           delete: Schema.Boolean,
         }),
@@ -325,33 +325,33 @@ export const CreateServerResponse = Schema.Struct({
         description: Schema.String,
         type: Schema.NullOr(Schema.Literal("public", "private")),
         deprecation: Schema.NullOr(Schema.Struct({
-          unavailable_after: Schema.String,
+          unavailableAfter: Schema.propertySignature(Schema.String).pipe(Schema.fromKey("unavailable_after")),
           announced: Schema.String,
         })),
         architecture: Schema.NullOr(Schema.Literal("x86", "arm")),
       })),
-      rescue_enabled: Schema.Boolean,
+      rescueEnabled: Schema.propertySignature(Schema.Boolean).pipe(Schema.fromKey("rescue_enabled")),
       locked: Schema.Boolean,
-      backup_window: Schema.NullOr(Schema.String),
-      outgoing_traffic: Schema.NullOr(Schema.Int),
-      ingoing_traffic: Schema.NullOr(Schema.Int),
-      included_traffic: Schema.NullOr(Schema.Int),
+      backupWindow: Schema.propertySignature(Schema.NullOr(Schema.String)).pipe(Schema.fromKey("backup_window")),
+      outgoingTraffic: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("outgoing_traffic")),
+      ingoingTraffic: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("ingoing_traffic")),
+      includedTraffic: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("included_traffic")),
       protection: Schema.Struct({
         delete: Schema.Boolean,
         rebuild: Schema.Boolean,
       }),
       labels: Schema.Record({ key: Schema.String, value: Schema.String }),
       volumes: Schema.optional(Schema.Array(Schema.Int)),
-      load_balancers: Schema.optional(Schema.Array(Schema.Int)),
-      primary_disk_size: Schema.Number,
-      placement_group: Schema.optional(Schema.NullOr(Schema.Struct({
+      loadBalancers: Schema.optional(Schema.Array(Schema.Int)).pipe(Schema.fromKey("load_balancers")),
+      primaryDiskSize: Schema.propertySignature(Schema.Number).pipe(Schema.fromKey("primary_disk_size")),
+      placementGroup: Schema.optional(Schema.NullOr(Schema.Struct({
         id: Schema.Int,
         name: Schema.String,
         labels: Schema.Record({ key: Schema.String, value: Schema.String }),
         type: Schema.Literal("spread"),
         created: Schema.String,
         servers: Schema.Array(Schema.Int),
-      }))),
+      }))).pipe(Schema.fromKey("placement_group")),
     }),
     action: Schema.Struct({
       id: Schema.Int,
@@ -369,7 +369,7 @@ export const CreateServerResponse = Schema.Struct({
         message: Schema.String,
       })),
     }),
-    next_actions: Schema.Array(Schema.Struct({
+    nextActions: Schema.propertySignature(Schema.Array(Schema.Struct({
       id: Schema.Int,
       command: Schema.String,
       status: Schema.Literal("running", "success", "error"),
@@ -384,8 +384,8 @@ export const CreateServerResponse = Schema.Struct({
         code: Schema.String,
         message: Schema.String,
       })),
-    })),
-    root_password: Schema.NullOr(Schema.String),
+    }))).pipe(Schema.fromKey("next_actions")),
+    rootPassword: Schema.propertySignature(Schema.NullOr(Schema.String)).pipe(Schema.fromKey("root_password")),
   });
 export type CreateServerResponse = typeof CreateServerResponse.Type;
 
@@ -402,17 +402,17 @@ export const CreateServerImageResponse = Schema.Struct({
       status: Schema.Literal("available", "creating", "unavailable"),
       name: Schema.NullOr(Schema.String),
       description: Schema.String,
-      image_size: Schema.NullOr(Schema.Number),
-      disk_size: Schema.Number,
+      imageSize: Schema.propertySignature(Schema.NullOr(Schema.Number)).pipe(Schema.fromKey("image_size")),
+      diskSize: Schema.propertySignature(Schema.Number).pipe(Schema.fromKey("disk_size")),
       created: Schema.String,
-      created_from: Schema.NullOr(Schema.Struct({
+      createdFrom: Schema.propertySignature(Schema.NullOr(Schema.Struct({
         id: Schema.Int,
         name: Schema.String,
-      })),
-      bound_to: Schema.NullOr(Schema.Int),
-      os_flavor: Schema.Literal("ubuntu", "centos", "debian", "fedora", "rocky", "alma", "opensuse", "unknown"),
-      os_version: Schema.NullOr(Schema.String),
-      rapid_deploy: Schema.optional(Schema.Boolean),
+      }))).pipe(Schema.fromKey("created_from")),
+      boundTo: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("bound_to")),
+      osFlavor: Schema.propertySignature(Schema.Literal("ubuntu", "centos", "debian", "fedora", "rocky", "alma", "opensuse", "unknown")).pipe(Schema.fromKey("os_flavor")),
+      osVersion: Schema.propertySignature(Schema.NullOr(Schema.String)).pipe(Schema.fromKey("os_version")),
+      rapidDeploy: Schema.optional(Schema.Boolean).pipe(Schema.fromKey("rapid_deploy")),
       protection: Schema.Struct({
         delete: Schema.Boolean,
       }),
@@ -566,11 +566,11 @@ export type EnableServerBackupResponse = typeof EnableServerBackupResponse.Type;
 
 export const EnableServerRescueRequest = Schema.Struct({
     type: Schema.optional(Schema.Literal("linux64")),
-    ssh_keys: Schema.optional(Schema.Array(Schema.Int)),
+    sshKeys: Schema.optional(Schema.Array(Schema.Int)).pipe(Schema.fromKey("ssh_keys")),
   });
 export type EnableServerRescueRequest = typeof EnableServerRescueRequest.Type;
 export const EnableServerRescueResponse = Schema.Struct({
-    root_password: Schema.optional(Schema.String),
+    rootPassword: Schema.optional(Schema.String).pipe(Schema.fromKey("root_password")),
     action: Schema.optional(Schema.Struct({
       id: Schema.Int,
       command: Schema.String,
@@ -596,35 +596,35 @@ export const GetServerResponse = Schema.Struct({
       name: Schema.String,
       status: Schema.Literal("running", "initializing", "starting", "stopping", "off", "deleting", "migrating", "rebuilding", "unknown"),
       created: Schema.String,
-      public_net: Schema.Struct({
+      publicNet: Schema.propertySignature(Schema.Struct({
         ipv4: Schema.NullOr(Schema.Struct({
           id: Schema.optional(Schema.Int),
           ip: Schema.String,
           blocked: Schema.Boolean,
-          dns_ptr: Schema.String,
+          dnsPtr: Schema.propertySignature(Schema.String).pipe(Schema.fromKey("dns_ptr")),
         })),
         ipv6: Schema.NullOr(Schema.Struct({
           id: Schema.optional(Schema.Int),
           ip: Schema.String,
           blocked: Schema.Boolean,
-          dns_ptr: Schema.NullOr(Schema.Array(Schema.Struct({
+          dnsPtr: Schema.propertySignature(Schema.NullOr(Schema.Array(Schema.Struct({
             ip: Schema.String,
-            dns_ptr: Schema.String,
-          }))),
+            dnsPtr: Schema.propertySignature(Schema.String).pipe(Schema.fromKey("dns_ptr")),
+          })))).pipe(Schema.fromKey("dns_ptr")),
         })),
-        floating_ips: Schema.Array(Schema.Int),
+        floatingIps: Schema.propertySignature(Schema.Array(Schema.Int)).pipe(Schema.fromKey("floating_ips")),
         firewalls: Schema.optional(Schema.Array(Schema.Struct({
           id: Schema.optional(Schema.Int),
           status: Schema.optional(Schema.Literal("applied", "pending")),
         }))),
-      }),
-      private_net: Schema.Array(Schema.Struct({
+      })).pipe(Schema.fromKey("public_net")),
+      privateNet: Schema.propertySignature(Schema.Array(Schema.Struct({
         network: Schema.optional(Schema.Int),
         ip: Schema.optional(Schema.String),
-        alias_ips: Schema.optional(Schema.Array(Schema.String)),
-        mac_address: Schema.optional(Schema.String),
-      })),
-      server_type: Schema.Struct({
+        aliasIps: Schema.optional(Schema.Array(Schema.String)).pipe(Schema.fromKey("alias_ips")),
+        macAddress: Schema.optional(Schema.String).pipe(Schema.fromKey("mac_address")),
+      }))).pipe(Schema.fromKey("private_net")),
+      serverType: Schema.propertySignature(Schema.Struct({
         id: Schema.Int,
         name: Schema.String,
         description: Schema.String,
@@ -634,39 +634,39 @@ export const GetServerResponse = Schema.Struct({
         deprecated: Schema.Boolean,
         prices: Schema.Array(Schema.Struct({
           location: Schema.String,
-          price_hourly: Schema.Struct({
+          priceHourly: Schema.propertySignature(Schema.Struct({
             net: Schema.String,
             gross: Schema.String,
-          }),
-          price_monthly: Schema.Struct({
+          })).pipe(Schema.fromKey("price_hourly")),
+          priceMonthly: Schema.propertySignature(Schema.Struct({
             net: Schema.String,
             gross: Schema.String,
-          }),
-          included_traffic: Schema.Int,
-          price_per_tb_traffic: Schema.Struct({
+          })).pipe(Schema.fromKey("price_monthly")),
+          includedTraffic: Schema.propertySignature(Schema.Int).pipe(Schema.fromKey("included_traffic")),
+          pricePerTbTraffic: Schema.propertySignature(Schema.Struct({
             net: Schema.String,
             gross: Schema.String,
-          }),
+          })).pipe(Schema.fromKey("price_per_tb_traffic")),
         })),
-        storage_type: Schema.Literal("local", "network"),
-        cpu_type: Schema.Literal("shared", "dedicated"),
+        storageType: Schema.propertySignature(Schema.Literal("local", "network")).pipe(Schema.fromKey("storage_type")),
+        cpuType: Schema.propertySignature(Schema.Literal("shared", "dedicated")).pipe(Schema.fromKey("cpu_type")),
         category: Schema.optional(Schema.String),
         architecture: Schema.Literal("x86", "arm"),
         deprecation: Schema.optional(Schema.NullOr(Schema.Struct({
-          unavailable_after: Schema.String,
+          unavailableAfter: Schema.propertySignature(Schema.String).pipe(Schema.fromKey("unavailable_after")),
           announced: Schema.String,
         }))),
         locations: Schema.Array(Schema.Struct({
           id: Schema.Int,
           name: Schema.String,
           deprecation: Schema.NullOr(Schema.Struct({
-            unavailable_after: Schema.String,
+            unavailableAfter: Schema.propertySignature(Schema.String).pipe(Schema.fromKey("unavailable_after")),
             announced: Schema.String,
           })),
           recommended: Schema.Boolean,
           available: Schema.Boolean,
         })),
-      }),
+      })).pipe(Schema.fromKey("server_type")),
       location: Schema.Struct({
         id: Schema.Int,
         name: Schema.String,
@@ -675,7 +675,7 @@ export const GetServerResponse = Schema.Struct({
         city: Schema.String,
         latitude: Schema.Number,
         longitude: Schema.Number,
-        network_zone: Schema.String,
+        networkZone: Schema.propertySignature(Schema.String).pipe(Schema.fromKey("network_zone")),
       }),
       image: Schema.NullOr(Schema.Struct({
         id: Schema.Int,
@@ -683,17 +683,17 @@ export const GetServerResponse = Schema.Struct({
         status: Schema.Literal("available", "creating", "unavailable"),
         name: Schema.NullOr(Schema.String),
         description: Schema.String,
-        image_size: Schema.NullOr(Schema.Number),
-        disk_size: Schema.Number,
+        imageSize: Schema.propertySignature(Schema.NullOr(Schema.Number)).pipe(Schema.fromKey("image_size")),
+        diskSize: Schema.propertySignature(Schema.Number).pipe(Schema.fromKey("disk_size")),
         created: Schema.String,
-        created_from: Schema.NullOr(Schema.Struct({
+        createdFrom: Schema.propertySignature(Schema.NullOr(Schema.Struct({
           id: Schema.Int,
           name: Schema.String,
-        })),
-        bound_to: Schema.NullOr(Schema.Int),
-        os_flavor: Schema.Literal("ubuntu", "centos", "debian", "fedora", "rocky", "alma", "opensuse", "unknown"),
-        os_version: Schema.NullOr(Schema.String),
-        rapid_deploy: Schema.optional(Schema.Boolean),
+        }))).pipe(Schema.fromKey("created_from")),
+        boundTo: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("bound_to")),
+        osFlavor: Schema.propertySignature(Schema.Literal("ubuntu", "centos", "debian", "fedora", "rocky", "alma", "opensuse", "unknown")).pipe(Schema.fromKey("os_flavor")),
+        osVersion: Schema.propertySignature(Schema.NullOr(Schema.String)).pipe(Schema.fromKey("os_version")),
+        rapidDeploy: Schema.optional(Schema.Boolean).pipe(Schema.fromKey("rapid_deploy")),
         protection: Schema.Struct({
           delete: Schema.Boolean,
         }),
@@ -708,33 +708,33 @@ export const GetServerResponse = Schema.Struct({
         description: Schema.String,
         type: Schema.NullOr(Schema.Literal("public", "private")),
         deprecation: Schema.NullOr(Schema.Struct({
-          unavailable_after: Schema.String,
+          unavailableAfter: Schema.propertySignature(Schema.String).pipe(Schema.fromKey("unavailable_after")),
           announced: Schema.String,
         })),
         architecture: Schema.NullOr(Schema.Literal("x86", "arm")),
       })),
-      rescue_enabled: Schema.Boolean,
+      rescueEnabled: Schema.propertySignature(Schema.Boolean).pipe(Schema.fromKey("rescue_enabled")),
       locked: Schema.Boolean,
-      backup_window: Schema.NullOr(Schema.String),
-      outgoing_traffic: Schema.NullOr(Schema.Int),
-      ingoing_traffic: Schema.NullOr(Schema.Int),
-      included_traffic: Schema.NullOr(Schema.Int),
+      backupWindow: Schema.propertySignature(Schema.NullOr(Schema.String)).pipe(Schema.fromKey("backup_window")),
+      outgoingTraffic: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("outgoing_traffic")),
+      ingoingTraffic: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("ingoing_traffic")),
+      includedTraffic: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("included_traffic")),
       protection: Schema.Struct({
         delete: Schema.Boolean,
         rebuild: Schema.Boolean,
       }),
       labels: Schema.Record({ key: Schema.String, value: Schema.String }),
       volumes: Schema.optional(Schema.Array(Schema.Int)),
-      load_balancers: Schema.optional(Schema.Array(Schema.Int)),
-      primary_disk_size: Schema.Number,
-      placement_group: Schema.optional(Schema.NullOr(Schema.Struct({
+      loadBalancers: Schema.optional(Schema.Array(Schema.Int)).pipe(Schema.fromKey("load_balancers")),
+      primaryDiskSize: Schema.propertySignature(Schema.Number).pipe(Schema.fromKey("primary_disk_size")),
+      placementGroup: Schema.optional(Schema.NullOr(Schema.Struct({
         id: Schema.Int,
         name: Schema.String,
         labels: Schema.Record({ key: Schema.String, value: Schema.String }),
         type: Schema.Literal("spread"),
         created: Schema.String,
         servers: Schema.Array(Schema.Int),
-      }))),
+      }))).pipe(Schema.fromKey("placement_group")),
     })),
   });
 export type GetServerResponse = typeof GetServerResponse.Type;
@@ -764,9 +764,9 @@ export const GetServerMetricsResponse = Schema.Struct({
       start: Schema.String,
       end: Schema.String,
       step: Schema.Number,
-      time_series: Schema.Record({ key: Schema.String, value: Schema.Struct({
+      timeSeries: Schema.propertySignature(Schema.Record({ key: Schema.String, value: Schema.Struct({
         values: Schema.Array(Schema.Array(Schema.Unknown)),
-      }) }),
+      }) })).pipe(Schema.fromKey("time_series")),
     }),
   });
 export type GetServerMetricsResponse = typeof GetServerMetricsResponse.Type;
@@ -803,35 +803,35 @@ export const ListServersResponse = Schema.Struct({
       name: Schema.String,
       status: Schema.Literal("running", "initializing", "starting", "stopping", "off", "deleting", "migrating", "rebuilding", "unknown"),
       created: Schema.String,
-      public_net: Schema.Struct({
+      publicNet: Schema.propertySignature(Schema.Struct({
         ipv4: Schema.NullOr(Schema.Struct({
           id: Schema.optional(Schema.Int),
           ip: Schema.String,
           blocked: Schema.Boolean,
-          dns_ptr: Schema.String,
+          dnsPtr: Schema.propertySignature(Schema.String).pipe(Schema.fromKey("dns_ptr")),
         })),
         ipv6: Schema.NullOr(Schema.Struct({
           id: Schema.optional(Schema.Int),
           ip: Schema.String,
           blocked: Schema.Boolean,
-          dns_ptr: Schema.NullOr(Schema.Array(Schema.Struct({
+          dnsPtr: Schema.propertySignature(Schema.NullOr(Schema.Array(Schema.Struct({
             ip: Schema.String,
-            dns_ptr: Schema.String,
-          }))),
+            dnsPtr: Schema.propertySignature(Schema.String).pipe(Schema.fromKey("dns_ptr")),
+          })))).pipe(Schema.fromKey("dns_ptr")),
         })),
-        floating_ips: Schema.Array(Schema.Int),
+        floatingIps: Schema.propertySignature(Schema.Array(Schema.Int)).pipe(Schema.fromKey("floating_ips")),
         firewalls: Schema.optional(Schema.Array(Schema.Struct({
           id: Schema.optional(Schema.Int),
           status: Schema.optional(Schema.Literal("applied", "pending")),
         }))),
-      }),
-      private_net: Schema.Array(Schema.Struct({
+      })).pipe(Schema.fromKey("public_net")),
+      privateNet: Schema.propertySignature(Schema.Array(Schema.Struct({
         network: Schema.optional(Schema.Int),
         ip: Schema.optional(Schema.String),
-        alias_ips: Schema.optional(Schema.Array(Schema.String)),
-        mac_address: Schema.optional(Schema.String),
-      })),
-      server_type: Schema.Struct({
+        aliasIps: Schema.optional(Schema.Array(Schema.String)).pipe(Schema.fromKey("alias_ips")),
+        macAddress: Schema.optional(Schema.String).pipe(Schema.fromKey("mac_address")),
+      }))).pipe(Schema.fromKey("private_net")),
+      serverType: Schema.propertySignature(Schema.Struct({
         id: Schema.Int,
         name: Schema.String,
         description: Schema.String,
@@ -841,39 +841,39 @@ export const ListServersResponse = Schema.Struct({
         deprecated: Schema.Boolean,
         prices: Schema.Array(Schema.Struct({
           location: Schema.String,
-          price_hourly: Schema.Struct({
+          priceHourly: Schema.propertySignature(Schema.Struct({
             net: Schema.String,
             gross: Schema.String,
-          }),
-          price_monthly: Schema.Struct({
+          })).pipe(Schema.fromKey("price_hourly")),
+          priceMonthly: Schema.propertySignature(Schema.Struct({
             net: Schema.String,
             gross: Schema.String,
-          }),
-          included_traffic: Schema.Int,
-          price_per_tb_traffic: Schema.Struct({
+          })).pipe(Schema.fromKey("price_monthly")),
+          includedTraffic: Schema.propertySignature(Schema.Int).pipe(Schema.fromKey("included_traffic")),
+          pricePerTbTraffic: Schema.propertySignature(Schema.Struct({
             net: Schema.String,
             gross: Schema.String,
-          }),
+          })).pipe(Schema.fromKey("price_per_tb_traffic")),
         })),
-        storage_type: Schema.Literal("local", "network"),
-        cpu_type: Schema.Literal("shared", "dedicated"),
+        storageType: Schema.propertySignature(Schema.Literal("local", "network")).pipe(Schema.fromKey("storage_type")),
+        cpuType: Schema.propertySignature(Schema.Literal("shared", "dedicated")).pipe(Schema.fromKey("cpu_type")),
         category: Schema.optional(Schema.String),
         architecture: Schema.Literal("x86", "arm"),
         deprecation: Schema.optional(Schema.NullOr(Schema.Struct({
-          unavailable_after: Schema.String,
+          unavailableAfter: Schema.propertySignature(Schema.String).pipe(Schema.fromKey("unavailable_after")),
           announced: Schema.String,
         }))),
         locations: Schema.Array(Schema.Struct({
           id: Schema.Int,
           name: Schema.String,
           deprecation: Schema.NullOr(Schema.Struct({
-            unavailable_after: Schema.String,
+            unavailableAfter: Schema.propertySignature(Schema.String).pipe(Schema.fromKey("unavailable_after")),
             announced: Schema.String,
           })),
           recommended: Schema.Boolean,
           available: Schema.Boolean,
         })),
-      }),
+      })).pipe(Schema.fromKey("server_type")),
       location: Schema.Struct({
         id: Schema.Int,
         name: Schema.String,
@@ -882,7 +882,7 @@ export const ListServersResponse = Schema.Struct({
         city: Schema.String,
         latitude: Schema.Number,
         longitude: Schema.Number,
-        network_zone: Schema.String,
+        networkZone: Schema.propertySignature(Schema.String).pipe(Schema.fromKey("network_zone")),
       }),
       image: Schema.NullOr(Schema.Struct({
         id: Schema.Int,
@@ -890,17 +890,17 @@ export const ListServersResponse = Schema.Struct({
         status: Schema.Literal("available", "creating", "unavailable"),
         name: Schema.NullOr(Schema.String),
         description: Schema.String,
-        image_size: Schema.NullOr(Schema.Number),
-        disk_size: Schema.Number,
+        imageSize: Schema.propertySignature(Schema.NullOr(Schema.Number)).pipe(Schema.fromKey("image_size")),
+        diskSize: Schema.propertySignature(Schema.Number).pipe(Schema.fromKey("disk_size")),
         created: Schema.String,
-        created_from: Schema.NullOr(Schema.Struct({
+        createdFrom: Schema.propertySignature(Schema.NullOr(Schema.Struct({
           id: Schema.Int,
           name: Schema.String,
-        })),
-        bound_to: Schema.NullOr(Schema.Int),
-        os_flavor: Schema.Literal("ubuntu", "centos", "debian", "fedora", "rocky", "alma", "opensuse", "unknown"),
-        os_version: Schema.NullOr(Schema.String),
-        rapid_deploy: Schema.optional(Schema.Boolean),
+        }))).pipe(Schema.fromKey("created_from")),
+        boundTo: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("bound_to")),
+        osFlavor: Schema.propertySignature(Schema.Literal("ubuntu", "centos", "debian", "fedora", "rocky", "alma", "opensuse", "unknown")).pipe(Schema.fromKey("os_flavor")),
+        osVersion: Schema.propertySignature(Schema.NullOr(Schema.String)).pipe(Schema.fromKey("os_version")),
+        rapidDeploy: Schema.optional(Schema.Boolean).pipe(Schema.fromKey("rapid_deploy")),
         protection: Schema.Struct({
           delete: Schema.Boolean,
         }),
@@ -915,53 +915,53 @@ export const ListServersResponse = Schema.Struct({
         description: Schema.String,
         type: Schema.NullOr(Schema.Literal("public", "private")),
         deprecation: Schema.NullOr(Schema.Struct({
-          unavailable_after: Schema.String,
+          unavailableAfter: Schema.propertySignature(Schema.String).pipe(Schema.fromKey("unavailable_after")),
           announced: Schema.String,
         })),
         architecture: Schema.NullOr(Schema.Literal("x86", "arm")),
       })),
-      rescue_enabled: Schema.Boolean,
+      rescueEnabled: Schema.propertySignature(Schema.Boolean).pipe(Schema.fromKey("rescue_enabled")),
       locked: Schema.Boolean,
-      backup_window: Schema.NullOr(Schema.String),
-      outgoing_traffic: Schema.NullOr(Schema.Int),
-      ingoing_traffic: Schema.NullOr(Schema.Int),
-      included_traffic: Schema.NullOr(Schema.Int),
+      backupWindow: Schema.propertySignature(Schema.NullOr(Schema.String)).pipe(Schema.fromKey("backup_window")),
+      outgoingTraffic: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("outgoing_traffic")),
+      ingoingTraffic: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("ingoing_traffic")),
+      includedTraffic: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("included_traffic")),
       protection: Schema.Struct({
         delete: Schema.Boolean,
         rebuild: Schema.Boolean,
       }),
       labels: Schema.Record({ key: Schema.String, value: Schema.String }),
       volumes: Schema.optional(Schema.Array(Schema.Int)),
-      load_balancers: Schema.optional(Schema.Array(Schema.Int)),
-      primary_disk_size: Schema.Number,
-      placement_group: Schema.optional(Schema.NullOr(Schema.Struct({
+      loadBalancers: Schema.optional(Schema.Array(Schema.Int)).pipe(Schema.fromKey("load_balancers")),
+      primaryDiskSize: Schema.propertySignature(Schema.Number).pipe(Schema.fromKey("primary_disk_size")),
+      placementGroup: Schema.optional(Schema.NullOr(Schema.Struct({
         id: Schema.Int,
         name: Schema.String,
         labels: Schema.Record({ key: Schema.String, value: Schema.String }),
         type: Schema.Literal("spread"),
         created: Schema.String,
         servers: Schema.Array(Schema.Int),
-      }))),
+      }))).pipe(Schema.fromKey("placement_group")),
     })),
     meta: Schema.Struct({
       pagination: Schema.Struct({
         page: Schema.Int,
-        per_page: Schema.Int,
-        previous_page: Schema.NullOr(Schema.Int),
-        next_page: Schema.NullOr(Schema.Int),
-        last_page: Schema.NullOr(Schema.Int),
-        total_entries: Schema.NullOr(Schema.Int),
+        perPage: Schema.propertySignature(Schema.Int).pipe(Schema.fromKey("per_page")),
+        previousPage: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("previous_page")),
+        nextPage: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("next_page")),
+        lastPage: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("last_page")),
+        totalEntries: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("total_entries")),
       }),
     }),
   });
 export type ListServersResponse = typeof ListServersResponse.Type;
 export interface ListServersQuery {
   name?: string;
-  label_selector?: string;
+  labelSelector?: string;
   sort?: ReadonlyArray<"id" | "id:asc" | "id:desc" | "name" | "name:asc" | "name:desc" | "created" | "created:asc" | "created:desc">;
   status?: ReadonlyArray<"running" | "initializing" | "starting" | "stopping" | "off" | "deleting" | "migrating" | "rebuilding" | "unknown">;
   page?: number;
-  per_page?: number;
+  perPage?: number;
 }
 
 export const ListServerActionsResponse = Schema.Struct({
@@ -984,11 +984,11 @@ export const ListServerActionsResponse = Schema.Struct({
     meta: Schema.Struct({
       pagination: Schema.Struct({
         page: Schema.Int,
-        per_page: Schema.Int,
-        previous_page: Schema.NullOr(Schema.Int),
-        next_page: Schema.NullOr(Schema.Int),
-        last_page: Schema.NullOr(Schema.Int),
-        total_entries: Schema.NullOr(Schema.Int),
+        perPage: Schema.propertySignature(Schema.Int).pipe(Schema.fromKey("per_page")),
+        previousPage: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("previous_page")),
+        nextPage: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("next_page")),
+        lastPage: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("last_page")),
+        totalEntries: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("total_entries")),
       }),
     }),
   });
@@ -997,7 +997,7 @@ export interface ListServerActionsQuery {
   sort?: ReadonlyArray<"id" | "id:asc" | "id:desc" | "command" | "command:asc" | "command:desc" | "status" | "status:asc" | "status:desc" | "started" | "started:asc" | "started:desc" | "finished" | "finished:asc" | "finished:desc">;
   status?: ReadonlyArray<"running" | "success" | "error">;
   page?: number;
-  per_page?: number;
+  perPage?: number;
 }
 
 export const ListServersActionsResponse = Schema.Struct({
@@ -1020,11 +1020,11 @@ export const ListServersActionsResponse = Schema.Struct({
     meta: Schema.Struct({
       pagination: Schema.Struct({
         page: Schema.Int,
-        per_page: Schema.Int,
-        previous_page: Schema.NullOr(Schema.Int),
-        next_page: Schema.NullOr(Schema.Int),
-        last_page: Schema.NullOr(Schema.Int),
-        total_entries: Schema.NullOr(Schema.Int),
+        perPage: Schema.propertySignature(Schema.Int).pipe(Schema.fromKey("per_page")),
+        previousPage: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("previous_page")),
+        nextPage: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("next_page")),
+        lastPage: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("last_page")),
+        totalEntries: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("total_entries")),
       }),
     }),
   });
@@ -1034,7 +1034,7 @@ export interface ListServersActionsQuery {
   sort?: ReadonlyArray<"id" | "id:asc" | "id:desc" | "command" | "command:asc" | "command:desc" | "status" | "status:asc" | "status:desc" | "started" | "started:asc" | "started:desc" | "finished" | "finished:asc" | "finished:desc">;
   status?: ReadonlyArray<"running" | "success" | "error">;
   page?: number;
-  per_page?: number;
+  perPage?: number;
 }
 
 export const PowerOffServerResponse = Schema.Struct({
@@ -1099,11 +1099,11 @@ export type RebootServerResponse = typeof RebootServerResponse.Type;
 
 export const RebuildServerRequest = Schema.Struct({
     image: Schema.String,
-    user_data: Schema.optional(Schema.String),
+    userData: Schema.optional(Schema.String).pipe(Schema.fromKey("user_data")),
   });
 export type RebuildServerRequest = typeof RebuildServerRequest.Type;
 export const RebuildServerResponse = Schema.Struct({
-    root_password: Schema.optional(Schema.NullOr(Schema.String)),
+    rootPassword: Schema.optional(Schema.NullOr(Schema.String)).pipe(Schema.fromKey("root_password")),
     action: Schema.optional(Schema.Struct({
       id: Schema.Int,
       command: Schema.String,
@@ -1144,7 +1144,7 @@ export const RemoveServerFromPlacementGroupResponse = Schema.Struct({
 export type RemoveServerFromPlacementGroupResponse = typeof RemoveServerFromPlacementGroupResponse.Type;
 
 export const RequestServerConsoleResponse = Schema.Struct({
-    wss_url: Schema.String,
+    wssUrl: Schema.propertySignature(Schema.String).pipe(Schema.fromKey("wss_url")),
     password: Schema.String,
     action: Schema.Struct({
       id: Schema.Int,
@@ -1186,7 +1186,7 @@ export const ResetServerResponse = Schema.Struct({
 export type ResetServerResponse = typeof ResetServerResponse.Type;
 
 export const ResetServerPasswordResponse = Schema.Struct({
-    root_password: Schema.optional(Schema.String),
+    rootPassword: Schema.optional(Schema.String).pipe(Schema.fromKey("root_password")),
     action: Schema.optional(Schema.Struct({
       id: Schema.Int,
       command: Schema.String,
@@ -1237,35 +1237,35 @@ export const UpdateServerResponse = Schema.Struct({
       name: Schema.String,
       status: Schema.Literal("running", "initializing", "starting", "stopping", "off", "deleting", "migrating", "rebuilding", "unknown"),
       created: Schema.String,
-      public_net: Schema.Struct({
+      publicNet: Schema.propertySignature(Schema.Struct({
         ipv4: Schema.NullOr(Schema.Struct({
           id: Schema.optional(Schema.Int),
           ip: Schema.String,
           blocked: Schema.Boolean,
-          dns_ptr: Schema.String,
+          dnsPtr: Schema.propertySignature(Schema.String).pipe(Schema.fromKey("dns_ptr")),
         })),
         ipv6: Schema.NullOr(Schema.Struct({
           id: Schema.optional(Schema.Int),
           ip: Schema.String,
           blocked: Schema.Boolean,
-          dns_ptr: Schema.NullOr(Schema.Array(Schema.Struct({
+          dnsPtr: Schema.propertySignature(Schema.NullOr(Schema.Array(Schema.Struct({
             ip: Schema.String,
-            dns_ptr: Schema.String,
-          }))),
+            dnsPtr: Schema.propertySignature(Schema.String).pipe(Schema.fromKey("dns_ptr")),
+          })))).pipe(Schema.fromKey("dns_ptr")),
         })),
-        floating_ips: Schema.Array(Schema.Int),
+        floatingIps: Schema.propertySignature(Schema.Array(Schema.Int)).pipe(Schema.fromKey("floating_ips")),
         firewalls: Schema.optional(Schema.Array(Schema.Struct({
           id: Schema.optional(Schema.Int),
           status: Schema.optional(Schema.Literal("applied", "pending")),
         }))),
-      }),
-      private_net: Schema.Array(Schema.Struct({
+      })).pipe(Schema.fromKey("public_net")),
+      privateNet: Schema.propertySignature(Schema.Array(Schema.Struct({
         network: Schema.optional(Schema.Int),
         ip: Schema.optional(Schema.String),
-        alias_ips: Schema.optional(Schema.Array(Schema.String)),
-        mac_address: Schema.optional(Schema.String),
-      })),
-      server_type: Schema.Struct({
+        aliasIps: Schema.optional(Schema.Array(Schema.String)).pipe(Schema.fromKey("alias_ips")),
+        macAddress: Schema.optional(Schema.String).pipe(Schema.fromKey("mac_address")),
+      }))).pipe(Schema.fromKey("private_net")),
+      serverType: Schema.propertySignature(Schema.Struct({
         id: Schema.Int,
         name: Schema.String,
         description: Schema.String,
@@ -1275,39 +1275,39 @@ export const UpdateServerResponse = Schema.Struct({
         deprecated: Schema.Boolean,
         prices: Schema.Array(Schema.Struct({
           location: Schema.String,
-          price_hourly: Schema.Struct({
+          priceHourly: Schema.propertySignature(Schema.Struct({
             net: Schema.String,
             gross: Schema.String,
-          }),
-          price_monthly: Schema.Struct({
+          })).pipe(Schema.fromKey("price_hourly")),
+          priceMonthly: Schema.propertySignature(Schema.Struct({
             net: Schema.String,
             gross: Schema.String,
-          }),
-          included_traffic: Schema.Int,
-          price_per_tb_traffic: Schema.Struct({
+          })).pipe(Schema.fromKey("price_monthly")),
+          includedTraffic: Schema.propertySignature(Schema.Int).pipe(Schema.fromKey("included_traffic")),
+          pricePerTbTraffic: Schema.propertySignature(Schema.Struct({
             net: Schema.String,
             gross: Schema.String,
-          }),
+          })).pipe(Schema.fromKey("price_per_tb_traffic")),
         })),
-        storage_type: Schema.Literal("local", "network"),
-        cpu_type: Schema.Literal("shared", "dedicated"),
+        storageType: Schema.propertySignature(Schema.Literal("local", "network")).pipe(Schema.fromKey("storage_type")),
+        cpuType: Schema.propertySignature(Schema.Literal("shared", "dedicated")).pipe(Schema.fromKey("cpu_type")),
         category: Schema.optional(Schema.String),
         architecture: Schema.Literal("x86", "arm"),
         deprecation: Schema.optional(Schema.NullOr(Schema.Struct({
-          unavailable_after: Schema.String,
+          unavailableAfter: Schema.propertySignature(Schema.String).pipe(Schema.fromKey("unavailable_after")),
           announced: Schema.String,
         }))),
         locations: Schema.Array(Schema.Struct({
           id: Schema.Int,
           name: Schema.String,
           deprecation: Schema.NullOr(Schema.Struct({
-            unavailable_after: Schema.String,
+            unavailableAfter: Schema.propertySignature(Schema.String).pipe(Schema.fromKey("unavailable_after")),
             announced: Schema.String,
           })),
           recommended: Schema.Boolean,
           available: Schema.Boolean,
         })),
-      }),
+      })).pipe(Schema.fromKey("server_type")),
       location: Schema.Struct({
         id: Schema.Int,
         name: Schema.String,
@@ -1316,7 +1316,7 @@ export const UpdateServerResponse = Schema.Struct({
         city: Schema.String,
         latitude: Schema.Number,
         longitude: Schema.Number,
-        network_zone: Schema.String,
+        networkZone: Schema.propertySignature(Schema.String).pipe(Schema.fromKey("network_zone")),
       }),
       image: Schema.NullOr(Schema.Struct({
         id: Schema.Int,
@@ -1324,17 +1324,17 @@ export const UpdateServerResponse = Schema.Struct({
         status: Schema.Literal("available", "creating", "unavailable"),
         name: Schema.NullOr(Schema.String),
         description: Schema.String,
-        image_size: Schema.NullOr(Schema.Number),
-        disk_size: Schema.Number,
+        imageSize: Schema.propertySignature(Schema.NullOr(Schema.Number)).pipe(Schema.fromKey("image_size")),
+        diskSize: Schema.propertySignature(Schema.Number).pipe(Schema.fromKey("disk_size")),
         created: Schema.String,
-        created_from: Schema.NullOr(Schema.Struct({
+        createdFrom: Schema.propertySignature(Schema.NullOr(Schema.Struct({
           id: Schema.Int,
           name: Schema.String,
-        })),
-        bound_to: Schema.NullOr(Schema.Int),
-        os_flavor: Schema.Literal("ubuntu", "centos", "debian", "fedora", "rocky", "alma", "opensuse", "unknown"),
-        os_version: Schema.NullOr(Schema.String),
-        rapid_deploy: Schema.optional(Schema.Boolean),
+        }))).pipe(Schema.fromKey("created_from")),
+        boundTo: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("bound_to")),
+        osFlavor: Schema.propertySignature(Schema.Literal("ubuntu", "centos", "debian", "fedora", "rocky", "alma", "opensuse", "unknown")).pipe(Schema.fromKey("os_flavor")),
+        osVersion: Schema.propertySignature(Schema.NullOr(Schema.String)).pipe(Schema.fromKey("os_version")),
+        rapidDeploy: Schema.optional(Schema.Boolean).pipe(Schema.fromKey("rapid_deploy")),
         protection: Schema.Struct({
           delete: Schema.Boolean,
         }),
@@ -1349,33 +1349,33 @@ export const UpdateServerResponse = Schema.Struct({
         description: Schema.String,
         type: Schema.NullOr(Schema.Literal("public", "private")),
         deprecation: Schema.NullOr(Schema.Struct({
-          unavailable_after: Schema.String,
+          unavailableAfter: Schema.propertySignature(Schema.String).pipe(Schema.fromKey("unavailable_after")),
           announced: Schema.String,
         })),
         architecture: Schema.NullOr(Schema.Literal("x86", "arm")),
       })),
-      rescue_enabled: Schema.Boolean,
+      rescueEnabled: Schema.propertySignature(Schema.Boolean).pipe(Schema.fromKey("rescue_enabled")),
       locked: Schema.Boolean,
-      backup_window: Schema.NullOr(Schema.String),
-      outgoing_traffic: Schema.NullOr(Schema.Int),
-      ingoing_traffic: Schema.NullOr(Schema.Int),
-      included_traffic: Schema.NullOr(Schema.Int),
+      backupWindow: Schema.propertySignature(Schema.NullOr(Schema.String)).pipe(Schema.fromKey("backup_window")),
+      outgoingTraffic: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("outgoing_traffic")),
+      ingoingTraffic: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("ingoing_traffic")),
+      includedTraffic: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("included_traffic")),
       protection: Schema.Struct({
         delete: Schema.Boolean,
         rebuild: Schema.Boolean,
       }),
       labels: Schema.Record({ key: Schema.String, value: Schema.String }),
       volumes: Schema.optional(Schema.Array(Schema.Int)),
-      load_balancers: Schema.optional(Schema.Array(Schema.Int)),
-      primary_disk_size: Schema.Number,
-      placement_group: Schema.optional(Schema.NullOr(Schema.Struct({
+      loadBalancers: Schema.optional(Schema.Array(Schema.Int)).pipe(Schema.fromKey("load_balancers")),
+      primaryDiskSize: Schema.propertySignature(Schema.Number).pipe(Schema.fromKey("primary_disk_size")),
+      placementGroup: Schema.optional(Schema.NullOr(Schema.Struct({
         id: Schema.Int,
         name: Schema.String,
         labels: Schema.Record({ key: Schema.String, value: Schema.String }),
         type: Schema.Literal("spread"),
         created: Schema.String,
         servers: Schema.Array(Schema.Int),
-      }))),
+      }))).pipe(Schema.fromKey("placement_group")),
     })),
   });
 export type UpdateServerResponse = typeof UpdateServerResponse.Type;
@@ -1546,8 +1546,8 @@ export const makeServers = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Get an Action for a Server */
-    getAction: (id: number, action_id: number): Effect.Effect<GetServerActionResponse, HetznerErrors> =>
-      HttpClientRequest.get(`/servers/${id}/actions/${action_id}`).pipe(
+    getAction: (id: number, actionId: number): Effect.Effect<GetServerActionResponse, HetznerErrors> =>
+      HttpClientRequest.get(`/servers/${id}/actions/${actionId}`).pipe(
         http.execute,
         Effect.flatMap(HttpClientResponse.schemaBodyJson(GetServerActionResponse)),
         Effect.catchAll(handleHetznerError),
@@ -1557,7 +1557,7 @@ export const makeServers = (http: HttpClient.HttpClient) => ({
     /** Get Metrics for a Server */
     getMetrics: (id: number, query?: GetServerMetricsQuery): Effect.Effect<GetServerMetricsResponse, HetznerErrors> =>
       HttpClientRequest.get(`/servers/${id}/metrics`).pipe(
-        HttpClientRequest.setUrlParams(toUrlParams(query)),
+        HttpClientRequest.setUrlParams(toUrlParams({ type: query?.type, start: query?.start, end: query?.end, step: query?.step })),
         http.execute,
         Effect.flatMap(HttpClientResponse.schemaBodyJson(GetServerMetricsResponse)),
         Effect.catchAll(handleHetznerError),
@@ -1576,7 +1576,7 @@ export const makeServers = (http: HttpClient.HttpClient) => ({
     /** List Servers */
     list: (query?: ListServersQuery): Effect.Effect<ListServersResponse, HetznerErrors> =>
       HttpClientRequest.get("/servers").pipe(
-        HttpClientRequest.setUrlParams(toUrlParams(query)),
+        HttpClientRequest.setUrlParams(toUrlParams({ name: query?.name, label_selector: query?.labelSelector, sort: query?.sort, status: query?.status, page: query?.page, per_page: query?.perPage })),
         http.execute,
         Effect.flatMap(HttpClientResponse.schemaBodyJson(ListServersResponse)),
         Effect.catchAll(handleHetznerError),
@@ -1586,7 +1586,7 @@ export const makeServers = (http: HttpClient.HttpClient) => ({
     /** List Actions for a Server */
     listActions: (id: number, query?: ListServerActionsQuery): Effect.Effect<ListServerActionsResponse, HetznerErrors> =>
       HttpClientRequest.get(`/servers/${id}/actions`).pipe(
-        HttpClientRequest.setUrlParams(toUrlParams(query)),
+        HttpClientRequest.setUrlParams(toUrlParams({ sort: query?.sort, status: query?.status, page: query?.page, per_page: query?.perPage })),
         http.execute,
         Effect.flatMap(HttpClientResponse.schemaBodyJson(ListServerActionsResponse)),
         Effect.catchAll(handleHetznerError),
@@ -1596,7 +1596,7 @@ export const makeServers = (http: HttpClient.HttpClient) => ({
     /** List Actions */
     listServersActions: (query?: ListServersActionsQuery): Effect.Effect<ListServersActionsResponse, HetznerErrors> =>
       HttpClientRequest.get("/servers/actions").pipe(
-        HttpClientRequest.setUrlParams(toUrlParams(query)),
+        HttpClientRequest.setUrlParams(toUrlParams({ id: query?.id, sort: query?.sort, status: query?.status, page: query?.page, per_page: query?.perPage })),
         http.execute,
         Effect.flatMap(HttpClientResponse.schemaBodyJson(ListServersActionsResponse)),
         Effect.catchAll(handleHetznerError),

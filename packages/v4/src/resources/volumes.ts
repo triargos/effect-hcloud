@@ -81,17 +81,17 @@ export const CreateVolumeResponse = Schema.Struct({
         city: Schema.String,
         latitude: Schema.Number,
         longitude: Schema.Number,
-        network_zone: Schema.String,
-      }),
+        networkZone: Schema.String,
+      }).pipe(Schema.encodeKeys({ networkZone: "network_zone" })),
       size: Schema.Number,
-      linux_device: Schema.String,
+      linuxDevice: Schema.String,
       protection: Schema.Struct({
         delete: Schema.Boolean,
       }),
       labels: Schema.Record(Schema.String, Schema.String),
       status: Schema.Literals(["available", "creating"]),
       format: Schema.NullOr(Schema.String),
-    }),
+    }).pipe(Schema.encodeKeys({ linuxDevice: "linux_device" })),
     action: Schema.Struct({
       id: Schema.Int,
       command: Schema.String,
@@ -108,7 +108,7 @@ export const CreateVolumeResponse = Schema.Struct({
         message: Schema.String,
       })),
     }),
-    next_actions: Schema.Array(Schema.Struct({
+    nextActions: Schema.Array(Schema.Struct({
       id: Schema.Int,
       command: Schema.String,
       status: Schema.Literals(["running", "success", "error"]),
@@ -124,7 +124,7 @@ export const CreateVolumeResponse = Schema.Struct({
         message: Schema.String,
       })),
     })),
-  });
+  }).pipe(Schema.encodeKeys({ nextActions: "next_actions" }));
 export type CreateVolumeResponse = typeof CreateVolumeResponse.Type;
 
 export const DetachVolumeResponse = Schema.Struct({
@@ -161,17 +161,17 @@ export const GetVolumeResponse = Schema.Struct({
         city: Schema.String,
         latitude: Schema.Number,
         longitude: Schema.Number,
-        network_zone: Schema.String,
-      }),
+        networkZone: Schema.String,
+      }).pipe(Schema.encodeKeys({ networkZone: "network_zone" })),
       size: Schema.Number,
-      linux_device: Schema.String,
+      linuxDevice: Schema.String,
       protection: Schema.Struct({
         delete: Schema.Boolean,
       }),
       labels: Schema.Record(Schema.String, Schema.String),
       status: Schema.Literals(["available", "creating"]),
       format: Schema.NullOr(Schema.String),
-    }),
+    }).pipe(Schema.encodeKeys({ linuxDevice: "linux_device" })),
   });
 export type GetVolumeResponse = typeof GetVolumeResponse.Type;
 
@@ -229,26 +229,26 @@ export const ListVolumesResponse = Schema.Struct({
         city: Schema.String,
         latitude: Schema.Number,
         longitude: Schema.Number,
-        network_zone: Schema.String,
-      }),
+        networkZone: Schema.String,
+      }).pipe(Schema.encodeKeys({ networkZone: "network_zone" })),
       size: Schema.Number,
-      linux_device: Schema.String,
+      linuxDevice: Schema.String,
       protection: Schema.Struct({
         delete: Schema.Boolean,
       }),
       labels: Schema.Record(Schema.String, Schema.String),
       status: Schema.Literals(["available", "creating"]),
       format: Schema.NullOr(Schema.String),
-    })),
+    }).pipe(Schema.encodeKeys({ linuxDevice: "linux_device" }))),
     meta: Schema.Struct({
       pagination: Schema.Struct({
         page: Schema.Int,
-        per_page: Schema.Int,
-        previous_page: Schema.NullOr(Schema.Int),
-        next_page: Schema.NullOr(Schema.Int),
-        last_page: Schema.NullOr(Schema.Int),
-        total_entries: Schema.NullOr(Schema.Int),
-      }),
+        perPage: Schema.Int,
+        previousPage: Schema.NullOr(Schema.Int),
+        nextPage: Schema.NullOr(Schema.Int),
+        lastPage: Schema.NullOr(Schema.Int),
+        totalEntries: Schema.NullOr(Schema.Int),
+      }).pipe(Schema.encodeKeys({ perPage: "per_page", previousPage: "previous_page", nextPage: "next_page", lastPage: "last_page", totalEntries: "total_entries" })),
     }),
   });
 export type ListVolumesResponse = typeof ListVolumesResponse.Type;
@@ -256,9 +256,9 @@ export interface ListVolumesQuery {
   status?: ReadonlyArray<"available" | "creating">;
   sort?: ReadonlyArray<"id" | "id:asc" | "id:desc" | "name" | "name:asc" | "name:desc" | "created" | "created:asc" | "created:desc">;
   name?: string;
-  label_selector?: string;
+  labelSelector?: string;
   page?: number;
-  per_page?: number;
+  perPage?: number;
 }
 
 export const ListVolumeActionsResponse = Schema.Struct({
@@ -281,12 +281,12 @@ export const ListVolumeActionsResponse = Schema.Struct({
     meta: Schema.Struct({
       pagination: Schema.Struct({
         page: Schema.Int,
-        per_page: Schema.Int,
-        previous_page: Schema.NullOr(Schema.Int),
-        next_page: Schema.NullOr(Schema.Int),
-        last_page: Schema.NullOr(Schema.Int),
-        total_entries: Schema.NullOr(Schema.Int),
-      }),
+        perPage: Schema.Int,
+        previousPage: Schema.NullOr(Schema.Int),
+        nextPage: Schema.NullOr(Schema.Int),
+        lastPage: Schema.NullOr(Schema.Int),
+        totalEntries: Schema.NullOr(Schema.Int),
+      }).pipe(Schema.encodeKeys({ perPage: "per_page", previousPage: "previous_page", nextPage: "next_page", lastPage: "last_page", totalEntries: "total_entries" })),
     }),
   });
 export type ListVolumeActionsResponse = typeof ListVolumeActionsResponse.Type;
@@ -294,7 +294,7 @@ export interface ListVolumeActionsQuery {
   sort?: ReadonlyArray<"id" | "id:asc" | "id:desc" | "command" | "command:asc" | "command:desc" | "status" | "status:asc" | "status:desc" | "started" | "started:asc" | "started:desc" | "finished" | "finished:asc" | "finished:desc">;
   status?: ReadonlyArray<"running" | "success" | "error">;
   page?: number;
-  per_page?: number;
+  perPage?: number;
 }
 
 export const ListVolumesActionsResponse = Schema.Struct({
@@ -317,12 +317,12 @@ export const ListVolumesActionsResponse = Schema.Struct({
     meta: Schema.Struct({
       pagination: Schema.Struct({
         page: Schema.Int,
-        per_page: Schema.Int,
-        previous_page: Schema.NullOr(Schema.Int),
-        next_page: Schema.NullOr(Schema.Int),
-        last_page: Schema.NullOr(Schema.Int),
-        total_entries: Schema.NullOr(Schema.Int),
-      }),
+        perPage: Schema.Int,
+        previousPage: Schema.NullOr(Schema.Int),
+        nextPage: Schema.NullOr(Schema.Int),
+        lastPage: Schema.NullOr(Schema.Int),
+        totalEntries: Schema.NullOr(Schema.Int),
+      }).pipe(Schema.encodeKeys({ perPage: "per_page", previousPage: "previous_page", nextPage: "next_page", lastPage: "last_page", totalEntries: "total_entries" })),
     }),
   });
 export type ListVolumesActionsResponse = typeof ListVolumesActionsResponse.Type;
@@ -331,7 +331,7 @@ export interface ListVolumesActionsQuery {
   sort?: ReadonlyArray<"id" | "id:asc" | "id:desc" | "command" | "command:asc" | "command:desc" | "status" | "status:asc" | "status:desc" | "started" | "started:asc" | "started:desc" | "finished" | "finished:asc" | "finished:desc">;
   status?: ReadonlyArray<"running" | "success" | "error">;
   page?: number;
-  per_page?: number;
+  perPage?: number;
 }
 
 export const ResizeVolumeRequest = Schema.Struct({
@@ -377,17 +377,17 @@ export const UpdateVolumeResponse = Schema.Struct({
         city: Schema.String,
         latitude: Schema.Number,
         longitude: Schema.Number,
-        network_zone: Schema.String,
-      }),
+        networkZone: Schema.String,
+      }).pipe(Schema.encodeKeys({ networkZone: "network_zone" })),
       size: Schema.Number,
-      linux_device: Schema.String,
+      linuxDevice: Schema.String,
       protection: Schema.Struct({
         delete: Schema.Boolean,
       }),
       labels: Schema.Record(Schema.String, Schema.String),
       status: Schema.Literals(["available", "creating"]),
       format: Schema.NullOr(Schema.String),
-    }),
+    }).pipe(Schema.encodeKeys({ linuxDevice: "linux_device" })),
   });
 export type UpdateVolumeResponse = typeof UpdateVolumeResponse.Type;
 
@@ -450,8 +450,8 @@ export const makeVolumes = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Get an Action for a Volume */
-    getAction: (id: number, action_id: number): Effect.Effect<GetVolumeActionResponse, HetznerErrors> =>
-      HttpClientRequest.get(`/volumes/${id}/actions/${action_id}`).pipe(
+    getAction: (id: number, actionId: number): Effect.Effect<GetVolumeActionResponse, HetznerErrors> =>
+      HttpClientRequest.get(`/volumes/${id}/actions/${actionId}`).pipe(
         http.execute,
         Effect.flatMap(decodeJson(GetVolumeActionResponse)),
         Effect.catch(handleHetznerError),
@@ -470,7 +470,7 @@ export const makeVolumes = (http: HttpClient.HttpClient) => ({
     /** List Volumes */
     list: (query?: ListVolumesQuery): Effect.Effect<ListVolumesResponse, HetznerErrors> =>
       HttpClientRequest.get("/volumes").pipe(
-        HttpClientRequest.setUrlParams(toUrlParams(query)),
+        HttpClientRequest.setUrlParams(toUrlParams({ status: query?.status, sort: query?.sort, name: query?.name, label_selector: query?.labelSelector, page: query?.page, per_page: query?.perPage })),
         http.execute,
         Effect.flatMap(decodeJson(ListVolumesResponse)),
         Effect.catch(handleHetznerError),
@@ -480,7 +480,7 @@ export const makeVolumes = (http: HttpClient.HttpClient) => ({
     /** List Actions for a Volume */
     listActions: (id: number, query?: ListVolumeActionsQuery): Effect.Effect<ListVolumeActionsResponse, HetznerErrors> =>
       HttpClientRequest.get(`/volumes/${id}/actions`).pipe(
-        HttpClientRequest.setUrlParams(toUrlParams(query)),
+        HttpClientRequest.setUrlParams(toUrlParams({ sort: query?.sort, status: query?.status, page: query?.page, per_page: query?.perPage })),
         http.execute,
         Effect.flatMap(decodeJson(ListVolumeActionsResponse)),
         Effect.catch(handleHetznerError),
@@ -490,7 +490,7 @@ export const makeVolumes = (http: HttpClient.HttpClient) => ({
     /** List Actions */
     listVolumesActions: (query?: ListVolumesActionsQuery): Effect.Effect<ListVolumesActionsResponse, HetznerErrors> =>
       HttpClientRequest.get("/volumes/actions").pipe(
-        HttpClientRequest.setUrlParams(toUrlParams(query)),
+        HttpClientRequest.setUrlParams(toUrlParams({ id: query?.id, sort: query?.sort, status: query?.status, page: query?.page, per_page: query?.perPage })),
         http.execute,
         Effect.flatMap(decodeJson(ListVolumesActionsResponse)),
         Effect.catch(handleHetznerError),

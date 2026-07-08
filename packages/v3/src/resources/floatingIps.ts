@@ -34,7 +34,7 @@ export type AssignFloatingIpResponse = typeof AssignFloatingIpResponse.Type;
 
 export const ChangeFloatingIpDnsPtrRequest = Schema.Struct({
     ip: Schema.String,
-    dns_ptr: Schema.optional(Schema.NullOr(Schema.String)),
+    dnsPtr: Schema.optional(Schema.NullOr(Schema.String)).pipe(Schema.fromKey("dns_ptr")),
   });
 export type ChangeFloatingIpDnsPtrRequest = typeof ChangeFloatingIpDnsPtrRequest.Type;
 export const ChangeFloatingIpDnsPtrResponse = Schema.Struct({
@@ -84,25 +84,25 @@ export type ChangeFloatingIpProtectionResponse = typeof ChangeFloatingIpProtecti
 export const CreateFloatingIpRequest = Schema.Struct({
     type: Schema.Literal("ipv4", "ipv6"),
     server: Schema.optional(Schema.NullOr(Schema.Int)),
-    home_location: Schema.optional(Schema.Union(Schema.String, Schema.Int)),
+    homeLocation: Schema.optional(Schema.Union(Schema.String, Schema.Int)).pipe(Schema.fromKey("home_location")),
     description: Schema.optional(Schema.NullOr(Schema.String)),
     name: Schema.optional(Schema.String),
     labels: Schema.optional(Schema.Record({ key: Schema.String, value: Schema.String })),
   });
 export type CreateFloatingIpRequest = typeof CreateFloatingIpRequest.Type;
 export const CreateFloatingIpResponse = Schema.Struct({
-    floating_ip: Schema.Struct({
+    floatingIp: Schema.propertySignature(Schema.Struct({
       id: Schema.Int,
       name: Schema.String,
       description: Schema.NullOr(Schema.String),
       ip: Schema.String,
       type: Schema.Literal("ipv4", "ipv6"),
       server: Schema.NullOr(Schema.Int),
-      dns_ptr: Schema.Array(Schema.Struct({
+      dnsPtr: Schema.propertySignature(Schema.Array(Schema.Struct({
         ip: Schema.String,
-        dns_ptr: Schema.String,
-      })),
-      home_location: Schema.Struct({
+        dnsPtr: Schema.propertySignature(Schema.String).pipe(Schema.fromKey("dns_ptr")),
+      }))).pipe(Schema.fromKey("dns_ptr")),
+      homeLocation: Schema.propertySignature(Schema.Struct({
         id: Schema.Int,
         name: Schema.String,
         description: Schema.String,
@@ -110,15 +110,15 @@ export const CreateFloatingIpResponse = Schema.Struct({
         city: Schema.String,
         latitude: Schema.Number,
         longitude: Schema.Number,
-        network_zone: Schema.String,
-      }),
+        networkZone: Schema.propertySignature(Schema.String).pipe(Schema.fromKey("network_zone")),
+      })).pipe(Schema.fromKey("home_location")),
       blocked: Schema.Boolean,
       protection: Schema.Struct({
         delete: Schema.Boolean,
       }),
       labels: Schema.Record({ key: Schema.String, value: Schema.String }),
       created: Schema.String,
-    }),
+    })).pipe(Schema.fromKey("floating_ip")),
     action: Schema.optional(Schema.NullOr(Schema.Struct({
       id: Schema.Int,
       command: Schema.String,
@@ -139,18 +139,18 @@ export const CreateFloatingIpResponse = Schema.Struct({
 export type CreateFloatingIpResponse = typeof CreateFloatingIpResponse.Type;
 
 export const GetFloatingIpResponse = Schema.Struct({
-    floating_ip: Schema.Struct({
+    floatingIp: Schema.propertySignature(Schema.Struct({
       id: Schema.Int,
       name: Schema.String,
       description: Schema.NullOr(Schema.String),
       ip: Schema.String,
       type: Schema.Literal("ipv4", "ipv6"),
       server: Schema.NullOr(Schema.Int),
-      dns_ptr: Schema.Array(Schema.Struct({
+      dnsPtr: Schema.propertySignature(Schema.Array(Schema.Struct({
         ip: Schema.String,
-        dns_ptr: Schema.String,
-      })),
-      home_location: Schema.Struct({
+        dnsPtr: Schema.propertySignature(Schema.String).pipe(Schema.fromKey("dns_ptr")),
+      }))).pipe(Schema.fromKey("dns_ptr")),
+      homeLocation: Schema.propertySignature(Schema.Struct({
         id: Schema.Int,
         name: Schema.String,
         description: Schema.String,
@@ -158,15 +158,15 @@ export const GetFloatingIpResponse = Schema.Struct({
         city: Schema.String,
         latitude: Schema.Number,
         longitude: Schema.Number,
-        network_zone: Schema.String,
-      }),
+        networkZone: Schema.propertySignature(Schema.String).pipe(Schema.fromKey("network_zone")),
+      })).pipe(Schema.fromKey("home_location")),
       blocked: Schema.Boolean,
       protection: Schema.Struct({
         delete: Schema.Boolean,
       }),
       labels: Schema.Record({ key: Schema.String, value: Schema.String }),
       created: Schema.String,
-    }),
+    })).pipe(Schema.fromKey("floating_ip")),
   });
 export type GetFloatingIpResponse = typeof GetFloatingIpResponse.Type;
 
@@ -211,18 +211,18 @@ export const GetFloatingIpsActionResponse = Schema.Struct({
 export type GetFloatingIpsActionResponse = typeof GetFloatingIpsActionResponse.Type;
 
 export const ListFloatingIpsResponse = Schema.Struct({
-    floating_ips: Schema.Array(Schema.Struct({
+    floatingIps: Schema.propertySignature(Schema.Array(Schema.Struct({
       id: Schema.Int,
       name: Schema.String,
       description: Schema.NullOr(Schema.String),
       ip: Schema.String,
       type: Schema.Literal("ipv4", "ipv6"),
       server: Schema.NullOr(Schema.Int),
-      dns_ptr: Schema.Array(Schema.Struct({
+      dnsPtr: Schema.propertySignature(Schema.Array(Schema.Struct({
         ip: Schema.String,
-        dns_ptr: Schema.String,
-      })),
-      home_location: Schema.Struct({
+        dnsPtr: Schema.propertySignature(Schema.String).pipe(Schema.fromKey("dns_ptr")),
+      }))).pipe(Schema.fromKey("dns_ptr")),
+      homeLocation: Schema.propertySignature(Schema.Struct({
         id: Schema.Int,
         name: Schema.String,
         description: Schema.String,
@@ -230,33 +230,33 @@ export const ListFloatingIpsResponse = Schema.Struct({
         city: Schema.String,
         latitude: Schema.Number,
         longitude: Schema.Number,
-        network_zone: Schema.String,
-      }),
+        networkZone: Schema.propertySignature(Schema.String).pipe(Schema.fromKey("network_zone")),
+      })).pipe(Schema.fromKey("home_location")),
       blocked: Schema.Boolean,
       protection: Schema.Struct({
         delete: Schema.Boolean,
       }),
       labels: Schema.Record({ key: Schema.String, value: Schema.String }),
       created: Schema.String,
-    })),
+    }))).pipe(Schema.fromKey("floating_ips")),
     meta: Schema.Struct({
       pagination: Schema.Struct({
         page: Schema.Int,
-        per_page: Schema.Int,
-        previous_page: Schema.NullOr(Schema.Int),
-        next_page: Schema.NullOr(Schema.Int),
-        last_page: Schema.NullOr(Schema.Int),
-        total_entries: Schema.NullOr(Schema.Int),
+        perPage: Schema.propertySignature(Schema.Int).pipe(Schema.fromKey("per_page")),
+        previousPage: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("previous_page")),
+        nextPage: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("next_page")),
+        lastPage: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("last_page")),
+        totalEntries: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("total_entries")),
       }),
     }),
   });
 export type ListFloatingIpsResponse = typeof ListFloatingIpsResponse.Type;
 export interface ListFloatingIpsQuery {
   name?: string;
-  label_selector?: string;
+  labelSelector?: string;
   sort?: ReadonlyArray<"id" | "id:asc" | "id:desc" | "created" | "created:asc" | "created:desc">;
   page?: number;
-  per_page?: number;
+  perPage?: number;
 }
 
 export const ListFloatingIpActionsResponse = Schema.Struct({
@@ -279,11 +279,11 @@ export const ListFloatingIpActionsResponse = Schema.Struct({
     meta: Schema.Struct({
       pagination: Schema.Struct({
         page: Schema.Int,
-        per_page: Schema.Int,
-        previous_page: Schema.NullOr(Schema.Int),
-        next_page: Schema.NullOr(Schema.Int),
-        last_page: Schema.NullOr(Schema.Int),
-        total_entries: Schema.NullOr(Schema.Int),
+        perPage: Schema.propertySignature(Schema.Int).pipe(Schema.fromKey("per_page")),
+        previousPage: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("previous_page")),
+        nextPage: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("next_page")),
+        lastPage: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("last_page")),
+        totalEntries: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("total_entries")),
       }),
     }),
   });
@@ -292,7 +292,7 @@ export interface ListFloatingIpActionsQuery {
   sort?: ReadonlyArray<"id" | "id:asc" | "id:desc" | "command" | "command:asc" | "command:desc" | "status" | "status:asc" | "status:desc" | "started" | "started:asc" | "started:desc" | "finished" | "finished:asc" | "finished:desc">;
   status?: ReadonlyArray<"running" | "success" | "error">;
   page?: number;
-  per_page?: number;
+  perPage?: number;
 }
 
 export const ListFloatingIpsActionsResponse = Schema.Struct({
@@ -315,11 +315,11 @@ export const ListFloatingIpsActionsResponse = Schema.Struct({
     meta: Schema.Struct({
       pagination: Schema.Struct({
         page: Schema.Int,
-        per_page: Schema.Int,
-        previous_page: Schema.NullOr(Schema.Int),
-        next_page: Schema.NullOr(Schema.Int),
-        last_page: Schema.NullOr(Schema.Int),
-        total_entries: Schema.NullOr(Schema.Int),
+        perPage: Schema.propertySignature(Schema.Int).pipe(Schema.fromKey("per_page")),
+        previousPage: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("previous_page")),
+        nextPage: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("next_page")),
+        lastPage: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("last_page")),
+        totalEntries: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("total_entries")),
       }),
     }),
   });
@@ -329,7 +329,7 @@ export interface ListFloatingIpsActionsQuery {
   sort?: ReadonlyArray<"id" | "id:asc" | "id:desc" | "command" | "command:asc" | "command:desc" | "status" | "status:asc" | "status:desc" | "started" | "started:asc" | "started:desc" | "finished" | "finished:asc" | "finished:desc">;
   status?: ReadonlyArray<"running" | "success" | "error">;
   page?: number;
-  per_page?: number;
+  perPage?: number;
 }
 
 export const UnassignFloatingIpResponse = Schema.Struct({
@@ -359,18 +359,18 @@ export const UpdateFloatingIpRequest = Schema.Struct({
   });
 export type UpdateFloatingIpRequest = typeof UpdateFloatingIpRequest.Type;
 export const UpdateFloatingIpResponse = Schema.Struct({
-    floating_ip: Schema.Struct({
+    floatingIp: Schema.propertySignature(Schema.Struct({
       id: Schema.Int,
       name: Schema.String,
       description: Schema.NullOr(Schema.String),
       ip: Schema.String,
       type: Schema.Literal("ipv4", "ipv6"),
       server: Schema.NullOr(Schema.Int),
-      dns_ptr: Schema.Array(Schema.Struct({
+      dnsPtr: Schema.propertySignature(Schema.Array(Schema.Struct({
         ip: Schema.String,
-        dns_ptr: Schema.String,
-      })),
-      home_location: Schema.Struct({
+        dnsPtr: Schema.propertySignature(Schema.String).pipe(Schema.fromKey("dns_ptr")),
+      }))).pipe(Schema.fromKey("dns_ptr")),
+      homeLocation: Schema.propertySignature(Schema.Struct({
         id: Schema.Int,
         name: Schema.String,
         description: Schema.String,
@@ -378,15 +378,15 @@ export const UpdateFloatingIpResponse = Schema.Struct({
         city: Schema.String,
         latitude: Schema.Number,
         longitude: Schema.Number,
-        network_zone: Schema.String,
-      }),
+        networkZone: Schema.propertySignature(Schema.String).pipe(Schema.fromKey("network_zone")),
+      })).pipe(Schema.fromKey("home_location")),
       blocked: Schema.Boolean,
       protection: Schema.Struct({
         delete: Schema.Boolean,
       }),
       labels: Schema.Record({ key: Schema.String, value: Schema.String }),
       created: Schema.String,
-    }),
+    })).pipe(Schema.fromKey("floating_ip")),
   });
 export type UpdateFloatingIpResponse = typeof UpdateFloatingIpResponse.Type;
 
@@ -450,8 +450,8 @@ export const makeFloatingIps = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Get an Action for a Floating IP */
-    getAction: (id: number, action_id: number): Effect.Effect<GetFloatingIpActionResponse, HetznerErrors> =>
-      HttpClientRequest.get(`/floating_ips/${id}/actions/${action_id}`).pipe(
+    getAction: (id: number, actionId: number): Effect.Effect<GetFloatingIpActionResponse, HetznerErrors> =>
+      HttpClientRequest.get(`/floating_ips/${id}/actions/${actionId}`).pipe(
         http.execute,
         Effect.flatMap(HttpClientResponse.schemaBodyJson(GetFloatingIpActionResponse)),
         Effect.catchAll(handleHetznerError),
@@ -470,7 +470,7 @@ export const makeFloatingIps = (http: HttpClient.HttpClient) => ({
     /** List Floating IPs */
     list: (query?: ListFloatingIpsQuery): Effect.Effect<ListFloatingIpsResponse, HetznerErrors> =>
       HttpClientRequest.get("/floating_ips").pipe(
-        HttpClientRequest.setUrlParams(toUrlParams(query)),
+        HttpClientRequest.setUrlParams(toUrlParams({ name: query?.name, label_selector: query?.labelSelector, sort: query?.sort, page: query?.page, per_page: query?.perPage })),
         http.execute,
         Effect.flatMap(HttpClientResponse.schemaBodyJson(ListFloatingIpsResponse)),
         Effect.catchAll(handleHetznerError),
@@ -480,7 +480,7 @@ export const makeFloatingIps = (http: HttpClient.HttpClient) => ({
     /** List Actions for a Floating IP */
     listActions: (id: number, query?: ListFloatingIpActionsQuery): Effect.Effect<ListFloatingIpActionsResponse, HetznerErrors> =>
       HttpClientRequest.get(`/floating_ips/${id}/actions`).pipe(
-        HttpClientRequest.setUrlParams(toUrlParams(query)),
+        HttpClientRequest.setUrlParams(toUrlParams({ sort: query?.sort, status: query?.status, page: query?.page, per_page: query?.perPage })),
         http.execute,
         Effect.flatMap(HttpClientResponse.schemaBodyJson(ListFloatingIpActionsResponse)),
         Effect.catchAll(handleHetznerError),
@@ -490,7 +490,7 @@ export const makeFloatingIps = (http: HttpClient.HttpClient) => ({
     /** List Actions */
     listFloatingIpsActions: (query?: ListFloatingIpsActionsQuery): Effect.Effect<ListFloatingIpsActionsResponse, HetznerErrors> =>
       HttpClientRequest.get("/floating_ips/actions").pipe(
-        HttpClientRequest.setUrlParams(toUrlParams(query)),
+        HttpClientRequest.setUrlParams(toUrlParams({ id: query?.id, sort: query?.sort, status: query?.status, page: query?.page, per_page: query?.perPage })),
         http.execute,
         Effect.flatMap(HttpClientResponse.schemaBodyJson(ListFloatingIpsActionsResponse)),
         Effect.catchAll(handleHetznerError),

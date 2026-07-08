@@ -15,7 +15,7 @@ export const CreatePlacementGroupRequest = Schema.Struct({
   });
 export type CreatePlacementGroupRequest = typeof CreatePlacementGroupRequest.Type;
 export const CreatePlacementGroupResponse = Schema.Struct({
-    placement_group: Schema.Struct({
+    placementGroup: Schema.Struct({
       id: Schema.Int,
       name: Schema.String,
       labels: Schema.Record(Schema.String, Schema.String),
@@ -39,11 +39,11 @@ export const CreatePlacementGroupResponse = Schema.Struct({
         message: Schema.String,
       })),
     }))),
-  });
+  }).pipe(Schema.encodeKeys({ placementGroup: "placement_group" }));
 export type CreatePlacementGroupResponse = typeof CreatePlacementGroupResponse.Type;
 
 export const GetPlacementGroupResponse = Schema.Struct({
-    placement_group: Schema.Struct({
+    placementGroup: Schema.Struct({
       id: Schema.Int,
       name: Schema.String,
       labels: Schema.Record(Schema.String, Schema.String),
@@ -51,11 +51,11 @@ export const GetPlacementGroupResponse = Schema.Struct({
       created: Schema.String,
       servers: Schema.Array(Schema.Int),
     }),
-  });
+  }).pipe(Schema.encodeKeys({ placementGroup: "placement_group" }));
 export type GetPlacementGroupResponse = typeof GetPlacementGroupResponse.Type;
 
 export const ListPlacementGroupsResponse = Schema.Struct({
-    placement_groups: Schema.Array(Schema.Struct({
+    placementGroups: Schema.Array(Schema.Struct({
       id: Schema.Int,
       name: Schema.String,
       labels: Schema.Record(Schema.String, Schema.String),
@@ -66,22 +66,22 @@ export const ListPlacementGroupsResponse = Schema.Struct({
     meta: Schema.Struct({
       pagination: Schema.Struct({
         page: Schema.Int,
-        per_page: Schema.Int,
-        previous_page: Schema.NullOr(Schema.Int),
-        next_page: Schema.NullOr(Schema.Int),
-        last_page: Schema.NullOr(Schema.Int),
-        total_entries: Schema.NullOr(Schema.Int),
-      }),
+        perPage: Schema.Int,
+        previousPage: Schema.NullOr(Schema.Int),
+        nextPage: Schema.NullOr(Schema.Int),
+        lastPage: Schema.NullOr(Schema.Int),
+        totalEntries: Schema.NullOr(Schema.Int),
+      }).pipe(Schema.encodeKeys({ perPage: "per_page", previousPage: "previous_page", nextPage: "next_page", lastPage: "last_page", totalEntries: "total_entries" })),
     }),
-  });
+  }).pipe(Schema.encodeKeys({ placementGroups: "placement_groups" }));
 export type ListPlacementGroupsResponse = typeof ListPlacementGroupsResponse.Type;
 export interface ListPlacementGroupsQuery {
   sort?: ReadonlyArray<"id" | "id:asc" | "id:desc" | "name" | "name:asc" | "name:desc" | "created" | "created:asc" | "created:desc">;
   name?: string;
-  label_selector?: string;
+  labelSelector?: string;
   type?: ReadonlyArray<"spread">;
   page?: number;
-  per_page?: number;
+  perPage?: number;
 }
 
 export const UpdatePlacementGroupRequest = Schema.Struct({
@@ -90,7 +90,7 @@ export const UpdatePlacementGroupRequest = Schema.Struct({
   });
 export type UpdatePlacementGroupRequest = typeof UpdatePlacementGroupRequest.Type;
 export const UpdatePlacementGroupResponse = Schema.Struct({
-    placement_group: Schema.Struct({
+    placementGroup: Schema.Struct({
       id: Schema.Int,
       name: Schema.String,
       labels: Schema.Record(Schema.String, Schema.String),
@@ -98,7 +98,7 @@ export const UpdatePlacementGroupResponse = Schema.Struct({
       created: Schema.String,
       servers: Schema.Array(Schema.Int),
     }),
-  });
+  }).pipe(Schema.encodeKeys({ placementGroup: "placement_group" }));
 export type UpdatePlacementGroupResponse = typeof UpdatePlacementGroupResponse.Type;
 
 
@@ -133,7 +133,7 @@ export const makePlacementGroups = (http: HttpClient.HttpClient) => ({
     /** List Placement Groups */
     list: (query?: ListPlacementGroupsQuery): Effect.Effect<ListPlacementGroupsResponse, HetznerErrors> =>
       HttpClientRequest.get("/placement_groups").pipe(
-        HttpClientRequest.setUrlParams(toUrlParams(query)),
+        HttpClientRequest.setUrlParams(toUrlParams({ sort: query?.sort, name: query?.name, label_selector: query?.labelSelector, type: query?.type, page: query?.page, per_page: query?.perPage })),
         http.execute,
         Effect.flatMap(decodeJson(ListPlacementGroupsResponse)),
         Effect.catch(handleHetznerError),

@@ -65,7 +65,7 @@ export const makeActions = (http: HttpClient.HttpClient) => ({
     /** Get multiple Actions */
     getActions: (query?: GetActionsQuery): Effect.Effect<GetActionsResponse, HetznerErrors> =>
       HttpClientRequest.get("/actions").pipe(
-        HttpClientRequest.setUrlParams(toUrlParams(query)),
+        HttpClientRequest.setUrlParams(toUrlParams({ id: query?.id })),
         http.execute,
         Effect.flatMap(decodeJson(GetActionsResponse)),
         Effect.catch(handleHetznerError),

@@ -9,8 +9,8 @@ import { toUrlParams } from "../internal/url-params.js";
 
 
 export const AssignPrimaryIpRequest = Schema.Struct({
-    assignee_type: Schema.Literal("server"),
-    assignee_id: Schema.Int,
+    assigneeType: Schema.propertySignature(Schema.Literal("server")).pipe(Schema.fromKey("assignee_type")),
+    assigneeId: Schema.propertySignature(Schema.Int).pipe(Schema.fromKey("assignee_id")),
   });
 export type AssignPrimaryIpRequest = typeof AssignPrimaryIpRequest.Type;
 export const AssignPrimaryIpResponse = Schema.Struct({
@@ -35,7 +35,7 @@ export type AssignPrimaryIpResponse = typeof AssignPrimaryIpResponse.Type;
 
 export const ChangePrimaryIpDnsPtrRequest = Schema.Struct({
     ip: Schema.String,
-    dns_ptr: Schema.optional(Schema.NullOr(Schema.String)),
+    dnsPtr: Schema.optional(Schema.NullOr(Schema.String)).pipe(Schema.fromKey("dns_ptr")),
   });
 export type ChangePrimaryIpDnsPtrRequest = typeof ChangePrimaryIpDnsPtrRequest.Type;
 export const ChangePrimaryIpDnsPtrResponse = Schema.Struct({
@@ -87,13 +87,13 @@ export const CreatePrimaryIpRequest = Schema.Struct({
     labels: Schema.optional(Schema.Record({ key: Schema.String, value: Schema.String })),
     type: Schema.Literal("ipv4", "ipv6"),
     location: Schema.optional(Schema.Union(Schema.String, Schema.Int)),
-    assignee_type: Schema.optional(Schema.Literal("server")),
-    assignee_id: Schema.optional(Schema.NullOr(Schema.Int)),
-    auto_delete: Schema.optional(Schema.Boolean),
+    assigneeType: Schema.optional(Schema.Literal("server")).pipe(Schema.fromKey("assignee_type")),
+    assigneeId: Schema.optional(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("assignee_id")),
+    autoDelete: Schema.optional(Schema.Boolean).pipe(Schema.fromKey("auto_delete")),
   });
 export type CreatePrimaryIpRequest = typeof CreatePrimaryIpRequest.Type;
 export const CreatePrimaryIpResponse = Schema.Struct({
-    primary_ip: Schema.Struct({
+    primaryIp: Schema.propertySignature(Schema.Struct({
       id: Schema.Int,
       name: Schema.String,
       labels: Schema.Record({ key: Schema.String, value: Schema.String }),
@@ -107,21 +107,21 @@ export const CreatePrimaryIpResponse = Schema.Struct({
         city: Schema.String,
         latitude: Schema.Number,
         longitude: Schema.Number,
-        network_zone: Schema.String,
+        networkZone: Schema.propertySignature(Schema.String).pipe(Schema.fromKey("network_zone")),
       }),
       ip: Schema.String,
-      dns_ptr: Schema.Array(Schema.Struct({
+      dnsPtr: Schema.propertySignature(Schema.Array(Schema.Struct({
         ip: Schema.String,
-        dns_ptr: Schema.String,
-      })),
+        dnsPtr: Schema.propertySignature(Schema.String).pipe(Schema.fromKey("dns_ptr")),
+      }))).pipe(Schema.fromKey("dns_ptr")),
       protection: Schema.Struct({
         delete: Schema.Boolean,
       }),
       type: Schema.Literal("ipv4", "ipv6"),
-      auto_delete: Schema.Boolean,
-      assignee_type: Schema.Literal("server"),
-      assignee_id: Schema.NullOr(Schema.Int),
-    }),
+      autoDelete: Schema.propertySignature(Schema.Boolean).pipe(Schema.fromKey("auto_delete")),
+      assigneeType: Schema.propertySignature(Schema.Literal("server")).pipe(Schema.fromKey("assignee_type")),
+      assigneeId: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("assignee_id")),
+    })).pipe(Schema.fromKey("primary_ip")),
     action: Schema.optional(Schema.NullOr(Schema.Struct({
       id: Schema.Int,
       command: Schema.String,
@@ -142,7 +142,7 @@ export const CreatePrimaryIpResponse = Schema.Struct({
 export type CreatePrimaryIpResponse = typeof CreatePrimaryIpResponse.Type;
 
 export const GetPrimaryIpResponse = Schema.Struct({
-    primary_ip: Schema.Struct({
+    primaryIp: Schema.propertySignature(Schema.Struct({
       id: Schema.Int,
       name: Schema.String,
       labels: Schema.Record({ key: Schema.String, value: Schema.String }),
@@ -156,21 +156,21 @@ export const GetPrimaryIpResponse = Schema.Struct({
         city: Schema.String,
         latitude: Schema.Number,
         longitude: Schema.Number,
-        network_zone: Schema.String,
+        networkZone: Schema.propertySignature(Schema.String).pipe(Schema.fromKey("network_zone")),
       }),
       ip: Schema.String,
-      dns_ptr: Schema.Array(Schema.Struct({
+      dnsPtr: Schema.propertySignature(Schema.Array(Schema.Struct({
         ip: Schema.String,
-        dns_ptr: Schema.String,
-      })),
+        dnsPtr: Schema.propertySignature(Schema.String).pipe(Schema.fromKey("dns_ptr")),
+      }))).pipe(Schema.fromKey("dns_ptr")),
       protection: Schema.Struct({
         delete: Schema.Boolean,
       }),
       type: Schema.Literal("ipv4", "ipv6"),
-      auto_delete: Schema.Boolean,
-      assignee_type: Schema.Literal("server"),
-      assignee_id: Schema.NullOr(Schema.Int),
-    }),
+      autoDelete: Schema.propertySignature(Schema.Boolean).pipe(Schema.fromKey("auto_delete")),
+      assigneeType: Schema.propertySignature(Schema.Literal("server")).pipe(Schema.fromKey("assignee_type")),
+      assigneeId: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("assignee_id")),
+    })).pipe(Schema.fromKey("primary_ip")),
   });
 export type GetPrimaryIpResponse = typeof GetPrimaryIpResponse.Type;
 
@@ -215,7 +215,7 @@ export const GetPrimaryIpsActionResponse = Schema.Struct({
 export type GetPrimaryIpsActionResponse = typeof GetPrimaryIpsActionResponse.Type;
 
 export const ListPrimaryIpsResponse = Schema.Struct({
-    primary_ips: Schema.Array(Schema.Struct({
+    primaryIps: Schema.propertySignature(Schema.Array(Schema.Struct({
       id: Schema.Int,
       name: Schema.String,
       labels: Schema.Record({ key: Schema.String, value: Schema.String }),
@@ -229,39 +229,39 @@ export const ListPrimaryIpsResponse = Schema.Struct({
         city: Schema.String,
         latitude: Schema.Number,
         longitude: Schema.Number,
-        network_zone: Schema.String,
+        networkZone: Schema.propertySignature(Schema.String).pipe(Schema.fromKey("network_zone")),
       }),
       ip: Schema.String,
-      dns_ptr: Schema.Array(Schema.Struct({
+      dnsPtr: Schema.propertySignature(Schema.Array(Schema.Struct({
         ip: Schema.String,
-        dns_ptr: Schema.String,
-      })),
+        dnsPtr: Schema.propertySignature(Schema.String).pipe(Schema.fromKey("dns_ptr")),
+      }))).pipe(Schema.fromKey("dns_ptr")),
       protection: Schema.Struct({
         delete: Schema.Boolean,
       }),
       type: Schema.Literal("ipv4", "ipv6"),
-      auto_delete: Schema.Boolean,
-      assignee_type: Schema.Literal("server"),
-      assignee_id: Schema.NullOr(Schema.Int),
-    })),
+      autoDelete: Schema.propertySignature(Schema.Boolean).pipe(Schema.fromKey("auto_delete")),
+      assigneeType: Schema.propertySignature(Schema.Literal("server")).pipe(Schema.fromKey("assignee_type")),
+      assigneeId: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("assignee_id")),
+    }))).pipe(Schema.fromKey("primary_ips")),
     meta: Schema.Struct({
       pagination: Schema.Struct({
         page: Schema.Int,
-        per_page: Schema.Int,
-        previous_page: Schema.NullOr(Schema.Int),
-        next_page: Schema.NullOr(Schema.Int),
-        last_page: Schema.NullOr(Schema.Int),
-        total_entries: Schema.NullOr(Schema.Int),
+        perPage: Schema.propertySignature(Schema.Int).pipe(Schema.fromKey("per_page")),
+        previousPage: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("previous_page")),
+        nextPage: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("next_page")),
+        lastPage: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("last_page")),
+        totalEntries: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("total_entries")),
       }),
     }),
   });
 export type ListPrimaryIpsResponse = typeof ListPrimaryIpsResponse.Type;
 export interface ListPrimaryIpsQuery {
   name?: string;
-  label_selector?: string;
+  labelSelector?: string;
   ip?: string;
   page?: number;
-  per_page?: number;
+  perPage?: number;
   sort?: ReadonlyArray<"id" | "id:asc" | "id:desc" | "created" | "created:asc" | "created:desc">;
 }
 
@@ -285,11 +285,11 @@ export const ListPrimaryIpActionsResponse = Schema.Struct({
     meta: Schema.Struct({
       pagination: Schema.Struct({
         page: Schema.Int,
-        per_page: Schema.Int,
-        previous_page: Schema.NullOr(Schema.Int),
-        next_page: Schema.NullOr(Schema.Int),
-        last_page: Schema.NullOr(Schema.Int),
-        total_entries: Schema.NullOr(Schema.Int),
+        perPage: Schema.propertySignature(Schema.Int).pipe(Schema.fromKey("per_page")),
+        previousPage: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("previous_page")),
+        nextPage: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("next_page")),
+        lastPage: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("last_page")),
+        totalEntries: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("total_entries")),
       }),
     }),
   });
@@ -298,7 +298,7 @@ export interface ListPrimaryIpActionsQuery {
   sort?: ReadonlyArray<"id" | "id:asc" | "id:desc" | "command" | "command:asc" | "command:desc" | "status" | "status:asc" | "status:desc" | "started" | "started:asc" | "started:desc" | "finished" | "finished:asc" | "finished:desc">;
   status?: ReadonlyArray<"running" | "success" | "error">;
   page?: number;
-  per_page?: number;
+  perPage?: number;
 }
 
 export const ListPrimaryIpsActionsResponse = Schema.Struct({
@@ -321,11 +321,11 @@ export const ListPrimaryIpsActionsResponse = Schema.Struct({
     meta: Schema.Struct({
       pagination: Schema.Struct({
         page: Schema.Int,
-        per_page: Schema.Int,
-        previous_page: Schema.NullOr(Schema.Int),
-        next_page: Schema.NullOr(Schema.Int),
-        last_page: Schema.NullOr(Schema.Int),
-        total_entries: Schema.NullOr(Schema.Int),
+        perPage: Schema.propertySignature(Schema.Int).pipe(Schema.fromKey("per_page")),
+        previousPage: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("previous_page")),
+        nextPage: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("next_page")),
+        lastPage: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("last_page")),
+        totalEntries: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("total_entries")),
       }),
     }),
   });
@@ -335,7 +335,7 @@ export interface ListPrimaryIpsActionsQuery {
   sort?: ReadonlyArray<"id" | "id:asc" | "id:desc" | "command" | "command:asc" | "command:desc" | "status" | "status:asc" | "status:desc" | "started" | "started:asc" | "started:desc" | "finished" | "finished:asc" | "finished:desc">;
   status?: ReadonlyArray<"running" | "success" | "error">;
   page?: number;
-  per_page?: number;
+  perPage?: number;
 }
 
 export const UnassignPrimaryIpResponse = Schema.Struct({
@@ -361,11 +361,11 @@ export type UnassignPrimaryIpResponse = typeof UnassignPrimaryIpResponse.Type;
 export const UpdatePrimaryIpRequest = Schema.Struct({
     name: Schema.optional(Schema.String),
     labels: Schema.optional(Schema.Record({ key: Schema.String, value: Schema.String })),
-    auto_delete: Schema.optional(Schema.Boolean),
+    autoDelete: Schema.optional(Schema.Boolean).pipe(Schema.fromKey("auto_delete")),
   });
 export type UpdatePrimaryIpRequest = typeof UpdatePrimaryIpRequest.Type;
 export const UpdatePrimaryIpResponse = Schema.Struct({
-    primary_ip: Schema.Struct({
+    primaryIp: Schema.propertySignature(Schema.Struct({
       id: Schema.Int,
       name: Schema.String,
       labels: Schema.Record({ key: Schema.String, value: Schema.String }),
@@ -379,21 +379,21 @@ export const UpdatePrimaryIpResponse = Schema.Struct({
         city: Schema.String,
         latitude: Schema.Number,
         longitude: Schema.Number,
-        network_zone: Schema.String,
+        networkZone: Schema.propertySignature(Schema.String).pipe(Schema.fromKey("network_zone")),
       }),
       ip: Schema.String,
-      dns_ptr: Schema.Array(Schema.Struct({
+      dnsPtr: Schema.propertySignature(Schema.Array(Schema.Struct({
         ip: Schema.String,
-        dns_ptr: Schema.String,
-      })),
+        dnsPtr: Schema.propertySignature(Schema.String).pipe(Schema.fromKey("dns_ptr")),
+      }))).pipe(Schema.fromKey("dns_ptr")),
       protection: Schema.Struct({
         delete: Schema.Boolean,
       }),
       type: Schema.Literal("ipv4", "ipv6"),
-      auto_delete: Schema.Boolean,
-      assignee_type: Schema.Literal("server"),
-      assignee_id: Schema.NullOr(Schema.Int),
-    }),
+      autoDelete: Schema.propertySignature(Schema.Boolean).pipe(Schema.fromKey("auto_delete")),
+      assigneeType: Schema.propertySignature(Schema.Literal("server")).pipe(Schema.fromKey("assignee_type")),
+      assigneeId: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("assignee_id")),
+    })).pipe(Schema.fromKey("primary_ip")),
   });
 export type UpdatePrimaryIpResponse = typeof UpdatePrimaryIpResponse.Type;
 
@@ -457,8 +457,8 @@ export const makePrimaryIps = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Get an Action for a Primary IP */
-    getAction: (id: number, action_id: number): Effect.Effect<GetPrimaryIpActionResponse, HetznerErrors> =>
-      HttpClientRequest.get(`/primary_ips/${id}/actions/${action_id}`).pipe(
+    getAction: (id: number, actionId: number): Effect.Effect<GetPrimaryIpActionResponse, HetznerErrors> =>
+      HttpClientRequest.get(`/primary_ips/${id}/actions/${actionId}`).pipe(
         http.execute,
         Effect.flatMap(HttpClientResponse.schemaBodyJson(GetPrimaryIpActionResponse)),
         Effect.catchAll(handleHetznerError),
@@ -477,7 +477,7 @@ export const makePrimaryIps = (http: HttpClient.HttpClient) => ({
     /** List Primary IPs */
     list: (query?: ListPrimaryIpsQuery): Effect.Effect<ListPrimaryIpsResponse, HetznerErrors> =>
       HttpClientRequest.get("/primary_ips").pipe(
-        HttpClientRequest.setUrlParams(toUrlParams(query)),
+        HttpClientRequest.setUrlParams(toUrlParams({ name: query?.name, label_selector: query?.labelSelector, ip: query?.ip, page: query?.page, per_page: query?.perPage, sort: query?.sort })),
         http.execute,
         Effect.flatMap(HttpClientResponse.schemaBodyJson(ListPrimaryIpsResponse)),
         Effect.catchAll(handleHetznerError),
@@ -487,7 +487,7 @@ export const makePrimaryIps = (http: HttpClient.HttpClient) => ({
     /** List Actions for a Primary IP */
     listActions: (id: number, query?: ListPrimaryIpActionsQuery): Effect.Effect<ListPrimaryIpActionsResponse, HetznerErrors> =>
       HttpClientRequest.get(`/primary_ips/${id}/actions`).pipe(
-        HttpClientRequest.setUrlParams(toUrlParams(query)),
+        HttpClientRequest.setUrlParams(toUrlParams({ sort: query?.sort, status: query?.status, page: query?.page, per_page: query?.perPage })),
         http.execute,
         Effect.flatMap(HttpClientResponse.schemaBodyJson(ListPrimaryIpActionsResponse)),
         Effect.catchAll(handleHetznerError),
@@ -497,7 +497,7 @@ export const makePrimaryIps = (http: HttpClient.HttpClient) => ({
     /** List Actions */
     listPrimaryIpsActions: (query?: ListPrimaryIpsActionsQuery): Effect.Effect<ListPrimaryIpsActionsResponse, HetznerErrors> =>
       HttpClientRequest.get("/primary_ips/actions").pipe(
-        HttpClientRequest.setUrlParams(toUrlParams(query)),
+        HttpClientRequest.setUrlParams(toUrlParams({ id: query?.id, sort: query?.sort, status: query?.status, page: query?.page, per_page: query?.perPage })),
         http.execute,
         Effect.flatMap(HttpClientResponse.schemaBodyJson(ListPrimaryIpsActionsResponse)),
         Effect.catchAll(handleHetznerError),

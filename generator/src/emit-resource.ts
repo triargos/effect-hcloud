@@ -9,7 +9,7 @@ import type { Dialect } from "./dialect.ts";
 import { schemaToEffect, propKey } from "./emit-schema.ts";
 import { tsTypeForQueryParam } from "./emit-ts-type.ts";
 import type { OperationIR, ResourceIR } from "./ir.ts";
-import { pascalCase } from "./naming.ts";
+import { camelCase, pascalCase } from "./naming.ts";
 
 export type Profile = {
   readonly dialect: Dialect;
@@ -31,7 +31,7 @@ const isText = (op: OperationIR) => !isJson(op) && !isVoid(op);
 
 function pathExpr(op: OperationIR): string {
   if (op.pathParams.length === 0) return JSON.stringify(op.path);
-  return "`" + op.path.replace(/\{([^}]+)\}/g, (_m, name) => "${" + name + "}") + "`";
+  return "`" + op.path.replace(/\{([^}]+)\}/g, (_m, name) => "${" + camelCase(name) + "}") + "`";
 }
 
 function returnType(op: OperationIR): string {
@@ -42,7 +42,7 @@ function returnType(op: OperationIR): string {
 
 function methodArgs(op: OperationIR): string {
   const args: string[] = [];
-  for (const p of op.pathParams) args.push(`${p.name}: ${p.tsType}`);
+  for (const p of op.pathParams) args.push(`${camelCase(p.name)}: ${p.tsType}`);
   if (op.requestSchema) args.push(op.requestRequired ? `body: ${reqName(op)}` : `body?: ${reqName(op)}`);
   if (op.queryParams.length > 0) args.push(`query?: ${queryName(op)}`);
   return args.join(", ");
@@ -56,7 +56,10 @@ function pipeSteps(op: OperationIR, span: string, p: Profile): string[] {
     steps.push(`http.del(${path}).pipe(`);
   } else {
     steps.push(`HttpClientRequest.${op.method}(${path}).pipe(`);
-    if (op.queryParams.length > 0) steps.push(`  HttpClientRequest.setUrlParams(toUrlParams(query)),`);
+    if (op.queryParams.length > 0) {
+      const pairs = op.queryParams.map((qp) => `${propKey(qp.name)}: query?.${camelCase(qp.name)}`).join(", ");
+      steps.push(`  HttpClientRequest.setUrlParams(toUrlParams({ ${pairs} })),`);
+    }
     if (op.requestSchema) {
       const body = op.requestRequired ? "body" : `body ?? ({} as ${reqName(op)})`;
       steps.push(`  HttpClientRequest.schemaBodyJson(${reqName(op)})(${body}),`);
@@ -98,7 +101,7 @@ function emitSchemas(op: OperationIR, d: Dialect): string {
   }
   if (op.queryParams.length > 0) {
     const fields = op.queryParams
-      .map((qp) => `  ${propKey(qp.name)}${qp.required ? "" : "?"}: ${tsTypeForQueryParam(qp.schema)};`)
+      .map((qp) => `  ${propKey(camelCase(qp.name))}${qp.required ? "" : "?"}: ${tsTypeForQueryParam(qp.schema)};`)
       .join("\n");
     out.push(`export interface ${queryName(op)} {\n${fields}\n}`);
   }

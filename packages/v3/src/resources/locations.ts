@@ -17,7 +17,7 @@ export const GetLocationResponse = Schema.Struct({
       city: Schema.String,
       latitude: Schema.Number,
       longitude: Schema.Number,
-      network_zone: Schema.String,
+      networkZone: Schema.propertySignature(Schema.String).pipe(Schema.fromKey("network_zone")),
     }),
   });
 export type GetLocationResponse = typeof GetLocationResponse.Type;
@@ -31,16 +31,16 @@ export const ListLocationsResponse = Schema.Struct({
       city: Schema.String,
       latitude: Schema.Number,
       longitude: Schema.Number,
-      network_zone: Schema.String,
+      networkZone: Schema.propertySignature(Schema.String).pipe(Schema.fromKey("network_zone")),
     })),
     meta: Schema.Struct({
       pagination: Schema.Struct({
         page: Schema.Int,
-        per_page: Schema.Int,
-        previous_page: Schema.NullOr(Schema.Int),
-        next_page: Schema.NullOr(Schema.Int),
-        last_page: Schema.NullOr(Schema.Int),
-        total_entries: Schema.NullOr(Schema.Int),
+        perPage: Schema.propertySignature(Schema.Int).pipe(Schema.fromKey("per_page")),
+        previousPage: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("previous_page")),
+        nextPage: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("next_page")),
+        lastPage: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("last_page")),
+        totalEntries: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("total_entries")),
       }),
     }),
   });
@@ -49,7 +49,7 @@ export interface ListLocationsQuery {
   name?: string;
   sort?: ReadonlyArray<"id" | "id:asc" | "id:desc" | "name" | "name:asc" | "name:desc">;
   page?: number;
-  per_page?: number;
+  perPage?: number;
 }
 
 
@@ -66,7 +66,7 @@ export const makeLocations = (http: HttpClient.HttpClient) => ({
     /** List Locations */
     list: (query?: ListLocationsQuery): Effect.Effect<ListLocationsResponse, HetznerErrors> =>
       HttpClientRequest.get("/locations").pipe(
-        HttpClientRequest.setUrlParams(toUrlParams(query)),
+        HttpClientRequest.setUrlParams(toUrlParams({ name: query?.name, sort: query?.sort, page: query?.page, per_page: query?.perPage })),
         http.execute,
         Effect.flatMap(HttpClientResponse.schemaBodyJson(ListLocationsResponse)),
         Effect.catchAll(handleHetznerError),

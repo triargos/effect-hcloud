@@ -5,6 +5,7 @@
  * emitters.
  */
 import type { Dialect } from "./dialect.ts";
+import { camelCase } from "./naming.ts";
 import type { JsonSchema } from "./openapi.ts";
 
 /** Split a 3.1 type into its non-null base type(s) and whether `"null"` was present. */
@@ -109,18 +110,30 @@ function scalarType(baseType: string | undefined, schema: JsonSchema, d: Dialect
   }
 }
 
-/** Render a `Schema.Struct({ ... })` from an object schema's properties. */
+/**
+ * Render a `Schema.Struct({ ... })` from an object schema's properties. JSON keys
+ * are exposed as camelCase on the decoded (Type) side; the original snake_case
+ * key is preserved on the wire via the dialect's rename hooks (`fromKey` in v3,
+ * struct-level `encodeKeys` in v4). Dynamic map keys (Record) are never renamed.
+ */
 export function structFields(schema: JsonSchema, d: Dialect, indent: string): string {
   const props = schema.properties ?? {};
   const required = new Set(schema.required ?? []);
   const inner = indent + "  ";
   const lines: string[] = [];
+  const renames: Array<readonly [string, string]> = [];
   for (const [key, prop] of Object.entries(props)) {
+    const typeKey = camelCase(key);
+    const optional = !required.has(key);
     let field = schemaToEffect(prop, d, inner);
-    if (!required.has(key)) field = d.optional(field);
-    lines.push(`${inner}${propKey(key)}: ${field},`);
+    if (optional) field = d.optional(field);
+    if (typeKey !== key) {
+      field = d.fieldRename(field, key, optional);
+      renames.push([typeKey, key]);
+    }
+    lines.push(`${inner}${propKey(typeKey)}: ${field},`);
   }
-  return d.struct(`\n${lines.join("\n")}\n${indent}`);
+  return d.structRename(d.struct(`\n${lines.join("\n")}\n${indent}`), renames);
 }
 
 /** Quote a property key only when it isn't a safe JS identifier. */

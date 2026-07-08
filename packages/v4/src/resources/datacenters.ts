@@ -21,14 +21,14 @@ export const GetDatacenterResponse = Schema.Struct({
         city: Schema.String,
         latitude: Schema.Number,
         longitude: Schema.Number,
-        network_zone: Schema.String,
-      }),
-      server_types: Schema.Struct({
+        networkZone: Schema.String,
+      }).pipe(Schema.encodeKeys({ networkZone: "network_zone" })),
+      serverTypes: Schema.Struct({
         supported: Schema.Array(Schema.Int),
         available: Schema.Array(Schema.Int),
-        available_for_migration: Schema.Array(Schema.Int),
-      }),
-    }),
+        availableForMigration: Schema.Array(Schema.Int),
+      }).pipe(Schema.encodeKeys({ availableForMigration: "available_for_migration" })),
+    }).pipe(Schema.encodeKeys({ serverTypes: "server_types" })),
   });
 export type GetDatacenterResponse = typeof GetDatacenterResponse.Type;
 
@@ -45,24 +45,24 @@ export const ListDatacentersResponse = Schema.Struct({
         city: Schema.String,
         latitude: Schema.Number,
         longitude: Schema.Number,
-        network_zone: Schema.String,
-      }),
-      server_types: Schema.Struct({
+        networkZone: Schema.String,
+      }).pipe(Schema.encodeKeys({ networkZone: "network_zone" })),
+      serverTypes: Schema.Struct({
         supported: Schema.Array(Schema.Int),
         available: Schema.Array(Schema.Int),
-        available_for_migration: Schema.Array(Schema.Int),
-      }),
-    })),
+        availableForMigration: Schema.Array(Schema.Int),
+      }).pipe(Schema.encodeKeys({ availableForMigration: "available_for_migration" })),
+    }).pipe(Schema.encodeKeys({ serverTypes: "server_types" }))),
     recommendation: Schema.Int,
     meta: Schema.Struct({
       pagination: Schema.Struct({
         page: Schema.Int,
-        per_page: Schema.Int,
-        previous_page: Schema.NullOr(Schema.Int),
-        next_page: Schema.NullOr(Schema.Int),
-        last_page: Schema.NullOr(Schema.Int),
-        total_entries: Schema.NullOr(Schema.Int),
-      }),
+        perPage: Schema.Int,
+        previousPage: Schema.NullOr(Schema.Int),
+        nextPage: Schema.NullOr(Schema.Int),
+        lastPage: Schema.NullOr(Schema.Int),
+        totalEntries: Schema.NullOr(Schema.Int),
+      }).pipe(Schema.encodeKeys({ perPage: "per_page", previousPage: "previous_page", nextPage: "next_page", lastPage: "last_page", totalEntries: "total_entries" })),
     }),
   });
 export type ListDatacentersResponse = typeof ListDatacentersResponse.Type;
@@ -70,7 +70,7 @@ export interface ListDatacentersQuery {
   name?: string;
   sort?: ReadonlyArray<"id" | "id:asc" | "id:desc" | "name" | "name:asc" | "name:desc">;
   page?: number;
-  per_page?: number;
+  perPage?: number;
 }
 
 
@@ -87,7 +87,7 @@ export const makeDatacenters = (http: HttpClient.HttpClient) => ({
     /** List Data Centers */
     list: (query?: ListDatacentersQuery): Effect.Effect<ListDatacentersResponse, HetznerErrors> =>
       HttpClientRequest.get("/datacenters").pipe(
-        HttpClientRequest.setUrlParams(toUrlParams(query)),
+        HttpClientRequest.setUrlParams(toUrlParams({ name: query?.name, sort: query?.sort, page: query?.page, per_page: query?.perPage })),
         http.execute,
         Effect.flatMap(decodeJson(ListDatacentersResponse)),
         Effect.catch(handleHetznerError),

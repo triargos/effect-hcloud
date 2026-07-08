@@ -13,9 +13,9 @@ export const CreateCertificateRequest = Schema.Struct({
     labels: Schema.optional(Schema.Record(Schema.String, Schema.String)),
     type: Schema.optional(Schema.Literals(["uploaded", "managed"])),
     certificate: Schema.optional(Schema.String),
-    private_key: Schema.optional(Schema.String),
-    domain_names: Schema.optional(Schema.Array(Schema.String)),
-  });
+    privateKey: Schema.optional(Schema.String),
+    domainNames: Schema.optional(Schema.Array(Schema.String)),
+  }).pipe(Schema.encodeKeys({ privateKey: "private_key", domainNames: "domain_names" }));
 export type CreateCertificateRequest = typeof CreateCertificateRequest.Type;
 export const CreateCertificateResponse = Schema.Struct({
     certificate: Schema.Struct({
@@ -25,9 +25,9 @@ export const CreateCertificateResponse = Schema.Struct({
       type: Schema.optional(Schema.Literals(["uploaded", "managed"])),
       certificate: Schema.NullOr(Schema.String),
       created: Schema.String,
-      not_valid_before: Schema.NullOr(Schema.String),
-      not_valid_after: Schema.NullOr(Schema.String),
-      domain_names: Schema.Array(Schema.String),
+      notValidBefore: Schema.NullOr(Schema.String),
+      notValidAfter: Schema.NullOr(Schema.String),
+      domainNames: Schema.Array(Schema.String),
       fingerprint: Schema.NullOr(Schema.String),
       status: Schema.optional(Schema.NullOr(Schema.Struct({
         issuance: Schema.optional(Schema.Literals(["pending", "completed", "failed"])),
@@ -37,11 +37,11 @@ export const CreateCertificateResponse = Schema.Struct({
           message: Schema.optional(Schema.String),
         }))),
       }))),
-      used_by: Schema.Array(Schema.Struct({
+      usedBy: Schema.Array(Schema.Struct({
         id: Schema.Int,
         type: Schema.String,
       })),
-    }),
+    }).pipe(Schema.encodeKeys({ notValidBefore: "not_valid_before", notValidAfter: "not_valid_after", domainNames: "domain_names", usedBy: "used_by" })),
     action: Schema.optional(Schema.NullOr(Schema.Struct({
       id: Schema.Int,
       command: Schema.String,
@@ -69,9 +69,9 @@ export const GetCertificateResponse = Schema.Struct({
       type: Schema.optional(Schema.Literals(["uploaded", "managed"])),
       certificate: Schema.NullOr(Schema.String),
       created: Schema.String,
-      not_valid_before: Schema.NullOr(Schema.String),
-      not_valid_after: Schema.NullOr(Schema.String),
-      domain_names: Schema.Array(Schema.String),
+      notValidBefore: Schema.NullOr(Schema.String),
+      notValidAfter: Schema.NullOr(Schema.String),
+      domainNames: Schema.Array(Schema.String),
       fingerprint: Schema.NullOr(Schema.String),
       status: Schema.optional(Schema.NullOr(Schema.Struct({
         issuance: Schema.optional(Schema.Literals(["pending", "completed", "failed"])),
@@ -81,11 +81,11 @@ export const GetCertificateResponse = Schema.Struct({
           message: Schema.optional(Schema.String),
         }))),
       }))),
-      used_by: Schema.Array(Schema.Struct({
+      usedBy: Schema.Array(Schema.Struct({
         id: Schema.Int,
         type: Schema.String,
       })),
-    }),
+    }).pipe(Schema.encodeKeys({ notValidBefore: "not_valid_before", notValidAfter: "not_valid_after", domainNames: "domain_names", usedBy: "used_by" })),
   });
 export type GetCertificateResponse = typeof GetCertificateResponse.Type;
 
@@ -137,9 +137,9 @@ export const ListCertificatesResponse = Schema.Struct({
       type: Schema.optional(Schema.Literals(["uploaded", "managed"])),
       certificate: Schema.NullOr(Schema.String),
       created: Schema.String,
-      not_valid_before: Schema.NullOr(Schema.String),
-      not_valid_after: Schema.NullOr(Schema.String),
-      domain_names: Schema.Array(Schema.String),
+      notValidBefore: Schema.NullOr(Schema.String),
+      notValidAfter: Schema.NullOr(Schema.String),
+      domainNames: Schema.Array(Schema.String),
       fingerprint: Schema.NullOr(Schema.String),
       status: Schema.optional(Schema.NullOr(Schema.Struct({
         issuance: Schema.optional(Schema.Literals(["pending", "completed", "failed"])),
@@ -149,30 +149,30 @@ export const ListCertificatesResponse = Schema.Struct({
           message: Schema.optional(Schema.String),
         }))),
       }))),
-      used_by: Schema.Array(Schema.Struct({
+      usedBy: Schema.Array(Schema.Struct({
         id: Schema.Int,
         type: Schema.String,
       })),
-    })),
+    }).pipe(Schema.encodeKeys({ notValidBefore: "not_valid_before", notValidAfter: "not_valid_after", domainNames: "domain_names", usedBy: "used_by" }))),
     meta: Schema.Struct({
       pagination: Schema.Struct({
         page: Schema.Int,
-        per_page: Schema.Int,
-        previous_page: Schema.NullOr(Schema.Int),
-        next_page: Schema.NullOr(Schema.Int),
-        last_page: Schema.NullOr(Schema.Int),
-        total_entries: Schema.NullOr(Schema.Int),
-      }),
+        perPage: Schema.Int,
+        previousPage: Schema.NullOr(Schema.Int),
+        nextPage: Schema.NullOr(Schema.Int),
+        lastPage: Schema.NullOr(Schema.Int),
+        totalEntries: Schema.NullOr(Schema.Int),
+      }).pipe(Schema.encodeKeys({ perPage: "per_page", previousPage: "previous_page", nextPage: "next_page", lastPage: "last_page", totalEntries: "total_entries" })),
     }),
   });
 export type ListCertificatesResponse = typeof ListCertificatesResponse.Type;
 export interface ListCertificatesQuery {
   sort?: ReadonlyArray<"id" | "id:asc" | "id:desc" | "name" | "name:asc" | "name:desc" | "created" | "created:asc" | "created:desc">;
   name?: string;
-  label_selector?: string;
+  labelSelector?: string;
   type?: ReadonlyArray<"uploaded" | "managed">;
   page?: number;
-  per_page?: number;
+  perPage?: number;
 }
 
 export const ListCertificateActionsResponse = Schema.Struct({
@@ -195,12 +195,12 @@ export const ListCertificateActionsResponse = Schema.Struct({
     meta: Schema.Struct({
       pagination: Schema.Struct({
         page: Schema.Int,
-        per_page: Schema.Int,
-        previous_page: Schema.NullOr(Schema.Int),
-        next_page: Schema.NullOr(Schema.Int),
-        last_page: Schema.NullOr(Schema.Int),
-        total_entries: Schema.NullOr(Schema.Int),
-      }),
+        perPage: Schema.Int,
+        previousPage: Schema.NullOr(Schema.Int),
+        nextPage: Schema.NullOr(Schema.Int),
+        lastPage: Schema.NullOr(Schema.Int),
+        totalEntries: Schema.NullOr(Schema.Int),
+      }).pipe(Schema.encodeKeys({ perPage: "per_page", previousPage: "previous_page", nextPage: "next_page", lastPage: "last_page", totalEntries: "total_entries" })),
     }),
   });
 export type ListCertificateActionsResponse = typeof ListCertificateActionsResponse.Type;
@@ -208,7 +208,7 @@ export interface ListCertificateActionsQuery {
   sort?: ReadonlyArray<"id" | "id:asc" | "id:desc" | "command" | "command:asc" | "command:desc" | "status" | "status:asc" | "status:desc" | "started" | "started:asc" | "started:desc" | "finished" | "finished:asc" | "finished:desc">;
   status?: ReadonlyArray<"running" | "success" | "error">;
   page?: number;
-  per_page?: number;
+  perPage?: number;
 }
 
 export const ListCertificatesActionsResponse = Schema.Struct({
@@ -231,12 +231,12 @@ export const ListCertificatesActionsResponse = Schema.Struct({
     meta: Schema.Struct({
       pagination: Schema.Struct({
         page: Schema.Int,
-        per_page: Schema.Int,
-        previous_page: Schema.NullOr(Schema.Int),
-        next_page: Schema.NullOr(Schema.Int),
-        last_page: Schema.NullOr(Schema.Int),
-        total_entries: Schema.NullOr(Schema.Int),
-      }),
+        perPage: Schema.Int,
+        previousPage: Schema.NullOr(Schema.Int),
+        nextPage: Schema.NullOr(Schema.Int),
+        lastPage: Schema.NullOr(Schema.Int),
+        totalEntries: Schema.NullOr(Schema.Int),
+      }).pipe(Schema.encodeKeys({ perPage: "per_page", previousPage: "previous_page", nextPage: "next_page", lastPage: "last_page", totalEntries: "total_entries" })),
     }),
   });
 export type ListCertificatesActionsResponse = typeof ListCertificatesActionsResponse.Type;
@@ -245,7 +245,7 @@ export interface ListCertificatesActionsQuery {
   sort?: ReadonlyArray<"id" | "id:asc" | "id:desc" | "command" | "command:asc" | "command:desc" | "status" | "status:asc" | "status:desc" | "started" | "started:asc" | "started:desc" | "finished" | "finished:asc" | "finished:desc">;
   status?: ReadonlyArray<"running" | "success" | "error">;
   page?: number;
-  per_page?: number;
+  perPage?: number;
 }
 
 export const RetryCertificateResponse = Schema.Struct({
@@ -281,9 +281,9 @@ export const UpdateCertificateResponse = Schema.Struct({
       type: Schema.optional(Schema.Literals(["uploaded", "managed"])),
       certificate: Schema.NullOr(Schema.String),
       created: Schema.String,
-      not_valid_before: Schema.NullOr(Schema.String),
-      not_valid_after: Schema.NullOr(Schema.String),
-      domain_names: Schema.Array(Schema.String),
+      notValidBefore: Schema.NullOr(Schema.String),
+      notValidAfter: Schema.NullOr(Schema.String),
+      domainNames: Schema.Array(Schema.String),
       fingerprint: Schema.NullOr(Schema.String),
       status: Schema.optional(Schema.NullOr(Schema.Struct({
         issuance: Schema.optional(Schema.Literals(["pending", "completed", "failed"])),
@@ -293,11 +293,11 @@ export const UpdateCertificateResponse = Schema.Struct({
           message: Schema.optional(Schema.String),
         }))),
       }))),
-      used_by: Schema.Array(Schema.Struct({
+      usedBy: Schema.Array(Schema.Struct({
         id: Schema.Int,
         type: Schema.String,
       })),
-    }),
+    }).pipe(Schema.encodeKeys({ notValidBefore: "not_valid_before", notValidAfter: "not_valid_after", domainNames: "domain_names", usedBy: "used_by" })),
   });
 export type UpdateCertificateResponse = typeof UpdateCertificateResponse.Type;
 
@@ -331,8 +331,8 @@ export const makeCertificates = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Get an Action for a Certificate */
-    getAction: (id: number, action_id: number): Effect.Effect<GetCertificateActionResponse, HetznerErrors> =>
-      HttpClientRequest.get(`/certificates/${id}/actions/${action_id}`).pipe(
+    getAction: (id: number, actionId: number): Effect.Effect<GetCertificateActionResponse, HetznerErrors> =>
+      HttpClientRequest.get(`/certificates/${id}/actions/${actionId}`).pipe(
         http.execute,
         Effect.flatMap(decodeJson(GetCertificateActionResponse)),
         Effect.catch(handleHetznerError),
@@ -351,7 +351,7 @@ export const makeCertificates = (http: HttpClient.HttpClient) => ({
     /** List Certificates */
     list: (query?: ListCertificatesQuery): Effect.Effect<ListCertificatesResponse, HetznerErrors> =>
       HttpClientRequest.get("/certificates").pipe(
-        HttpClientRequest.setUrlParams(toUrlParams(query)),
+        HttpClientRequest.setUrlParams(toUrlParams({ sort: query?.sort, name: query?.name, label_selector: query?.labelSelector, type: query?.type, page: query?.page, per_page: query?.perPage })),
         http.execute,
         Effect.flatMap(decodeJson(ListCertificatesResponse)),
         Effect.catch(handleHetznerError),
@@ -361,7 +361,7 @@ export const makeCertificates = (http: HttpClient.HttpClient) => ({
     /** List Actions for a Certificate */
     listActions: (id: number, query?: ListCertificateActionsQuery): Effect.Effect<ListCertificateActionsResponse, HetznerErrors> =>
       HttpClientRequest.get(`/certificates/${id}/actions`).pipe(
-        HttpClientRequest.setUrlParams(toUrlParams(query)),
+        HttpClientRequest.setUrlParams(toUrlParams({ sort: query?.sort, status: query?.status, page: query?.page, per_page: query?.perPage })),
         http.execute,
         Effect.flatMap(decodeJson(ListCertificateActionsResponse)),
         Effect.catch(handleHetznerError),
@@ -371,7 +371,7 @@ export const makeCertificates = (http: HttpClient.HttpClient) => ({
     /** List Actions */
     listCertificatesActions: (query?: ListCertificatesActionsQuery): Effect.Effect<ListCertificatesActionsResponse, HetznerErrors> =>
       HttpClientRequest.get("/certificates/actions").pipe(
-        HttpClientRequest.setUrlParams(toUrlParams(query)),
+        HttpClientRequest.setUrlParams(toUrlParams({ id: query?.id, sort: query?.sort, status: query?.status, page: query?.page, per_page: query?.perPage })),
         http.execute,
         Effect.flatMap(decodeJson(ListCertificatesActionsResponse)),
         Effect.catch(handleHetznerError),

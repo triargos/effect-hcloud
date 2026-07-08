@@ -9,16 +9,16 @@ import { toUrlParams } from "../internal/url-params.js";
 
 
 export const ApplyFirewallToResourcesRequest = Schema.Struct({
-    apply_to: Schema.Array(Schema.Struct({
+    applyTo: Schema.Array(Schema.Struct({
       type: Schema.Literals(["server", "label_selector"]),
       server: Schema.optional(Schema.Struct({
         id: Schema.Int,
       })),
-      label_selector: Schema.optional(Schema.Struct({
+      labelSelector: Schema.optional(Schema.Struct({
         selector: Schema.String,
       })),
-    })),
-  });
+    }).pipe(Schema.encodeKeys({ labelSelector: "label_selector" }))),
+  }).pipe(Schema.encodeKeys({ applyTo: "apply_to" }));
 export type ApplyFirewallToResourcesRequest = typeof ApplyFirewallToResourcesRequest.Type;
 export const ApplyFirewallToResourcesResponse = Schema.Struct({
     actions: Schema.Array(Schema.Struct({
@@ -46,21 +46,21 @@ export const CreateFirewallRequest = Schema.Struct({
     rules: Schema.optional(Schema.Array(Schema.Struct({
       description: Schema.optional(Schema.NullOr(Schema.String)),
       direction: Schema.Literals(["in", "out"]),
-      source_ips: Schema.optional(Schema.Array(Schema.String)),
-      destination_ips: Schema.optional(Schema.Array(Schema.String)),
+      sourceIps: Schema.optional(Schema.Array(Schema.String)),
+      destinationIps: Schema.optional(Schema.Array(Schema.String)),
       protocol: Schema.Literals(["tcp", "udp", "icmp", "esp", "gre"]),
       port: Schema.optional(Schema.String),
-    }))),
-    apply_to: Schema.optional(Schema.Array(Schema.Struct({
+    }).pipe(Schema.encodeKeys({ sourceIps: "source_ips", destinationIps: "destination_ips" })))),
+    applyTo: Schema.optional(Schema.Array(Schema.Struct({
       type: Schema.Literals(["server", "label_selector"]),
       server: Schema.optional(Schema.Struct({
         id: Schema.Int,
       })),
-      label_selector: Schema.optional(Schema.Struct({
+      labelSelector: Schema.optional(Schema.Struct({
         selector: Schema.String,
       })),
-    }))),
-  });
+    }).pipe(Schema.encodeKeys({ labelSelector: "label_selector" })))),
+  }).pipe(Schema.encodeKeys({ applyTo: "apply_to" }));
 export type CreateFirewallRequest = typeof CreateFirewallRequest.Type;
 export const CreateFirewallResponse = Schema.Struct({
     firewall: Schema.optional(Schema.Struct({
@@ -71,27 +71,27 @@ export const CreateFirewallResponse = Schema.Struct({
       rules: Schema.Array(Schema.Struct({
         description: Schema.optional(Schema.NullOr(Schema.String)),
         direction: Schema.Literals(["in", "out"]),
-        source_ips: Schema.Array(Schema.String),
-        destination_ips: Schema.Array(Schema.String),
+        sourceIps: Schema.Array(Schema.String),
+        destinationIps: Schema.Array(Schema.String),
         protocol: Schema.Literals(["tcp", "udp", "icmp", "esp", "gre"]),
         port: Schema.NullOr(Schema.String),
-      })),
-      applied_to: Schema.Array(Schema.Struct({
+      }).pipe(Schema.encodeKeys({ sourceIps: "source_ips", destinationIps: "destination_ips" }))),
+      appliedTo: Schema.Array(Schema.Struct({
         type: Schema.Literals(["server", "label_selector"]),
         server: Schema.optional(Schema.Struct({
           id: Schema.Int,
         })),
-        label_selector: Schema.optional(Schema.Struct({
+        labelSelector: Schema.optional(Schema.Struct({
           selector: Schema.String,
         })),
-        applied_to_resources: Schema.optional(Schema.Array(Schema.Struct({
+        appliedToResources: Schema.optional(Schema.Array(Schema.Struct({
           type: Schema.optional(Schema.Literal("server")),
           server: Schema.optional(Schema.Struct({
             id: Schema.Int,
           })),
         }))),
-      })),
-    })),
+      }).pipe(Schema.encodeKeys({ labelSelector: "label_selector", appliedToResources: "applied_to_resources" }))),
+    }).pipe(Schema.encodeKeys({ appliedTo: "applied_to" }))),
     actions: Schema.optional(Schema.Array(Schema.Struct({
       id: Schema.Int,
       command: Schema.String,
@@ -120,27 +120,27 @@ export const GetFirewallResponse = Schema.Struct({
       rules: Schema.Array(Schema.Struct({
         description: Schema.optional(Schema.NullOr(Schema.String)),
         direction: Schema.Literals(["in", "out"]),
-        source_ips: Schema.Array(Schema.String),
-        destination_ips: Schema.Array(Schema.String),
+        sourceIps: Schema.Array(Schema.String),
+        destinationIps: Schema.Array(Schema.String),
         protocol: Schema.Literals(["tcp", "udp", "icmp", "esp", "gre"]),
         port: Schema.NullOr(Schema.String),
-      })),
-      applied_to: Schema.Array(Schema.Struct({
+      }).pipe(Schema.encodeKeys({ sourceIps: "source_ips", destinationIps: "destination_ips" }))),
+      appliedTo: Schema.Array(Schema.Struct({
         type: Schema.Literals(["server", "label_selector"]),
         server: Schema.optional(Schema.Struct({
           id: Schema.Int,
         })),
-        label_selector: Schema.optional(Schema.Struct({
+        labelSelector: Schema.optional(Schema.Struct({
           selector: Schema.String,
         })),
-        applied_to_resources: Schema.optional(Schema.Array(Schema.Struct({
+        appliedToResources: Schema.optional(Schema.Array(Schema.Struct({
           type: Schema.optional(Schema.Literal("server")),
           server: Schema.optional(Schema.Struct({
             id: Schema.Int,
           })),
         }))),
-      })),
-    }),
+      }).pipe(Schema.encodeKeys({ labelSelector: "label_selector", appliedToResources: "applied_to_resources" }))),
+    }).pipe(Schema.encodeKeys({ appliedTo: "applied_to" })),
   });
 export type GetFirewallResponse = typeof GetFirewallResponse.Type;
 
@@ -193,45 +193,45 @@ export const ListFirewallsResponse = Schema.Struct({
       rules: Schema.Array(Schema.Struct({
         description: Schema.optional(Schema.NullOr(Schema.String)),
         direction: Schema.Literals(["in", "out"]),
-        source_ips: Schema.Array(Schema.String),
-        destination_ips: Schema.Array(Schema.String),
+        sourceIps: Schema.Array(Schema.String),
+        destinationIps: Schema.Array(Schema.String),
         protocol: Schema.Literals(["tcp", "udp", "icmp", "esp", "gre"]),
         port: Schema.NullOr(Schema.String),
-      })),
-      applied_to: Schema.Array(Schema.Struct({
+      }).pipe(Schema.encodeKeys({ sourceIps: "source_ips", destinationIps: "destination_ips" }))),
+      appliedTo: Schema.Array(Schema.Struct({
         type: Schema.Literals(["server", "label_selector"]),
         server: Schema.optional(Schema.Struct({
           id: Schema.Int,
         })),
-        label_selector: Schema.optional(Schema.Struct({
+        labelSelector: Schema.optional(Schema.Struct({
           selector: Schema.String,
         })),
-        applied_to_resources: Schema.optional(Schema.Array(Schema.Struct({
+        appliedToResources: Schema.optional(Schema.Array(Schema.Struct({
           type: Schema.optional(Schema.Literal("server")),
           server: Schema.optional(Schema.Struct({
             id: Schema.Int,
           })),
         }))),
-      })),
-    })),
+      }).pipe(Schema.encodeKeys({ labelSelector: "label_selector", appliedToResources: "applied_to_resources" }))),
+    }).pipe(Schema.encodeKeys({ appliedTo: "applied_to" }))),
     meta: Schema.Struct({
       pagination: Schema.Struct({
         page: Schema.Int,
-        per_page: Schema.Int,
-        previous_page: Schema.NullOr(Schema.Int),
-        next_page: Schema.NullOr(Schema.Int),
-        last_page: Schema.NullOr(Schema.Int),
-        total_entries: Schema.NullOr(Schema.Int),
-      }),
+        perPage: Schema.Int,
+        previousPage: Schema.NullOr(Schema.Int),
+        nextPage: Schema.NullOr(Schema.Int),
+        lastPage: Schema.NullOr(Schema.Int),
+        totalEntries: Schema.NullOr(Schema.Int),
+      }).pipe(Schema.encodeKeys({ perPage: "per_page", previousPage: "previous_page", nextPage: "next_page", lastPage: "last_page", totalEntries: "total_entries" })),
     }),
   });
 export type ListFirewallsResponse = typeof ListFirewallsResponse.Type;
 export interface ListFirewallsQuery {
   sort?: ReadonlyArray<"id" | "id:asc" | "id:desc" | "name" | "name:asc" | "name:desc" | "created" | "created:asc" | "created:desc">;
   name?: string;
-  label_selector?: string;
+  labelSelector?: string;
   page?: number;
-  per_page?: number;
+  perPage?: number;
 }
 
 export const ListFirewallActionsResponse = Schema.Struct({
@@ -254,12 +254,12 @@ export const ListFirewallActionsResponse = Schema.Struct({
     meta: Schema.Struct({
       pagination: Schema.Struct({
         page: Schema.Int,
-        per_page: Schema.Int,
-        previous_page: Schema.NullOr(Schema.Int),
-        next_page: Schema.NullOr(Schema.Int),
-        last_page: Schema.NullOr(Schema.Int),
-        total_entries: Schema.NullOr(Schema.Int),
-      }),
+        perPage: Schema.Int,
+        previousPage: Schema.NullOr(Schema.Int),
+        nextPage: Schema.NullOr(Schema.Int),
+        lastPage: Schema.NullOr(Schema.Int),
+        totalEntries: Schema.NullOr(Schema.Int),
+      }).pipe(Schema.encodeKeys({ perPage: "per_page", previousPage: "previous_page", nextPage: "next_page", lastPage: "last_page", totalEntries: "total_entries" })),
     }),
   });
 export type ListFirewallActionsResponse = typeof ListFirewallActionsResponse.Type;
@@ -267,7 +267,7 @@ export interface ListFirewallActionsQuery {
   sort?: ReadonlyArray<"id" | "id:asc" | "id:desc" | "command" | "command:asc" | "command:desc" | "status" | "status:asc" | "status:desc" | "started" | "started:asc" | "started:desc" | "finished" | "finished:asc" | "finished:desc">;
   status?: ReadonlyArray<"running" | "success" | "error">;
   page?: number;
-  per_page?: number;
+  perPage?: number;
 }
 
 export const ListFirewallsActionsResponse = Schema.Struct({
@@ -290,12 +290,12 @@ export const ListFirewallsActionsResponse = Schema.Struct({
     meta: Schema.Struct({
       pagination: Schema.Struct({
         page: Schema.Int,
-        per_page: Schema.Int,
-        previous_page: Schema.NullOr(Schema.Int),
-        next_page: Schema.NullOr(Schema.Int),
-        last_page: Schema.NullOr(Schema.Int),
-        total_entries: Schema.NullOr(Schema.Int),
-      }),
+        perPage: Schema.Int,
+        previousPage: Schema.NullOr(Schema.Int),
+        nextPage: Schema.NullOr(Schema.Int),
+        lastPage: Schema.NullOr(Schema.Int),
+        totalEntries: Schema.NullOr(Schema.Int),
+      }).pipe(Schema.encodeKeys({ perPage: "per_page", previousPage: "previous_page", nextPage: "next_page", lastPage: "last_page", totalEntries: "total_entries" })),
     }),
   });
 export type ListFirewallsActionsResponse = typeof ListFirewallsActionsResponse.Type;
@@ -304,20 +304,20 @@ export interface ListFirewallsActionsQuery {
   sort?: ReadonlyArray<"id" | "id:asc" | "id:desc" | "command" | "command:asc" | "command:desc" | "status" | "status:asc" | "status:desc" | "started" | "started:asc" | "started:desc" | "finished" | "finished:asc" | "finished:desc">;
   status?: ReadonlyArray<"running" | "success" | "error">;
   page?: number;
-  per_page?: number;
+  perPage?: number;
 }
 
 export const RemoveFirewallFromResourcesRequest = Schema.Struct({
-    remove_from: Schema.Array(Schema.Struct({
+    removeFrom: Schema.Array(Schema.Struct({
       type: Schema.Literals(["server", "label_selector"]),
       server: Schema.optional(Schema.Struct({
         id: Schema.Int,
       })),
-      label_selector: Schema.optional(Schema.Struct({
+      labelSelector: Schema.optional(Schema.Struct({
         selector: Schema.String,
       })),
-    })),
-  });
+    }).pipe(Schema.encodeKeys({ labelSelector: "label_selector" }))),
+  }).pipe(Schema.encodeKeys({ removeFrom: "remove_from" }));
 export type RemoveFirewallFromResourcesRequest = typeof RemoveFirewallFromResourcesRequest.Type;
 export const RemoveFirewallFromResourcesResponse = Schema.Struct({
     actions: Schema.Array(Schema.Struct({
@@ -343,11 +343,11 @@ export const SetFirewallRulesRequest = Schema.Struct({
     rules: Schema.Array(Schema.Struct({
       description: Schema.optional(Schema.NullOr(Schema.String)),
       direction: Schema.Literals(["in", "out"]),
-      source_ips: Schema.optional(Schema.Array(Schema.String)),
-      destination_ips: Schema.optional(Schema.Array(Schema.String)),
+      sourceIps: Schema.optional(Schema.Array(Schema.String)),
+      destinationIps: Schema.optional(Schema.Array(Schema.String)),
       protocol: Schema.Literals(["tcp", "udp", "icmp", "esp", "gre"]),
       port: Schema.optional(Schema.String),
-    })),
+    }).pipe(Schema.encodeKeys({ sourceIps: "source_ips", destinationIps: "destination_ips" }))),
   });
 export type SetFirewallRulesRequest = typeof SetFirewallRulesRequest.Type;
 export const SetFirewallRulesResponse = Schema.Struct({
@@ -384,27 +384,27 @@ export const UpdateFirewallResponse = Schema.Struct({
       rules: Schema.Array(Schema.Struct({
         description: Schema.optional(Schema.NullOr(Schema.String)),
         direction: Schema.Literals(["in", "out"]),
-        source_ips: Schema.Array(Schema.String),
-        destination_ips: Schema.Array(Schema.String),
+        sourceIps: Schema.Array(Schema.String),
+        destinationIps: Schema.Array(Schema.String),
         protocol: Schema.Literals(["tcp", "udp", "icmp", "esp", "gre"]),
         port: Schema.NullOr(Schema.String),
-      })),
-      applied_to: Schema.Array(Schema.Struct({
+      }).pipe(Schema.encodeKeys({ sourceIps: "source_ips", destinationIps: "destination_ips" }))),
+      appliedTo: Schema.Array(Schema.Struct({
         type: Schema.Literals(["server", "label_selector"]),
         server: Schema.optional(Schema.Struct({
           id: Schema.Int,
         })),
-        label_selector: Schema.optional(Schema.Struct({
+        labelSelector: Schema.optional(Schema.Struct({
           selector: Schema.String,
         })),
-        applied_to_resources: Schema.optional(Schema.Array(Schema.Struct({
+        appliedToResources: Schema.optional(Schema.Array(Schema.Struct({
           type: Schema.optional(Schema.Literal("server")),
           server: Schema.optional(Schema.Struct({
             id: Schema.Int,
           })),
         }))),
-      })),
-    }),
+      }).pipe(Schema.encodeKeys({ labelSelector: "label_selector", appliedToResources: "applied_to_resources" }))),
+    }).pipe(Schema.encodeKeys({ appliedTo: "applied_to" })),
   });
 export type UpdateFirewallResponse = typeof UpdateFirewallResponse.Type;
 
@@ -448,8 +448,8 @@ export const makeFirewalls = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Get an Action for a Firewall */
-    getAction: (id: number, action_id: number): Effect.Effect<GetFirewallActionResponse, HetznerErrors> =>
-      HttpClientRequest.get(`/firewalls/${id}/actions/${action_id}`).pipe(
+    getAction: (id: number, actionId: number): Effect.Effect<GetFirewallActionResponse, HetznerErrors> =>
+      HttpClientRequest.get(`/firewalls/${id}/actions/${actionId}`).pipe(
         http.execute,
         Effect.flatMap(decodeJson(GetFirewallActionResponse)),
         Effect.catch(handleHetznerError),
@@ -468,7 +468,7 @@ export const makeFirewalls = (http: HttpClient.HttpClient) => ({
     /** List Firewalls */
     list: (query?: ListFirewallsQuery): Effect.Effect<ListFirewallsResponse, HetznerErrors> =>
       HttpClientRequest.get("/firewalls").pipe(
-        HttpClientRequest.setUrlParams(toUrlParams(query)),
+        HttpClientRequest.setUrlParams(toUrlParams({ sort: query?.sort, name: query?.name, label_selector: query?.labelSelector, page: query?.page, per_page: query?.perPage })),
         http.execute,
         Effect.flatMap(decodeJson(ListFirewallsResponse)),
         Effect.catch(handleHetznerError),
@@ -478,7 +478,7 @@ export const makeFirewalls = (http: HttpClient.HttpClient) => ({
     /** List Actions for a Firewall */
     listActions: (id: number, query?: ListFirewallActionsQuery): Effect.Effect<ListFirewallActionsResponse, HetznerErrors> =>
       HttpClientRequest.get(`/firewalls/${id}/actions`).pipe(
-        HttpClientRequest.setUrlParams(toUrlParams(query)),
+        HttpClientRequest.setUrlParams(toUrlParams({ sort: query?.sort, status: query?.status, page: query?.page, per_page: query?.perPage })),
         http.execute,
         Effect.flatMap(decodeJson(ListFirewallActionsResponse)),
         Effect.catch(handleHetznerError),
@@ -488,7 +488,7 @@ export const makeFirewalls = (http: HttpClient.HttpClient) => ({
     /** List Actions */
     listFirewallsActions: (query?: ListFirewallsActionsQuery): Effect.Effect<ListFirewallsActionsResponse, HetznerErrors> =>
       HttpClientRequest.get("/firewalls/actions").pipe(
-        HttpClientRequest.setUrlParams(toUrlParams(query)),
+        HttpClientRequest.setUrlParams(toUrlParams({ id: query?.id, sort: query?.sort, status: query?.status, page: query?.page, per_page: query?.perPage })),
         http.execute,
         Effect.flatMap(decodeJson(ListFirewallsActionsResponse)),
         Effect.catch(handleHetznerError),

@@ -15,7 +15,7 @@ export const GetIsoResponse = Schema.Struct({
       description: Schema.String,
       type: Schema.NullOr(Schema.Literal("public", "private")),
       deprecation: Schema.NullOr(Schema.Struct({
-        unavailable_after: Schema.String,
+        unavailableAfter: Schema.propertySignature(Schema.String).pipe(Schema.fromKey("unavailable_after")),
         announced: Schema.String,
       })),
       architecture: Schema.NullOr(Schema.Literal("x86", "arm")),
@@ -30,7 +30,7 @@ export const ListIsosResponse = Schema.Struct({
       description: Schema.String,
       type: Schema.NullOr(Schema.Literal("public", "private")),
       deprecation: Schema.NullOr(Schema.Struct({
-        unavailable_after: Schema.String,
+        unavailableAfter: Schema.propertySignature(Schema.String).pipe(Schema.fromKey("unavailable_after")),
         announced: Schema.String,
       })),
       architecture: Schema.NullOr(Schema.Literal("x86", "arm")),
@@ -38,11 +38,11 @@ export const ListIsosResponse = Schema.Struct({
     meta: Schema.Struct({
       pagination: Schema.Struct({
         page: Schema.Int,
-        per_page: Schema.Int,
-        previous_page: Schema.NullOr(Schema.Int),
-        next_page: Schema.NullOr(Schema.Int),
-        last_page: Schema.NullOr(Schema.Int),
-        total_entries: Schema.NullOr(Schema.Int),
+        perPage: Schema.propertySignature(Schema.Int).pipe(Schema.fromKey("per_page")),
+        previousPage: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("previous_page")),
+        nextPage: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("next_page")),
+        lastPage: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("last_page")),
+        totalEntries: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("total_entries")),
       }),
     }),
   });
@@ -50,9 +50,9 @@ export type ListIsosResponse = typeof ListIsosResponse.Type;
 export interface ListIsosQuery {
   name?: string;
   architecture?: "x86" | "arm";
-  include_architecture_wildcard?: boolean;
+  includeArchitectureWildcard?: boolean;
   page?: number;
-  per_page?: number;
+  perPage?: number;
 }
 
 
@@ -69,7 +69,7 @@ export const makeIsos = (http: HttpClient.HttpClient) => ({
     /** List ISOs */
     list: (query?: ListIsosQuery): Effect.Effect<ListIsosResponse, HetznerErrors> =>
       HttpClientRequest.get("/isos").pipe(
-        HttpClientRequest.setUrlParams(toUrlParams(query)),
+        HttpClientRequest.setUrlParams(toUrlParams({ name: query?.name, architecture: query?.architecture, include_architecture_wildcard: query?.includeArchitectureWildcard, page: query?.page, per_page: query?.perPage })),
         http.execute,
         Effect.flatMap(HttpClientResponse.schemaBodyJson(ListIsosResponse)),
         Effect.catchAll(handleHetznerError),

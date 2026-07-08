@@ -10,51 +10,51 @@ import { toUrlParams } from "../internal/url-params.js";
 
 export const CreateSshKeyRequest = Schema.Struct({
     name: Schema.String,
-    public_key: Schema.String,
+    publicKey: Schema.propertySignature(Schema.String).pipe(Schema.fromKey("public_key")),
     labels: Schema.optional(Schema.Record({ key: Schema.String, value: Schema.String })),
   });
 export type CreateSshKeyRequest = typeof CreateSshKeyRequest.Type;
 export const CreateSshKeyResponse = Schema.Struct({
-    ssh_key: Schema.Struct({
+    sshKey: Schema.propertySignature(Schema.Struct({
       id: Schema.Int,
       name: Schema.String,
       fingerprint: Schema.String,
-      public_key: Schema.String,
+      publicKey: Schema.propertySignature(Schema.String).pipe(Schema.fromKey("public_key")),
       labels: Schema.Record({ key: Schema.String, value: Schema.String }),
       created: Schema.String,
-    }),
+    })).pipe(Schema.fromKey("ssh_key")),
   });
 export type CreateSshKeyResponse = typeof CreateSshKeyResponse.Type;
 
 export const GetSshKeyResponse = Schema.Struct({
-    ssh_key: Schema.Struct({
+    sshKey: Schema.propertySignature(Schema.Struct({
       id: Schema.Int,
       name: Schema.String,
       fingerprint: Schema.String,
-      public_key: Schema.String,
+      publicKey: Schema.propertySignature(Schema.String).pipe(Schema.fromKey("public_key")),
       labels: Schema.Record({ key: Schema.String, value: Schema.String }),
       created: Schema.String,
-    }),
+    })).pipe(Schema.fromKey("ssh_key")),
   });
 export type GetSshKeyResponse = typeof GetSshKeyResponse.Type;
 
 export const ListSshKeysResponse = Schema.Struct({
-    ssh_keys: Schema.Array(Schema.Struct({
+    sshKeys: Schema.propertySignature(Schema.Array(Schema.Struct({
       id: Schema.Int,
       name: Schema.String,
       fingerprint: Schema.String,
-      public_key: Schema.String,
+      publicKey: Schema.propertySignature(Schema.String).pipe(Schema.fromKey("public_key")),
       labels: Schema.Record({ key: Schema.String, value: Schema.String }),
       created: Schema.String,
-    })),
+    }))).pipe(Schema.fromKey("ssh_keys")),
     meta: Schema.Struct({
       pagination: Schema.Struct({
         page: Schema.Int,
-        per_page: Schema.Int,
-        previous_page: Schema.NullOr(Schema.Int),
-        next_page: Schema.NullOr(Schema.Int),
-        last_page: Schema.NullOr(Schema.Int),
-        total_entries: Schema.NullOr(Schema.Int),
+        perPage: Schema.propertySignature(Schema.Int).pipe(Schema.fromKey("per_page")),
+        previousPage: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("previous_page")),
+        nextPage: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("next_page")),
+        lastPage: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("last_page")),
+        totalEntries: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("total_entries")),
       }),
     }),
   });
@@ -63,9 +63,9 @@ export interface ListSshKeysQuery {
   sort?: ReadonlyArray<"id" | "id:asc" | "id:desc" | "name" | "name:asc" | "name:desc">;
   name?: string;
   fingerprint?: string;
-  label_selector?: string;
+  labelSelector?: string;
   page?: number;
-  per_page?: number;
+  perPage?: number;
 }
 
 export const UpdateSshKeyRequest = Schema.Struct({
@@ -74,14 +74,14 @@ export const UpdateSshKeyRequest = Schema.Struct({
   });
 export type UpdateSshKeyRequest = typeof UpdateSshKeyRequest.Type;
 export const UpdateSshKeyResponse = Schema.Struct({
-    ssh_key: Schema.Struct({
+    sshKey: Schema.propertySignature(Schema.Struct({
       id: Schema.Int,
       name: Schema.String,
       fingerprint: Schema.String,
-      public_key: Schema.String,
+      publicKey: Schema.propertySignature(Schema.String).pipe(Schema.fromKey("public_key")),
       labels: Schema.Record({ key: Schema.String, value: Schema.String }),
       created: Schema.String,
-    }),
+    })).pipe(Schema.fromKey("ssh_key")),
   });
 export type UpdateSshKeyResponse = typeof UpdateSshKeyResponse.Type;
 
@@ -117,7 +117,7 @@ export const makeSshKeys = (http: HttpClient.HttpClient) => ({
     /** List SSH keys */
     list: (query?: ListSshKeysQuery): Effect.Effect<ListSshKeysResponse, HetznerErrors> =>
       HttpClientRequest.get("/ssh_keys").pipe(
-        HttpClientRequest.setUrlParams(toUrlParams(query)),
+        HttpClientRequest.setUrlParams(toUrlParams({ sort: query?.sort, name: query?.name, fingerprint: query?.fingerprint, label_selector: query?.labelSelector, page: query?.page, per_page: query?.perPage })),
         http.execute,
         Effect.flatMap(HttpClientResponse.schemaBodyJson(ListSshKeysResponse)),
         Effect.catchAll(handleHetznerError),

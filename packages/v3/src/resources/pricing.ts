@@ -11,92 +11,92 @@ import { toUrlParams } from "../internal/url-params.js";
 export const GetPricingResponse = Schema.Struct({
     pricing: Schema.Struct({
       currency: Schema.String,
-      vat_rate: Schema.String,
-      primary_ips: Schema.Array(Schema.Struct({
+      vatRate: Schema.propertySignature(Schema.String).pipe(Schema.fromKey("vat_rate")),
+      primaryIps: Schema.propertySignature(Schema.Array(Schema.Struct({
         type: Schema.Literal("ipv4", "ipv6"),
         prices: Schema.Array(Schema.Struct({
           location: Schema.String,
-          price_hourly: Schema.Struct({
+          priceHourly: Schema.propertySignature(Schema.Struct({
             net: Schema.String,
             gross: Schema.String,
-          }),
-          price_monthly: Schema.Struct({
+          })).pipe(Schema.fromKey("price_hourly")),
+          priceMonthly: Schema.propertySignature(Schema.Struct({
             net: Schema.String,
             gross: Schema.String,
-          }),
+          })).pipe(Schema.fromKey("price_monthly")),
         })),
-      })),
-      floating_ips: Schema.Array(Schema.Struct({
+      }))).pipe(Schema.fromKey("primary_ips")),
+      floatingIps: Schema.propertySignature(Schema.Array(Schema.Struct({
         type: Schema.Literal("ipv4", "ipv6"),
         prices: Schema.Array(Schema.Struct({
           location: Schema.String,
-          price_monthly: Schema.Struct({
+          priceMonthly: Schema.propertySignature(Schema.Struct({
             net: Schema.String,
             gross: Schema.String,
-          }),
+          })).pipe(Schema.fromKey("price_monthly")),
         })),
-      })),
+      }))).pipe(Schema.fromKey("floating_ips")),
       image: Schema.Struct({
-        price_per_gb_month: Schema.Struct({
+        pricePerGbMonth: Schema.propertySignature(Schema.Struct({
           net: Schema.String,
           gross: Schema.String,
-        }),
+        })).pipe(Schema.fromKey("price_per_gb_month")),
       }),
       volume: Schema.Struct({
-        price_per_gb_month: Schema.Struct({
+        pricePerGbMonth: Schema.propertySignature(Schema.Struct({
           net: Schema.String,
           gross: Schema.String,
-        }),
+        })).pipe(Schema.fromKey("price_per_gb_month")),
       }),
-      server_backup: Schema.Struct({
+      serverBackup: Schema.propertySignature(Schema.Struct({
         percentage: Schema.String,
-      }),
-      server_types: Schema.Array(Schema.Struct({
+      })).pipe(Schema.fromKey("server_backup")),
+      serverTypes: Schema.propertySignature(Schema.Array(Schema.Struct({
         id: Schema.Int,
         name: Schema.String,
         prices: Schema.Array(Schema.Struct({
           location: Schema.String,
-          price_hourly: Schema.Struct({
+          priceHourly: Schema.propertySignature(Schema.Struct({
             net: Schema.String,
             gross: Schema.String,
-          }),
-          price_monthly: Schema.Struct({
+          })).pipe(Schema.fromKey("price_hourly")),
+          priceMonthly: Schema.propertySignature(Schema.Struct({
             net: Schema.String,
             gross: Schema.String,
-          }),
-          included_traffic: Schema.Int,
-          price_per_tb_traffic: Schema.Struct({
+          })).pipe(Schema.fromKey("price_monthly")),
+          includedTraffic: Schema.propertySignature(Schema.Int).pipe(Schema.fromKey("included_traffic")),
+          pricePerTbTraffic: Schema.propertySignature(Schema.Struct({
             net: Schema.String,
             gross: Schema.String,
-          }),
+          })).pipe(Schema.fromKey("price_per_tb_traffic")),
         })),
-      })),
-      load_balancer_types: Schema.Array(Schema.Struct({
+      }))).pipe(Schema.fromKey("server_types")),
+      loadBalancerTypes: Schema.propertySignature(Schema.Array(Schema.Struct({
         id: Schema.Int,
         name: Schema.String,
         prices: Schema.Array(Schema.Struct({
           location: Schema.String,
-          price_hourly: Schema.Struct({
+          priceHourly: Schema.propertySignature(Schema.Struct({
             net: Schema.String,
             gross: Schema.String,
-          }),
-          price_monthly: Schema.Struct({
+          })).pipe(Schema.fromKey("price_hourly")),
+          priceMonthly: Schema.propertySignature(Schema.Struct({
             net: Schema.String,
             gross: Schema.String,
-          }),
-          included_traffic: Schema.Int,
-          price_per_tb_traffic: Schema.Struct({
+          })).pipe(Schema.fromKey("price_monthly")),
+          includedTraffic: Schema.propertySignature(Schema.Int).pipe(Schema.fromKey("included_traffic")),
+          pricePerTbTraffic: Schema.propertySignature(Schema.Struct({
             net: Schema.String,
             gross: Schema.String,
-          }),
+          })).pipe(Schema.fromKey("price_per_tb_traffic")),
         })),
-      })),
-      floating_ip: Schema.Struct({
-        price_monthly: Schema.Struct({
+      }))).pipe(Schema.fromKey("load_balancer_types")),
+      floatingIp: Schema.propertySignature(Schema.Struct({
+        priceMonthly: Schema.propertySignature(Schema.Struct({
           net: Schema.String,
           gross: Schema.String,
-        }),
-      }),
+        })).pipe(Schema.fromKey("price_monthly")),
+      })).pipe(Schema.fromKey("floating_ip")),
     }),
   });
 export type GetPricingResponse = typeof GetPricingResponse.Type;

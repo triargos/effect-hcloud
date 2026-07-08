@@ -8,7 +8,7 @@ official OpenAPI spec.
 ```ts
 const server = yield* hetzner.servers.create({
   name: "web-1",
-  server_type: "cx22",
+  serverType: "cx22",
   image: "ubuntu-24.04",
 })
 ```
@@ -37,9 +37,9 @@ import { HetznerClient } from "@triargos/effect-hcloud"
 const program = Effect.gen(function* () {
   const hetzner = yield* HetznerClient
 
-  const { server, root_password } = yield* hetzner.servers.create({
+  const { server, rootPassword } = yield* hetzner.servers.create({
     name: "web-1",
-    server_type: "cx22",
+    serverType: "cx22",
     image: "ubuntu-24.04",
   })
 

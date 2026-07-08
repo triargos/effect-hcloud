@@ -10,10 +10,10 @@ import { toUrlParams } from "../internal/url-params.js";
 
 export const AddLoadBalancerServiceRequest = Schema.Struct({
     protocol: Schema.Literals(["tcp", "http", "https"]),
-    listen_port: Schema.Int,
-    destination_port: Schema.Int,
+    listenPort: Schema.Int,
+    destinationPort: Schema.Int,
     proxyprotocol: Schema.Boolean,
-    health_check: Schema.Struct({
+    healthCheck: Schema.Struct({
       protocol: Schema.Literals(["tcp", "http"]),
       port: Schema.Int,
       interval: Schema.Int,
@@ -23,19 +23,19 @@ export const AddLoadBalancerServiceRequest = Schema.Struct({
         domain: Schema.optional(Schema.NullOr(Schema.String)),
         path: Schema.optional(Schema.String),
         response: Schema.optional(Schema.String),
-        status_codes: Schema.optional(Schema.Array(Schema.String)),
+        statusCodes: Schema.optional(Schema.Array(Schema.String)),
         tls: Schema.optional(Schema.Boolean),
-      })),
+      }).pipe(Schema.encodeKeys({ statusCodes: "status_codes" }))),
     }),
     http: Schema.optional(Schema.Struct({
-      cookie_name: Schema.optional(Schema.String),
-      cookie_lifetime: Schema.optional(Schema.Int),
-      timeout_idle: Schema.optional(Schema.Int),
+      cookieName: Schema.optional(Schema.String),
+      cookieLifetime: Schema.optional(Schema.Int),
+      timeoutIdle: Schema.optional(Schema.Int),
       certificates: Schema.optional(Schema.Array(Schema.Int)),
-      redirect_http: Schema.optional(Schema.Boolean),
-      sticky_sessions: Schema.optional(Schema.Boolean),
-    })),
-  });
+      redirectHttp: Schema.optional(Schema.Boolean),
+      stickySessions: Schema.optional(Schema.Boolean),
+    }).pipe(Schema.encodeKeys({ cookieName: "cookie_name", cookieLifetime: "cookie_lifetime", timeoutIdle: "timeout_idle", redirectHttp: "redirect_http", stickySessions: "sticky_sessions" }))),
+  }).pipe(Schema.encodeKeys({ listenPort: "listen_port", destinationPort: "destination_port", healthCheck: "health_check" }));
 export type AddLoadBalancerServiceRequest = typeof AddLoadBalancerServiceRequest.Type;
 export const AddLoadBalancerServiceResponse = Schema.Struct({
     action: Schema.Struct({
@@ -63,14 +63,14 @@ export const AddLoadBalancerTargetRequest = Schema.Struct({
       id: Schema.Int,
       ip: Schema.optional(Schema.String),
     })),
-    label_selector: Schema.optional(Schema.Struct({
+    labelSelector: Schema.optional(Schema.Struct({
       selector: Schema.String,
     })),
     ip: Schema.optional(Schema.Struct({
       ip: Schema.String,
     })),
-    use_private_ip: Schema.optional(Schema.Boolean),
-  });
+    usePrivateIp: Schema.optional(Schema.Boolean),
+  }).pipe(Schema.encodeKeys({ labelSelector: "label_selector", usePrivateIp: "use_private_ip" }));
 export type AddLoadBalancerTargetRequest = typeof AddLoadBalancerTargetRequest.Type;
 export const AddLoadBalancerTargetResponse = Schema.Struct({
     action: Schema.Struct({
@@ -95,8 +95,8 @@ export type AddLoadBalancerTargetResponse = typeof AddLoadBalancerTargetResponse
 export const AttachLoadBalancerToNetworkRequest = Schema.Struct({
     network: Schema.Int,
     ip: Schema.optional(Schema.String),
-    ip_range: Schema.optional(Schema.String),
-  });
+    ipRange: Schema.optional(Schema.String),
+  }).pipe(Schema.encodeKeys({ ipRange: "ip_range" }));
 export type AttachLoadBalancerToNetworkRequest = typeof AttachLoadBalancerToNetworkRequest.Type;
 export const AttachLoadBalancerToNetworkResponse = Schema.Struct({
     action: Schema.Struct({
@@ -144,8 +144,8 @@ export type ChangeLoadBalancerAlgorithmResponse = typeof ChangeLoadBalancerAlgor
 
 export const ChangeLoadBalancerDnsPtrRequest = Schema.Struct({
     ip: Schema.String,
-    dns_ptr: Schema.optional(Schema.NullOr(Schema.String)),
-  });
+    dnsPtr: Schema.optional(Schema.NullOr(Schema.String)),
+  }).pipe(Schema.encodeKeys({ dnsPtr: "dns_ptr" }));
 export type ChangeLoadBalancerDnsPtrRequest = typeof ChangeLoadBalancerDnsPtrRequest.Type;
 export const ChangeLoadBalancerDnsPtrResponse = Schema.Struct({
     action: Schema.Struct({
@@ -192,8 +192,8 @@ export const ChangeLoadBalancerProtectionResponse = Schema.Struct({
 export type ChangeLoadBalancerProtectionResponse = typeof ChangeLoadBalancerProtectionResponse.Type;
 
 export const ChangeLoadBalancerTypeRequest = Schema.Struct({
-    load_balancer_type: Schema.String,
-  });
+    loadBalancerType: Schema.String,
+  }).pipe(Schema.encodeKeys({ loadBalancerType: "load_balancer_type" }));
 export type ChangeLoadBalancerTypeRequest = typeof ChangeLoadBalancerTypeRequest.Type;
 export const ChangeLoadBalancerTypeResponse = Schema.Struct({
     action: Schema.Struct({
@@ -217,16 +217,16 @@ export type ChangeLoadBalancerTypeResponse = typeof ChangeLoadBalancerTypeRespon
 
 export const CreateLoadBalancerRequest = Schema.Struct({
     name: Schema.String,
-    load_balancer_type: Schema.String,
+    loadBalancerType: Schema.String,
     algorithm: Schema.optional(Schema.Struct({
       type: Schema.Literals(["round_robin", "least_connections"]),
     })),
     services: Schema.optional(Schema.Array(Schema.Union([Schema.Struct({
       protocol: Schema.Literal("tcp"),
-      listen_port: Schema.Int,
-      destination_port: Schema.Int,
+      listenPort: Schema.Int,
+      destinationPort: Schema.Int,
       proxyprotocol: Schema.Boolean,
-      health_check: Schema.Struct({
+      healthCheck: Schema.Struct({
         protocol: Schema.Literals(["tcp", "http"]),
         port: Schema.Int,
         interval: Schema.Int,
@@ -236,16 +236,16 @@ export const CreateLoadBalancerRequest = Schema.Struct({
           domain: Schema.NullOr(Schema.String),
           path: Schema.String,
           response: Schema.optional(Schema.String),
-          status_codes: Schema.optional(Schema.Array(Schema.String)),
+          statusCodes: Schema.optional(Schema.Array(Schema.String)),
           tls: Schema.optional(Schema.Boolean),
-        })),
+        }).pipe(Schema.encodeKeys({ statusCodes: "status_codes" }))),
       }),
-    }), Schema.Struct({
+    }).pipe(Schema.encodeKeys({ listenPort: "listen_port", destinationPort: "destination_port", healthCheck: "health_check" })), Schema.Struct({
       protocol: Schema.Literal("http"),
-      listen_port: Schema.Int,
-      destination_port: Schema.Int,
+      listenPort: Schema.Int,
+      destinationPort: Schema.Int,
       proxyprotocol: Schema.Boolean,
-      health_check: Schema.Struct({
+      healthCheck: Schema.Struct({
         protocol: Schema.Literals(["tcp", "http"]),
         port: Schema.Int,
         interval: Schema.Int,
@@ -255,22 +255,22 @@ export const CreateLoadBalancerRequest = Schema.Struct({
           domain: Schema.NullOr(Schema.String),
           path: Schema.String,
           response: Schema.optional(Schema.String),
-          status_codes: Schema.optional(Schema.Array(Schema.String)),
+          statusCodes: Schema.optional(Schema.Array(Schema.String)),
           tls: Schema.optional(Schema.Boolean),
-        })),
+        }).pipe(Schema.encodeKeys({ statusCodes: "status_codes" }))),
       }),
       http: Schema.Struct({
-        cookie_name: Schema.String,
-        cookie_lifetime: Schema.Int,
-        timeout_idle: Schema.Int,
-        sticky_sessions: Schema.Boolean,
-      }),
-    }), Schema.Struct({
+        cookieName: Schema.String,
+        cookieLifetime: Schema.Int,
+        timeoutIdle: Schema.Int,
+        stickySessions: Schema.Boolean,
+      }).pipe(Schema.encodeKeys({ cookieName: "cookie_name", cookieLifetime: "cookie_lifetime", timeoutIdle: "timeout_idle", stickySessions: "sticky_sessions" })),
+    }).pipe(Schema.encodeKeys({ listenPort: "listen_port", destinationPort: "destination_port", healthCheck: "health_check" })), Schema.Struct({
       protocol: Schema.Literal("https"),
-      listen_port: Schema.Int,
-      destination_port: Schema.Int,
+      listenPort: Schema.Int,
+      destinationPort: Schema.Int,
       proxyprotocol: Schema.Boolean,
-      health_check: Schema.Struct({
+      healthCheck: Schema.Struct({
         protocol: Schema.Literals(["tcp", "http"]),
         port: Schema.Int,
         interval: Schema.Int,
@@ -280,56 +280,56 @@ export const CreateLoadBalancerRequest = Schema.Struct({
           domain: Schema.NullOr(Schema.String),
           path: Schema.String,
           response: Schema.optional(Schema.String),
-          status_codes: Schema.optional(Schema.Array(Schema.String)),
+          statusCodes: Schema.optional(Schema.Array(Schema.String)),
           tls: Schema.optional(Schema.Boolean),
-        })),
+        }).pipe(Schema.encodeKeys({ statusCodes: "status_codes" }))),
       }),
       http: Schema.Struct({
-        cookie_name: Schema.String,
-        cookie_lifetime: Schema.Int,
-        timeout_idle: Schema.Int,
+        cookieName: Schema.String,
+        cookieLifetime: Schema.Int,
+        timeoutIdle: Schema.Int,
         certificates: Schema.Array(Schema.Int),
-        redirect_http: Schema.Boolean,
-        sticky_sessions: Schema.Boolean,
-      }),
-    })]))),
+        redirectHttp: Schema.Boolean,
+        stickySessions: Schema.Boolean,
+      }).pipe(Schema.encodeKeys({ cookieName: "cookie_name", cookieLifetime: "cookie_lifetime", timeoutIdle: "timeout_idle", redirectHttp: "redirect_http", stickySessions: "sticky_sessions" })),
+    }).pipe(Schema.encodeKeys({ listenPort: "listen_port", destinationPort: "destination_port", healthCheck: "health_check" }))]))),
     targets: Schema.optional(Schema.Array(Schema.Struct({
       type: Schema.Literals(["server", "label_selector", "ip"]),
       server: Schema.optional(Schema.Struct({
         id: Schema.Int,
         ip: Schema.optional(Schema.String),
       })),
-      label_selector: Schema.optional(Schema.Struct({
+      labelSelector: Schema.optional(Schema.Struct({
         selector: Schema.String,
       })),
       ip: Schema.optional(Schema.Struct({
         ip: Schema.String,
       })),
-      use_private_ip: Schema.optional(Schema.Boolean),
-    }))),
+      usePrivateIp: Schema.optional(Schema.Boolean),
+    }).pipe(Schema.encodeKeys({ labelSelector: "label_selector", usePrivateIp: "use_private_ip" })))),
     labels: Schema.optional(Schema.Record(Schema.String, Schema.String)),
-    public_interface: Schema.optional(Schema.Boolean),
+    publicInterface: Schema.optional(Schema.Boolean),
     network: Schema.optional(Schema.Int),
-    network_zone: Schema.optional(Schema.String),
+    networkZone: Schema.optional(Schema.String),
     location: Schema.optional(Schema.String),
-  });
+  }).pipe(Schema.encodeKeys({ loadBalancerType: "load_balancer_type", publicInterface: "public_interface", networkZone: "network_zone" }));
 export type CreateLoadBalancerRequest = typeof CreateLoadBalancerRequest.Type;
 export const CreateLoadBalancerResponse = Schema.Struct({
-    load_balancer: Schema.Struct({
+    loadBalancer: Schema.Struct({
       id: Schema.Int,
       name: Schema.String,
-      public_net: Schema.Struct({
+      publicNet: Schema.Struct({
         enabled: Schema.Boolean,
         ipv4: Schema.Struct({
           ip: Schema.NullOr(Schema.String),
-          dns_ptr: Schema.NullOr(Schema.String),
-        }),
+          dnsPtr: Schema.NullOr(Schema.String),
+        }).pipe(Schema.encodeKeys({ dnsPtr: "dns_ptr" })),
         ipv6: Schema.Struct({
           ip: Schema.NullOr(Schema.String),
-          dns_ptr: Schema.NullOr(Schema.String),
-        }),
+          dnsPtr: Schema.NullOr(Schema.String),
+        }).pipe(Schema.encodeKeys({ dnsPtr: "dns_ptr" })),
       }),
-      private_net: Schema.Array(Schema.Struct({
+      privateNet: Schema.Array(Schema.Struct({
         network: Schema.Int,
         ip: Schema.String,
       })),
@@ -341,38 +341,38 @@ export const CreateLoadBalancerResponse = Schema.Struct({
         city: Schema.String,
         latitude: Schema.Number,
         longitude: Schema.Number,
-        network_zone: Schema.String,
-      }),
-      load_balancer_type: Schema.Struct({
+        networkZone: Schema.String,
+      }).pipe(Schema.encodeKeys({ networkZone: "network_zone" })),
+      loadBalancerType: Schema.Struct({
         id: Schema.Int,
         name: Schema.String,
         description: Schema.String,
-        max_connections: Schema.Int,
-        max_services: Schema.Int,
-        max_targets: Schema.Int,
-        max_assigned_certificates: Schema.Int,
+        maxConnections: Schema.Int,
+        maxServices: Schema.Int,
+        maxTargets: Schema.Int,
+        maxAssignedCertificates: Schema.Int,
         deprecated: Schema.NullOr(Schema.String),
         deprecation: Schema.NullOr(Schema.Struct({
-          unavailable_after: Schema.String,
+          unavailableAfter: Schema.String,
           announced: Schema.String,
-        })),
+        }).pipe(Schema.encodeKeys({ unavailableAfter: "unavailable_after" }))),
         prices: Schema.Array(Schema.Struct({
           location: Schema.String,
-          price_hourly: Schema.Struct({
+          priceHourly: Schema.Struct({
             net: Schema.String,
             gross: Schema.String,
           }),
-          price_monthly: Schema.Struct({
+          priceMonthly: Schema.Struct({
             net: Schema.String,
             gross: Schema.String,
           }),
-          included_traffic: Schema.Int,
-          price_per_tb_traffic: Schema.Struct({
+          includedTraffic: Schema.Int,
+          pricePerTbTraffic: Schema.Struct({
             net: Schema.String,
             gross: Schema.String,
           }),
-        })),
-      }),
+        }).pipe(Schema.encodeKeys({ priceHourly: "price_hourly", priceMonthly: "price_monthly", includedTraffic: "included_traffic", pricePerTbTraffic: "price_per_tb_traffic" }))),
+      }).pipe(Schema.encodeKeys({ maxConnections: "max_connections", maxServices: "max_services", maxTargets: "max_targets", maxAssignedCertificates: "max_assigned_certificates" })),
       protection: Schema.Struct({
         delete: Schema.Boolean,
       }),
@@ -380,10 +380,10 @@ export const CreateLoadBalancerResponse = Schema.Struct({
       created: Schema.String,
       services: Schema.Array(Schema.Union([Schema.Struct({
         protocol: Schema.Literal("tcp"),
-        listen_port: Schema.Int,
-        destination_port: Schema.Int,
+        listenPort: Schema.Int,
+        destinationPort: Schema.Int,
         proxyprotocol: Schema.Boolean,
-        health_check: Schema.Struct({
+        healthCheck: Schema.Struct({
           protocol: Schema.Literals(["tcp", "http"]),
           port: Schema.Int,
           interval: Schema.Int,
@@ -393,16 +393,16 @@ export const CreateLoadBalancerResponse = Schema.Struct({
             domain: Schema.NullOr(Schema.String),
             path: Schema.String,
             response: Schema.optional(Schema.String),
-            status_codes: Schema.optional(Schema.Array(Schema.String)),
+            statusCodes: Schema.optional(Schema.Array(Schema.String)),
             tls: Schema.optional(Schema.Boolean),
-          })),
+          }).pipe(Schema.encodeKeys({ statusCodes: "status_codes" }))),
         }),
-      }), Schema.Struct({
+      }).pipe(Schema.encodeKeys({ listenPort: "listen_port", destinationPort: "destination_port", healthCheck: "health_check" })), Schema.Struct({
         protocol: Schema.Literal("http"),
-        listen_port: Schema.Int,
-        destination_port: Schema.Int,
+        listenPort: Schema.Int,
+        destinationPort: Schema.Int,
         proxyprotocol: Schema.Boolean,
-        health_check: Schema.Struct({
+        healthCheck: Schema.Struct({
           protocol: Schema.Literals(["tcp", "http"]),
           port: Schema.Int,
           interval: Schema.Int,
@@ -412,22 +412,22 @@ export const CreateLoadBalancerResponse = Schema.Struct({
             domain: Schema.NullOr(Schema.String),
             path: Schema.String,
             response: Schema.optional(Schema.String),
-            status_codes: Schema.optional(Schema.Array(Schema.String)),
+            statusCodes: Schema.optional(Schema.Array(Schema.String)),
             tls: Schema.optional(Schema.Boolean),
-          })),
+          }).pipe(Schema.encodeKeys({ statusCodes: "status_codes" }))),
         }),
         http: Schema.Struct({
-          cookie_name: Schema.String,
-          cookie_lifetime: Schema.Int,
-          timeout_idle: Schema.Int,
-          sticky_sessions: Schema.Boolean,
-        }),
-      }), Schema.Struct({
+          cookieName: Schema.String,
+          cookieLifetime: Schema.Int,
+          timeoutIdle: Schema.Int,
+          stickySessions: Schema.Boolean,
+        }).pipe(Schema.encodeKeys({ cookieName: "cookie_name", cookieLifetime: "cookie_lifetime", timeoutIdle: "timeout_idle", stickySessions: "sticky_sessions" })),
+      }).pipe(Schema.encodeKeys({ listenPort: "listen_port", destinationPort: "destination_port", healthCheck: "health_check" })), Schema.Struct({
         protocol: Schema.Literal("https"),
-        listen_port: Schema.Int,
-        destination_port: Schema.Int,
+        listenPort: Schema.Int,
+        destinationPort: Schema.Int,
         proxyprotocol: Schema.Boolean,
-        health_check: Schema.Struct({
+        healthCheck: Schema.Struct({
           protocol: Schema.Literals(["tcp", "http"]),
           port: Schema.Int,
           interval: Schema.Int,
@@ -437,33 +437,33 @@ export const CreateLoadBalancerResponse = Schema.Struct({
             domain: Schema.NullOr(Schema.String),
             path: Schema.String,
             response: Schema.optional(Schema.String),
-            status_codes: Schema.optional(Schema.Array(Schema.String)),
+            statusCodes: Schema.optional(Schema.Array(Schema.String)),
             tls: Schema.optional(Schema.Boolean),
-          })),
+          }).pipe(Schema.encodeKeys({ statusCodes: "status_codes" }))),
         }),
         http: Schema.Struct({
-          cookie_name: Schema.String,
-          cookie_lifetime: Schema.Int,
-          timeout_idle: Schema.Int,
+          cookieName: Schema.String,
+          cookieLifetime: Schema.Int,
+          timeoutIdle: Schema.Int,
           certificates: Schema.Array(Schema.Int),
-          redirect_http: Schema.Boolean,
-          sticky_sessions: Schema.Boolean,
-        }),
-      })])),
+          redirectHttp: Schema.Boolean,
+          stickySessions: Schema.Boolean,
+        }).pipe(Schema.encodeKeys({ cookieName: "cookie_name", cookieLifetime: "cookie_lifetime", timeoutIdle: "timeout_idle", redirectHttp: "redirect_http", stickySessions: "sticky_sessions" })),
+      }).pipe(Schema.encodeKeys({ listenPort: "listen_port", destinationPort: "destination_port", healthCheck: "health_check" }))])),
       targets: Schema.Array(Schema.Union([Schema.Struct({
         type: Schema.Literal("server"),
         server: Schema.Struct({
           id: Schema.Int,
           ip: Schema.String,
         }),
-        health_status: Schema.Array(Schema.Struct({
-          listen_port: Schema.Int,
+        healthStatus: Schema.Array(Schema.Struct({
+          listenPort: Schema.Int,
           status: Schema.Literals(["healthy", "unhealthy", "unknown"]),
-        })),
-        use_private_ip: Schema.Boolean,
-      }), Schema.Struct({
+        }).pipe(Schema.encodeKeys({ listenPort: "listen_port" }))),
+        usePrivateIp: Schema.Boolean,
+      }).pipe(Schema.encodeKeys({ healthStatus: "health_status", usePrivateIp: "use_private_ip" })), Schema.Struct({
         type: Schema.Literal("label_selector"),
-        label_selector: Schema.Struct({
+        labelSelector: Schema.Struct({
           selector: Schema.String,
         }),
         targets: Schema.Array(Schema.Struct({
@@ -472,30 +472,30 @@ export const CreateLoadBalancerResponse = Schema.Struct({
             id: Schema.Int,
             ip: Schema.String,
           }),
-          health_status: Schema.Array(Schema.Struct({
-            listen_port: Schema.Int,
+          healthStatus: Schema.Array(Schema.Struct({
+            listenPort: Schema.Int,
             status: Schema.Literals(["healthy", "unhealthy", "unknown"]),
-          })),
-          use_private_ip: Schema.Boolean,
-        })),
-        use_private_ip: Schema.Boolean,
-      }), Schema.Struct({
+          }).pipe(Schema.encodeKeys({ listenPort: "listen_port" }))),
+          usePrivateIp: Schema.Boolean,
+        }).pipe(Schema.encodeKeys({ healthStatus: "health_status", usePrivateIp: "use_private_ip" }))),
+        usePrivateIp: Schema.Boolean,
+      }).pipe(Schema.encodeKeys({ labelSelector: "label_selector", usePrivateIp: "use_private_ip" })), Schema.Struct({
         type: Schema.Literal("ip"),
         ip: Schema.Struct({
           ip: Schema.String,
         }),
-        health_status: Schema.Array(Schema.Struct({
-          listen_port: Schema.Int,
+        healthStatus: Schema.Array(Schema.Struct({
+          listenPort: Schema.Int,
           status: Schema.Literals(["healthy", "unhealthy", "unknown"]),
-        })),
-      })])),
+        }).pipe(Schema.encodeKeys({ listenPort: "listen_port" }))),
+      }).pipe(Schema.encodeKeys({ healthStatus: "health_status" }))])),
       algorithm: Schema.Struct({
         type: Schema.Literals(["round_robin", "least_connections"]),
       }),
-      outgoing_traffic: Schema.NullOr(Schema.Int),
-      ingoing_traffic: Schema.NullOr(Schema.Int),
-      included_traffic: Schema.Int,
-    }),
+      outgoingTraffic: Schema.NullOr(Schema.Int),
+      ingoingTraffic: Schema.NullOr(Schema.Int),
+      includedTraffic: Schema.Int,
+    }).pipe(Schema.encodeKeys({ publicNet: "public_net", privateNet: "private_net", loadBalancerType: "load_balancer_type", outgoingTraffic: "outgoing_traffic", ingoingTraffic: "ingoing_traffic", includedTraffic: "included_traffic" })),
     action: Schema.Struct({
       id: Schema.Int,
       command: Schema.String,
@@ -512,12 +512,12 @@ export const CreateLoadBalancerResponse = Schema.Struct({
         message: Schema.String,
       })),
     }),
-  });
+  }).pipe(Schema.encodeKeys({ loadBalancer: "load_balancer" }));
 export type CreateLoadBalancerResponse = typeof CreateLoadBalancerResponse.Type;
 
 export const DeleteLoadBalancerServiceRequest = Schema.Struct({
-    listen_port: Schema.Int,
-  });
+    listenPort: Schema.Int,
+  }).pipe(Schema.encodeKeys({ listenPort: "listen_port" }));
 export type DeleteLoadBalancerServiceRequest = typeof DeleteLoadBalancerServiceRequest.Type;
 export const DeleteLoadBalancerServiceResponse = Schema.Struct({
     action: Schema.Struct({
@@ -604,21 +604,21 @@ export const EnableLoadBalancerPublicInterfaceResponse = Schema.Struct({
 export type EnableLoadBalancerPublicInterfaceResponse = typeof EnableLoadBalancerPublicInterfaceResponse.Type;
 
 export const GetLoadBalancerResponse = Schema.Struct({
-    load_balancer: Schema.Struct({
+    loadBalancer: Schema.Struct({
       id: Schema.Int,
       name: Schema.String,
-      public_net: Schema.Struct({
+      publicNet: Schema.Struct({
         enabled: Schema.Boolean,
         ipv4: Schema.Struct({
           ip: Schema.NullOr(Schema.String),
-          dns_ptr: Schema.NullOr(Schema.String),
-        }),
+          dnsPtr: Schema.NullOr(Schema.String),
+        }).pipe(Schema.encodeKeys({ dnsPtr: "dns_ptr" })),
         ipv6: Schema.Struct({
           ip: Schema.NullOr(Schema.String),
-          dns_ptr: Schema.NullOr(Schema.String),
-        }),
+          dnsPtr: Schema.NullOr(Schema.String),
+        }).pipe(Schema.encodeKeys({ dnsPtr: "dns_ptr" })),
       }),
-      private_net: Schema.Array(Schema.Struct({
+      privateNet: Schema.Array(Schema.Struct({
         network: Schema.Int,
         ip: Schema.String,
       })),
@@ -630,38 +630,38 @@ export const GetLoadBalancerResponse = Schema.Struct({
         city: Schema.String,
         latitude: Schema.Number,
         longitude: Schema.Number,
-        network_zone: Schema.String,
-      }),
-      load_balancer_type: Schema.Struct({
+        networkZone: Schema.String,
+      }).pipe(Schema.encodeKeys({ networkZone: "network_zone" })),
+      loadBalancerType: Schema.Struct({
         id: Schema.Int,
         name: Schema.String,
         description: Schema.String,
-        max_connections: Schema.Int,
-        max_services: Schema.Int,
-        max_targets: Schema.Int,
-        max_assigned_certificates: Schema.Int,
+        maxConnections: Schema.Int,
+        maxServices: Schema.Int,
+        maxTargets: Schema.Int,
+        maxAssignedCertificates: Schema.Int,
         deprecated: Schema.NullOr(Schema.String),
         deprecation: Schema.NullOr(Schema.Struct({
-          unavailable_after: Schema.String,
+          unavailableAfter: Schema.String,
           announced: Schema.String,
-        })),
+        }).pipe(Schema.encodeKeys({ unavailableAfter: "unavailable_after" }))),
         prices: Schema.Array(Schema.Struct({
           location: Schema.String,
-          price_hourly: Schema.Struct({
+          priceHourly: Schema.Struct({
             net: Schema.String,
             gross: Schema.String,
           }),
-          price_monthly: Schema.Struct({
+          priceMonthly: Schema.Struct({
             net: Schema.String,
             gross: Schema.String,
           }),
-          included_traffic: Schema.Int,
-          price_per_tb_traffic: Schema.Struct({
+          includedTraffic: Schema.Int,
+          pricePerTbTraffic: Schema.Struct({
             net: Schema.String,
             gross: Schema.String,
           }),
-        })),
-      }),
+        }).pipe(Schema.encodeKeys({ priceHourly: "price_hourly", priceMonthly: "price_monthly", includedTraffic: "included_traffic", pricePerTbTraffic: "price_per_tb_traffic" }))),
+      }).pipe(Schema.encodeKeys({ maxConnections: "max_connections", maxServices: "max_services", maxTargets: "max_targets", maxAssignedCertificates: "max_assigned_certificates" })),
       protection: Schema.Struct({
         delete: Schema.Boolean,
       }),
@@ -669,10 +669,10 @@ export const GetLoadBalancerResponse = Schema.Struct({
       created: Schema.String,
       services: Schema.Array(Schema.Union([Schema.Struct({
         protocol: Schema.Literal("tcp"),
-        listen_port: Schema.Int,
-        destination_port: Schema.Int,
+        listenPort: Schema.Int,
+        destinationPort: Schema.Int,
         proxyprotocol: Schema.Boolean,
-        health_check: Schema.Struct({
+        healthCheck: Schema.Struct({
           protocol: Schema.Literals(["tcp", "http"]),
           port: Schema.Int,
           interval: Schema.Int,
@@ -682,16 +682,16 @@ export const GetLoadBalancerResponse = Schema.Struct({
             domain: Schema.NullOr(Schema.String),
             path: Schema.String,
             response: Schema.optional(Schema.String),
-            status_codes: Schema.optional(Schema.Array(Schema.String)),
+            statusCodes: Schema.optional(Schema.Array(Schema.String)),
             tls: Schema.optional(Schema.Boolean),
-          })),
+          }).pipe(Schema.encodeKeys({ statusCodes: "status_codes" }))),
         }),
-      }), Schema.Struct({
+      }).pipe(Schema.encodeKeys({ listenPort: "listen_port", destinationPort: "destination_port", healthCheck: "health_check" })), Schema.Struct({
         protocol: Schema.Literal("http"),
-        listen_port: Schema.Int,
-        destination_port: Schema.Int,
+        listenPort: Schema.Int,
+        destinationPort: Schema.Int,
         proxyprotocol: Schema.Boolean,
-        health_check: Schema.Struct({
+        healthCheck: Schema.Struct({
           protocol: Schema.Literals(["tcp", "http"]),
           port: Schema.Int,
           interval: Schema.Int,
@@ -701,22 +701,22 @@ export const GetLoadBalancerResponse = Schema.Struct({
             domain: Schema.NullOr(Schema.String),
             path: Schema.String,
             response: Schema.optional(Schema.String),
-            status_codes: Schema.optional(Schema.Array(Schema.String)),
+            statusCodes: Schema.optional(Schema.Array(Schema.String)),
             tls: Schema.optional(Schema.Boolean),
-          })),
+          }).pipe(Schema.encodeKeys({ statusCodes: "status_codes" }))),
         }),
         http: Schema.Struct({
-          cookie_name: Schema.String,
-          cookie_lifetime: Schema.Int,
-          timeout_idle: Schema.Int,
-          sticky_sessions: Schema.Boolean,
-        }),
-      }), Schema.Struct({
+          cookieName: Schema.String,
+          cookieLifetime: Schema.Int,
+          timeoutIdle: Schema.Int,
+          stickySessions: Schema.Boolean,
+        }).pipe(Schema.encodeKeys({ cookieName: "cookie_name", cookieLifetime: "cookie_lifetime", timeoutIdle: "timeout_idle", stickySessions: "sticky_sessions" })),
+      }).pipe(Schema.encodeKeys({ listenPort: "listen_port", destinationPort: "destination_port", healthCheck: "health_check" })), Schema.Struct({
         protocol: Schema.Literal("https"),
-        listen_port: Schema.Int,
-        destination_port: Schema.Int,
+        listenPort: Schema.Int,
+        destinationPort: Schema.Int,
         proxyprotocol: Schema.Boolean,
-        health_check: Schema.Struct({
+        healthCheck: Schema.Struct({
           protocol: Schema.Literals(["tcp", "http"]),
           port: Schema.Int,
           interval: Schema.Int,
@@ -726,33 +726,33 @@ export const GetLoadBalancerResponse = Schema.Struct({
             domain: Schema.NullOr(Schema.String),
             path: Schema.String,
             response: Schema.optional(Schema.String),
-            status_codes: Schema.optional(Schema.Array(Schema.String)),
+            statusCodes: Schema.optional(Schema.Array(Schema.String)),
             tls: Schema.optional(Schema.Boolean),
-          })),
+          }).pipe(Schema.encodeKeys({ statusCodes: "status_codes" }))),
         }),
         http: Schema.Struct({
-          cookie_name: Schema.String,
-          cookie_lifetime: Schema.Int,
-          timeout_idle: Schema.Int,
+          cookieName: Schema.String,
+          cookieLifetime: Schema.Int,
+          timeoutIdle: Schema.Int,
           certificates: Schema.Array(Schema.Int),
-          redirect_http: Schema.Boolean,
-          sticky_sessions: Schema.Boolean,
-        }),
-      })])),
+          redirectHttp: Schema.Boolean,
+          stickySessions: Schema.Boolean,
+        }).pipe(Schema.encodeKeys({ cookieName: "cookie_name", cookieLifetime: "cookie_lifetime", timeoutIdle: "timeout_idle", redirectHttp: "redirect_http", stickySessions: "sticky_sessions" })),
+      }).pipe(Schema.encodeKeys({ listenPort: "listen_port", destinationPort: "destination_port", healthCheck: "health_check" }))])),
       targets: Schema.Array(Schema.Union([Schema.Struct({
         type: Schema.Literal("server"),
         server: Schema.Struct({
           id: Schema.Int,
           ip: Schema.String,
         }),
-        health_status: Schema.Array(Schema.Struct({
-          listen_port: Schema.Int,
+        healthStatus: Schema.Array(Schema.Struct({
+          listenPort: Schema.Int,
           status: Schema.Literals(["healthy", "unhealthy", "unknown"]),
-        })),
-        use_private_ip: Schema.Boolean,
-      }), Schema.Struct({
+        }).pipe(Schema.encodeKeys({ listenPort: "listen_port" }))),
+        usePrivateIp: Schema.Boolean,
+      }).pipe(Schema.encodeKeys({ healthStatus: "health_status", usePrivateIp: "use_private_ip" })), Schema.Struct({
         type: Schema.Literal("label_selector"),
-        label_selector: Schema.Struct({
+        labelSelector: Schema.Struct({
           selector: Schema.String,
         }),
         targets: Schema.Array(Schema.Struct({
@@ -761,31 +761,31 @@ export const GetLoadBalancerResponse = Schema.Struct({
             id: Schema.Int,
             ip: Schema.String,
           }),
-          health_status: Schema.Array(Schema.Struct({
-            listen_port: Schema.Int,
+          healthStatus: Schema.Array(Schema.Struct({
+            listenPort: Schema.Int,
             status: Schema.Literals(["healthy", "unhealthy", "unknown"]),
-          })),
-          use_private_ip: Schema.Boolean,
-        })),
-        use_private_ip: Schema.Boolean,
-      }), Schema.Struct({
+          }).pipe(Schema.encodeKeys({ listenPort: "listen_port" }))),
+          usePrivateIp: Schema.Boolean,
+        }).pipe(Schema.encodeKeys({ healthStatus: "health_status", usePrivateIp: "use_private_ip" }))),
+        usePrivateIp: Schema.Boolean,
+      }).pipe(Schema.encodeKeys({ labelSelector: "label_selector", usePrivateIp: "use_private_ip" })), Schema.Struct({
         type: Schema.Literal("ip"),
         ip: Schema.Struct({
           ip: Schema.String,
         }),
-        health_status: Schema.Array(Schema.Struct({
-          listen_port: Schema.Int,
+        healthStatus: Schema.Array(Schema.Struct({
+          listenPort: Schema.Int,
           status: Schema.Literals(["healthy", "unhealthy", "unknown"]),
-        })),
-      })])),
+        }).pipe(Schema.encodeKeys({ listenPort: "listen_port" }))),
+      }).pipe(Schema.encodeKeys({ healthStatus: "health_status" }))])),
       algorithm: Schema.Struct({
         type: Schema.Literals(["round_robin", "least_connections"]),
       }),
-      outgoing_traffic: Schema.NullOr(Schema.Int),
-      ingoing_traffic: Schema.NullOr(Schema.Int),
-      included_traffic: Schema.Int,
-    }),
-  });
+      outgoingTraffic: Schema.NullOr(Schema.Int),
+      ingoingTraffic: Schema.NullOr(Schema.Int),
+      includedTraffic: Schema.Int,
+    }).pipe(Schema.encodeKeys({ publicNet: "public_net", privateNet: "private_net", loadBalancerType: "load_balancer_type", outgoingTraffic: "outgoing_traffic", ingoingTraffic: "ingoing_traffic", includedTraffic: "included_traffic" })),
+  }).pipe(Schema.encodeKeys({ loadBalancer: "load_balancer" }));
 export type GetLoadBalancerResponse = typeof GetLoadBalancerResponse.Type;
 
 export const GetLoadBalancerActionResponse = Schema.Struct({
@@ -833,10 +833,10 @@ export const GetLoadBalancerMetricsResponse = Schema.Struct({
       start: Schema.String,
       end: Schema.String,
       step: Schema.Number,
-      time_series: Schema.Record(Schema.String, Schema.Struct({
+      timeSeries: Schema.Record(Schema.String, Schema.Struct({
         values: Schema.Array(Schema.Array(Schema.Unknown)),
       })),
-    }),
+    }).pipe(Schema.encodeKeys({ timeSeries: "time_series" })),
   });
 export type GetLoadBalancerMetricsResponse = typeof GetLoadBalancerMetricsResponse.Type;
 export interface GetLoadBalancerMetricsQuery {
@@ -847,21 +847,21 @@ export interface GetLoadBalancerMetricsQuery {
 }
 
 export const ListLoadBalancersResponse = Schema.Struct({
-    load_balancers: Schema.Array(Schema.Struct({
+    loadBalancers: Schema.Array(Schema.Struct({
       id: Schema.Int,
       name: Schema.String,
-      public_net: Schema.Struct({
+      publicNet: Schema.Struct({
         enabled: Schema.Boolean,
         ipv4: Schema.Struct({
           ip: Schema.NullOr(Schema.String),
-          dns_ptr: Schema.NullOr(Schema.String),
-        }),
+          dnsPtr: Schema.NullOr(Schema.String),
+        }).pipe(Schema.encodeKeys({ dnsPtr: "dns_ptr" })),
         ipv6: Schema.Struct({
           ip: Schema.NullOr(Schema.String),
-          dns_ptr: Schema.NullOr(Schema.String),
-        }),
+          dnsPtr: Schema.NullOr(Schema.String),
+        }).pipe(Schema.encodeKeys({ dnsPtr: "dns_ptr" })),
       }),
-      private_net: Schema.Array(Schema.Struct({
+      privateNet: Schema.Array(Schema.Struct({
         network: Schema.Int,
         ip: Schema.String,
       })),
@@ -873,38 +873,38 @@ export const ListLoadBalancersResponse = Schema.Struct({
         city: Schema.String,
         latitude: Schema.Number,
         longitude: Schema.Number,
-        network_zone: Schema.String,
-      }),
-      load_balancer_type: Schema.Struct({
+        networkZone: Schema.String,
+      }).pipe(Schema.encodeKeys({ networkZone: "network_zone" })),
+      loadBalancerType: Schema.Struct({
         id: Schema.Int,
         name: Schema.String,
         description: Schema.String,
-        max_connections: Schema.Int,
-        max_services: Schema.Int,
-        max_targets: Schema.Int,
-        max_assigned_certificates: Schema.Int,
+        maxConnections: Schema.Int,
+        maxServices: Schema.Int,
+        maxTargets: Schema.Int,
+        maxAssignedCertificates: Schema.Int,
         deprecated: Schema.NullOr(Schema.String),
         deprecation: Schema.NullOr(Schema.Struct({
-          unavailable_after: Schema.String,
+          unavailableAfter: Schema.String,
           announced: Schema.String,
-        })),
+        }).pipe(Schema.encodeKeys({ unavailableAfter: "unavailable_after" }))),
         prices: Schema.Array(Schema.Struct({
           location: Schema.String,
-          price_hourly: Schema.Struct({
+          priceHourly: Schema.Struct({
             net: Schema.String,
             gross: Schema.String,
           }),
-          price_monthly: Schema.Struct({
+          priceMonthly: Schema.Struct({
             net: Schema.String,
             gross: Schema.String,
           }),
-          included_traffic: Schema.Int,
-          price_per_tb_traffic: Schema.Struct({
+          includedTraffic: Schema.Int,
+          pricePerTbTraffic: Schema.Struct({
             net: Schema.String,
             gross: Schema.String,
           }),
-        })),
-      }),
+        }).pipe(Schema.encodeKeys({ priceHourly: "price_hourly", priceMonthly: "price_monthly", includedTraffic: "included_traffic", pricePerTbTraffic: "price_per_tb_traffic" }))),
+      }).pipe(Schema.encodeKeys({ maxConnections: "max_connections", maxServices: "max_services", maxTargets: "max_targets", maxAssignedCertificates: "max_assigned_certificates" })),
       protection: Schema.Struct({
         delete: Schema.Boolean,
       }),
@@ -912,10 +912,10 @@ export const ListLoadBalancersResponse = Schema.Struct({
       created: Schema.String,
       services: Schema.Array(Schema.Union([Schema.Struct({
         protocol: Schema.Literal("tcp"),
-        listen_port: Schema.Int,
-        destination_port: Schema.Int,
+        listenPort: Schema.Int,
+        destinationPort: Schema.Int,
         proxyprotocol: Schema.Boolean,
-        health_check: Schema.Struct({
+        healthCheck: Schema.Struct({
           protocol: Schema.Literals(["tcp", "http"]),
           port: Schema.Int,
           interval: Schema.Int,
@@ -925,16 +925,16 @@ export const ListLoadBalancersResponse = Schema.Struct({
             domain: Schema.NullOr(Schema.String),
             path: Schema.String,
             response: Schema.optional(Schema.String),
-            status_codes: Schema.optional(Schema.Array(Schema.String)),
+            statusCodes: Schema.optional(Schema.Array(Schema.String)),
             tls: Schema.optional(Schema.Boolean),
-          })),
+          }).pipe(Schema.encodeKeys({ statusCodes: "status_codes" }))),
         }),
-      }), Schema.Struct({
+      }).pipe(Schema.encodeKeys({ listenPort: "listen_port", destinationPort: "destination_port", healthCheck: "health_check" })), Schema.Struct({
         protocol: Schema.Literal("http"),
-        listen_port: Schema.Int,
-        destination_port: Schema.Int,
+        listenPort: Schema.Int,
+        destinationPort: Schema.Int,
         proxyprotocol: Schema.Boolean,
-        health_check: Schema.Struct({
+        healthCheck: Schema.Struct({
           protocol: Schema.Literals(["tcp", "http"]),
           port: Schema.Int,
           interval: Schema.Int,
@@ -944,22 +944,22 @@ export const ListLoadBalancersResponse = Schema.Struct({
             domain: Schema.NullOr(Schema.String),
             path: Schema.String,
             response: Schema.optional(Schema.String),
-            status_codes: Schema.optional(Schema.Array(Schema.String)),
+            statusCodes: Schema.optional(Schema.Array(Schema.String)),
             tls: Schema.optional(Schema.Boolean),
-          })),
+          }).pipe(Schema.encodeKeys({ statusCodes: "status_codes" }))),
         }),
         http: Schema.Struct({
-          cookie_name: Schema.String,
-          cookie_lifetime: Schema.Int,
-          timeout_idle: Schema.Int,
-          sticky_sessions: Schema.Boolean,
-        }),
-      }), Schema.Struct({
+          cookieName: Schema.String,
+          cookieLifetime: Schema.Int,
+          timeoutIdle: Schema.Int,
+          stickySessions: Schema.Boolean,
+        }).pipe(Schema.encodeKeys({ cookieName: "cookie_name", cookieLifetime: "cookie_lifetime", timeoutIdle: "timeout_idle", stickySessions: "sticky_sessions" })),
+      }).pipe(Schema.encodeKeys({ listenPort: "listen_port", destinationPort: "destination_port", healthCheck: "health_check" })), Schema.Struct({
         protocol: Schema.Literal("https"),
-        listen_port: Schema.Int,
-        destination_port: Schema.Int,
+        listenPort: Schema.Int,
+        destinationPort: Schema.Int,
         proxyprotocol: Schema.Boolean,
-        health_check: Schema.Struct({
+        healthCheck: Schema.Struct({
           protocol: Schema.Literals(["tcp", "http"]),
           port: Schema.Int,
           interval: Schema.Int,
@@ -969,33 +969,33 @@ export const ListLoadBalancersResponse = Schema.Struct({
             domain: Schema.NullOr(Schema.String),
             path: Schema.String,
             response: Schema.optional(Schema.String),
-            status_codes: Schema.optional(Schema.Array(Schema.String)),
+            statusCodes: Schema.optional(Schema.Array(Schema.String)),
             tls: Schema.optional(Schema.Boolean),
-          })),
+          }).pipe(Schema.encodeKeys({ statusCodes: "status_codes" }))),
         }),
         http: Schema.Struct({
-          cookie_name: Schema.String,
-          cookie_lifetime: Schema.Int,
-          timeout_idle: Schema.Int,
+          cookieName: Schema.String,
+          cookieLifetime: Schema.Int,
+          timeoutIdle: Schema.Int,
           certificates: Schema.Array(Schema.Int),
-          redirect_http: Schema.Boolean,
-          sticky_sessions: Schema.Boolean,
-        }),
-      })])),
+          redirectHttp: Schema.Boolean,
+          stickySessions: Schema.Boolean,
+        }).pipe(Schema.encodeKeys({ cookieName: "cookie_name", cookieLifetime: "cookie_lifetime", timeoutIdle: "timeout_idle", redirectHttp: "redirect_http", stickySessions: "sticky_sessions" })),
+      }).pipe(Schema.encodeKeys({ listenPort: "listen_port", destinationPort: "destination_port", healthCheck: "health_check" }))])),
       targets: Schema.Array(Schema.Union([Schema.Struct({
         type: Schema.Literal("server"),
         server: Schema.Struct({
           id: Schema.Int,
           ip: Schema.String,
         }),
-        health_status: Schema.Array(Schema.Struct({
-          listen_port: Schema.Int,
+        healthStatus: Schema.Array(Schema.Struct({
+          listenPort: Schema.Int,
           status: Schema.Literals(["healthy", "unhealthy", "unknown"]),
-        })),
-        use_private_ip: Schema.Boolean,
-      }), Schema.Struct({
+        }).pipe(Schema.encodeKeys({ listenPort: "listen_port" }))),
+        usePrivateIp: Schema.Boolean,
+      }).pipe(Schema.encodeKeys({ healthStatus: "health_status", usePrivateIp: "use_private_ip" })), Schema.Struct({
         type: Schema.Literal("label_selector"),
-        label_selector: Schema.Struct({
+        labelSelector: Schema.Struct({
           selector: Schema.String,
         }),
         targets: Schema.Array(Schema.Struct({
@@ -1004,48 +1004,48 @@ export const ListLoadBalancersResponse = Schema.Struct({
             id: Schema.Int,
             ip: Schema.String,
           }),
-          health_status: Schema.Array(Schema.Struct({
-            listen_port: Schema.Int,
+          healthStatus: Schema.Array(Schema.Struct({
+            listenPort: Schema.Int,
             status: Schema.Literals(["healthy", "unhealthy", "unknown"]),
-          })),
-          use_private_ip: Schema.Boolean,
-        })),
-        use_private_ip: Schema.Boolean,
-      }), Schema.Struct({
+          }).pipe(Schema.encodeKeys({ listenPort: "listen_port" }))),
+          usePrivateIp: Schema.Boolean,
+        }).pipe(Schema.encodeKeys({ healthStatus: "health_status", usePrivateIp: "use_private_ip" }))),
+        usePrivateIp: Schema.Boolean,
+      }).pipe(Schema.encodeKeys({ labelSelector: "label_selector", usePrivateIp: "use_private_ip" })), Schema.Struct({
         type: Schema.Literal("ip"),
         ip: Schema.Struct({
           ip: Schema.String,
         }),
-        health_status: Schema.Array(Schema.Struct({
-          listen_port: Schema.Int,
+        healthStatus: Schema.Array(Schema.Struct({
+          listenPort: Schema.Int,
           status: Schema.Literals(["healthy", "unhealthy", "unknown"]),
-        })),
-      })])),
+        }).pipe(Schema.encodeKeys({ listenPort: "listen_port" }))),
+      }).pipe(Schema.encodeKeys({ healthStatus: "health_status" }))])),
       algorithm: Schema.Struct({
         type: Schema.Literals(["round_robin", "least_connections"]),
       }),
-      outgoing_traffic: Schema.NullOr(Schema.Int),
-      ingoing_traffic: Schema.NullOr(Schema.Int),
-      included_traffic: Schema.Int,
-    })),
+      outgoingTraffic: Schema.NullOr(Schema.Int),
+      ingoingTraffic: Schema.NullOr(Schema.Int),
+      includedTraffic: Schema.Int,
+    }).pipe(Schema.encodeKeys({ publicNet: "public_net", privateNet: "private_net", loadBalancerType: "load_balancer_type", outgoingTraffic: "outgoing_traffic", ingoingTraffic: "ingoing_traffic", includedTraffic: "included_traffic" }))),
     meta: Schema.Struct({
       pagination: Schema.Struct({
         page: Schema.Int,
-        per_page: Schema.Int,
-        previous_page: Schema.NullOr(Schema.Int),
-        next_page: Schema.NullOr(Schema.Int),
-        last_page: Schema.NullOr(Schema.Int),
-        total_entries: Schema.NullOr(Schema.Int),
-      }),
+        perPage: Schema.Int,
+        previousPage: Schema.NullOr(Schema.Int),
+        nextPage: Schema.NullOr(Schema.Int),
+        lastPage: Schema.NullOr(Schema.Int),
+        totalEntries: Schema.NullOr(Schema.Int),
+      }).pipe(Schema.encodeKeys({ perPage: "per_page", previousPage: "previous_page", nextPage: "next_page", lastPage: "last_page", totalEntries: "total_entries" })),
     }),
-  });
+  }).pipe(Schema.encodeKeys({ loadBalancers: "load_balancers" }));
 export type ListLoadBalancersResponse = typeof ListLoadBalancersResponse.Type;
 export interface ListLoadBalancersQuery {
   sort?: ReadonlyArray<"id" | "id:asc" | "id:desc" | "name" | "name:asc" | "name:desc" | "created" | "created:asc" | "created:desc">;
   name?: string;
-  label_selector?: string;
+  labelSelector?: string;
   page?: number;
-  per_page?: number;
+  perPage?: number;
 }
 
 export const ListLoadBalancerActionsResponse = Schema.Struct({
@@ -1068,12 +1068,12 @@ export const ListLoadBalancerActionsResponse = Schema.Struct({
     meta: Schema.Struct({
       pagination: Schema.Struct({
         page: Schema.Int,
-        per_page: Schema.Int,
-        previous_page: Schema.NullOr(Schema.Int),
-        next_page: Schema.NullOr(Schema.Int),
-        last_page: Schema.NullOr(Schema.Int),
-        total_entries: Schema.NullOr(Schema.Int),
-      }),
+        perPage: Schema.Int,
+        previousPage: Schema.NullOr(Schema.Int),
+        nextPage: Schema.NullOr(Schema.Int),
+        lastPage: Schema.NullOr(Schema.Int),
+        totalEntries: Schema.NullOr(Schema.Int),
+      }).pipe(Schema.encodeKeys({ perPage: "per_page", previousPage: "previous_page", nextPage: "next_page", lastPage: "last_page", totalEntries: "total_entries" })),
     }),
   });
 export type ListLoadBalancerActionsResponse = typeof ListLoadBalancerActionsResponse.Type;
@@ -1081,7 +1081,7 @@ export interface ListLoadBalancerActionsQuery {
   sort?: ReadonlyArray<"id" | "id:asc" | "id:desc" | "command" | "command:asc" | "command:desc" | "status" | "status:asc" | "status:desc" | "started" | "started:asc" | "started:desc" | "finished" | "finished:asc" | "finished:desc">;
   status?: ReadonlyArray<"running" | "success" | "error">;
   page?: number;
-  per_page?: number;
+  perPage?: number;
 }
 
 export const ListLoadBalancersActionsResponse = Schema.Struct({
@@ -1104,12 +1104,12 @@ export const ListLoadBalancersActionsResponse = Schema.Struct({
     meta: Schema.Struct({
       pagination: Schema.Struct({
         page: Schema.Int,
-        per_page: Schema.Int,
-        previous_page: Schema.NullOr(Schema.Int),
-        next_page: Schema.NullOr(Schema.Int),
-        last_page: Schema.NullOr(Schema.Int),
-        total_entries: Schema.NullOr(Schema.Int),
-      }),
+        perPage: Schema.Int,
+        previousPage: Schema.NullOr(Schema.Int),
+        nextPage: Schema.NullOr(Schema.Int),
+        lastPage: Schema.NullOr(Schema.Int),
+        totalEntries: Schema.NullOr(Schema.Int),
+      }).pipe(Schema.encodeKeys({ perPage: "per_page", previousPage: "previous_page", nextPage: "next_page", lastPage: "last_page", totalEntries: "total_entries" })),
     }),
   });
 export type ListLoadBalancersActionsResponse = typeof ListLoadBalancersActionsResponse.Type;
@@ -1118,7 +1118,7 @@ export interface ListLoadBalancersActionsQuery {
   sort?: ReadonlyArray<"id" | "id:asc" | "id:desc" | "command" | "command:asc" | "command:desc" | "status" | "status:asc" | "status:desc" | "started" | "started:asc" | "started:desc" | "finished" | "finished:asc" | "finished:desc">;
   status?: ReadonlyArray<"running" | "success" | "error">;
   page?: number;
-  per_page?: number;
+  perPage?: number;
 }
 
 export const RemoveLoadBalancerTargetRequest = Schema.Struct({
@@ -1127,13 +1127,13 @@ export const RemoveLoadBalancerTargetRequest = Schema.Struct({
       id: Schema.Int,
       ip: Schema.optional(Schema.String),
     })),
-    label_selector: Schema.optional(Schema.Struct({
+    labelSelector: Schema.optional(Schema.Struct({
       selector: Schema.String,
     })),
     ip: Schema.optional(Schema.Struct({
       ip: Schema.String,
     })),
-  });
+  }).pipe(Schema.encodeKeys({ labelSelector: "label_selector" }));
 export type RemoveLoadBalancerTargetRequest = typeof RemoveLoadBalancerTargetRequest.Type;
 export const RemoveLoadBalancerTargetResponse = Schema.Struct({
     action: Schema.Struct({
@@ -1161,21 +1161,21 @@ export const UpdateLoadBalancerRequest = Schema.Struct({
   });
 export type UpdateLoadBalancerRequest = typeof UpdateLoadBalancerRequest.Type;
 export const UpdateLoadBalancerResponse = Schema.Struct({
-    load_balancer: Schema.Struct({
+    loadBalancer: Schema.Struct({
       id: Schema.Int,
       name: Schema.String,
-      public_net: Schema.Struct({
+      publicNet: Schema.Struct({
         enabled: Schema.Boolean,
         ipv4: Schema.Struct({
           ip: Schema.NullOr(Schema.String),
-          dns_ptr: Schema.NullOr(Schema.String),
-        }),
+          dnsPtr: Schema.NullOr(Schema.String),
+        }).pipe(Schema.encodeKeys({ dnsPtr: "dns_ptr" })),
         ipv6: Schema.Struct({
           ip: Schema.NullOr(Schema.String),
-          dns_ptr: Schema.NullOr(Schema.String),
-        }),
+          dnsPtr: Schema.NullOr(Schema.String),
+        }).pipe(Schema.encodeKeys({ dnsPtr: "dns_ptr" })),
       }),
-      private_net: Schema.Array(Schema.Struct({
+      privateNet: Schema.Array(Schema.Struct({
         network: Schema.Int,
         ip: Schema.String,
       })),
@@ -1187,38 +1187,38 @@ export const UpdateLoadBalancerResponse = Schema.Struct({
         city: Schema.String,
         latitude: Schema.Number,
         longitude: Schema.Number,
-        network_zone: Schema.String,
-      }),
-      load_balancer_type: Schema.Struct({
+        networkZone: Schema.String,
+      }).pipe(Schema.encodeKeys({ networkZone: "network_zone" })),
+      loadBalancerType: Schema.Struct({
         id: Schema.Int,
         name: Schema.String,
         description: Schema.String,
-        max_connections: Schema.Int,
-        max_services: Schema.Int,
-        max_targets: Schema.Int,
-        max_assigned_certificates: Schema.Int,
+        maxConnections: Schema.Int,
+        maxServices: Schema.Int,
+        maxTargets: Schema.Int,
+        maxAssignedCertificates: Schema.Int,
         deprecated: Schema.NullOr(Schema.String),
         deprecation: Schema.NullOr(Schema.Struct({
-          unavailable_after: Schema.String,
+          unavailableAfter: Schema.String,
           announced: Schema.String,
-        })),
+        }).pipe(Schema.encodeKeys({ unavailableAfter: "unavailable_after" }))),
         prices: Schema.Array(Schema.Struct({
           location: Schema.String,
-          price_hourly: Schema.Struct({
+          priceHourly: Schema.Struct({
             net: Schema.String,
             gross: Schema.String,
           }),
-          price_monthly: Schema.Struct({
+          priceMonthly: Schema.Struct({
             net: Schema.String,
             gross: Schema.String,
           }),
-          included_traffic: Schema.Int,
-          price_per_tb_traffic: Schema.Struct({
+          includedTraffic: Schema.Int,
+          pricePerTbTraffic: Schema.Struct({
             net: Schema.String,
             gross: Schema.String,
           }),
-        })),
-      }),
+        }).pipe(Schema.encodeKeys({ priceHourly: "price_hourly", priceMonthly: "price_monthly", includedTraffic: "included_traffic", pricePerTbTraffic: "price_per_tb_traffic" }))),
+      }).pipe(Schema.encodeKeys({ maxConnections: "max_connections", maxServices: "max_services", maxTargets: "max_targets", maxAssignedCertificates: "max_assigned_certificates" })),
       protection: Schema.Struct({
         delete: Schema.Boolean,
       }),
@@ -1226,10 +1226,10 @@ export const UpdateLoadBalancerResponse = Schema.Struct({
       created: Schema.String,
       services: Schema.Array(Schema.Union([Schema.Struct({
         protocol: Schema.Literal("tcp"),
-        listen_port: Schema.Int,
-        destination_port: Schema.Int,
+        listenPort: Schema.Int,
+        destinationPort: Schema.Int,
         proxyprotocol: Schema.Boolean,
-        health_check: Schema.Struct({
+        healthCheck: Schema.Struct({
           protocol: Schema.Literals(["tcp", "http"]),
           port: Schema.Int,
           interval: Schema.Int,
@@ -1239,16 +1239,16 @@ export const UpdateLoadBalancerResponse = Schema.Struct({
             domain: Schema.NullOr(Schema.String),
             path: Schema.String,
             response: Schema.optional(Schema.String),
-            status_codes: Schema.optional(Schema.Array(Schema.String)),
+            statusCodes: Schema.optional(Schema.Array(Schema.String)),
             tls: Schema.optional(Schema.Boolean),
-          })),
+          }).pipe(Schema.encodeKeys({ statusCodes: "status_codes" }))),
         }),
-      }), Schema.Struct({
+      }).pipe(Schema.encodeKeys({ listenPort: "listen_port", destinationPort: "destination_port", healthCheck: "health_check" })), Schema.Struct({
         protocol: Schema.Literal("http"),
-        listen_port: Schema.Int,
-        destination_port: Schema.Int,
+        listenPort: Schema.Int,
+        destinationPort: Schema.Int,
         proxyprotocol: Schema.Boolean,
-        health_check: Schema.Struct({
+        healthCheck: Schema.Struct({
           protocol: Schema.Literals(["tcp", "http"]),
           port: Schema.Int,
           interval: Schema.Int,
@@ -1258,22 +1258,22 @@ export const UpdateLoadBalancerResponse = Schema.Struct({
             domain: Schema.NullOr(Schema.String),
             path: Schema.String,
             response: Schema.optional(Schema.String),
-            status_codes: Schema.optional(Schema.Array(Schema.String)),
+            statusCodes: Schema.optional(Schema.Array(Schema.String)),
             tls: Schema.optional(Schema.Boolean),
-          })),
+          }).pipe(Schema.encodeKeys({ statusCodes: "status_codes" }))),
         }),
         http: Schema.Struct({
-          cookie_name: Schema.String,
-          cookie_lifetime: Schema.Int,
-          timeout_idle: Schema.Int,
-          sticky_sessions: Schema.Boolean,
-        }),
-      }), Schema.Struct({
+          cookieName: Schema.String,
+          cookieLifetime: Schema.Int,
+          timeoutIdle: Schema.Int,
+          stickySessions: Schema.Boolean,
+        }).pipe(Schema.encodeKeys({ cookieName: "cookie_name", cookieLifetime: "cookie_lifetime", timeoutIdle: "timeout_idle", stickySessions: "sticky_sessions" })),
+      }).pipe(Schema.encodeKeys({ listenPort: "listen_port", destinationPort: "destination_port", healthCheck: "health_check" })), Schema.Struct({
         protocol: Schema.Literal("https"),
-        listen_port: Schema.Int,
-        destination_port: Schema.Int,
+        listenPort: Schema.Int,
+        destinationPort: Schema.Int,
         proxyprotocol: Schema.Boolean,
-        health_check: Schema.Struct({
+        healthCheck: Schema.Struct({
           protocol: Schema.Literals(["tcp", "http"]),
           port: Schema.Int,
           interval: Schema.Int,
@@ -1283,33 +1283,33 @@ export const UpdateLoadBalancerResponse = Schema.Struct({
             domain: Schema.NullOr(Schema.String),
             path: Schema.String,
             response: Schema.optional(Schema.String),
-            status_codes: Schema.optional(Schema.Array(Schema.String)),
+            statusCodes: Schema.optional(Schema.Array(Schema.String)),
             tls: Schema.optional(Schema.Boolean),
-          })),
+          }).pipe(Schema.encodeKeys({ statusCodes: "status_codes" }))),
         }),
         http: Schema.Struct({
-          cookie_name: Schema.String,
-          cookie_lifetime: Schema.Int,
-          timeout_idle: Schema.Int,
+          cookieName: Schema.String,
+          cookieLifetime: Schema.Int,
+          timeoutIdle: Schema.Int,
           certificates: Schema.Array(Schema.Int),
-          redirect_http: Schema.Boolean,
-          sticky_sessions: Schema.Boolean,
-        }),
-      })])),
+          redirectHttp: Schema.Boolean,
+          stickySessions: Schema.Boolean,
+        }).pipe(Schema.encodeKeys({ cookieName: "cookie_name", cookieLifetime: "cookie_lifetime", timeoutIdle: "timeout_idle", redirectHttp: "redirect_http", stickySessions: "sticky_sessions" })),
+      }).pipe(Schema.encodeKeys({ listenPort: "listen_port", destinationPort: "destination_port", healthCheck: "health_check" }))])),
       targets: Schema.Array(Schema.Union([Schema.Struct({
         type: Schema.Literal("server"),
         server: Schema.Struct({
           id: Schema.Int,
           ip: Schema.String,
         }),
-        health_status: Schema.Array(Schema.Struct({
-          listen_port: Schema.Int,
+        healthStatus: Schema.Array(Schema.Struct({
+          listenPort: Schema.Int,
           status: Schema.Literals(["healthy", "unhealthy", "unknown"]),
-        })),
-        use_private_ip: Schema.Boolean,
-      }), Schema.Struct({
+        }).pipe(Schema.encodeKeys({ listenPort: "listen_port" }))),
+        usePrivateIp: Schema.Boolean,
+      }).pipe(Schema.encodeKeys({ healthStatus: "health_status", usePrivateIp: "use_private_ip" })), Schema.Struct({
         type: Schema.Literal("label_selector"),
-        label_selector: Schema.Struct({
+        labelSelector: Schema.Struct({
           selector: Schema.String,
         }),
         targets: Schema.Array(Schema.Struct({
@@ -1318,39 +1318,39 @@ export const UpdateLoadBalancerResponse = Schema.Struct({
             id: Schema.Int,
             ip: Schema.String,
           }),
-          health_status: Schema.Array(Schema.Struct({
-            listen_port: Schema.Int,
+          healthStatus: Schema.Array(Schema.Struct({
+            listenPort: Schema.Int,
             status: Schema.Literals(["healthy", "unhealthy", "unknown"]),
-          })),
-          use_private_ip: Schema.Boolean,
-        })),
-        use_private_ip: Schema.Boolean,
-      }), Schema.Struct({
+          }).pipe(Schema.encodeKeys({ listenPort: "listen_port" }))),
+          usePrivateIp: Schema.Boolean,
+        }).pipe(Schema.encodeKeys({ healthStatus: "health_status", usePrivateIp: "use_private_ip" }))),
+        usePrivateIp: Schema.Boolean,
+      }).pipe(Schema.encodeKeys({ labelSelector: "label_selector", usePrivateIp: "use_private_ip" })), Schema.Struct({
         type: Schema.Literal("ip"),
         ip: Schema.Struct({
           ip: Schema.String,
         }),
-        health_status: Schema.Array(Schema.Struct({
-          listen_port: Schema.Int,
+        healthStatus: Schema.Array(Schema.Struct({
+          listenPort: Schema.Int,
           status: Schema.Literals(["healthy", "unhealthy", "unknown"]),
-        })),
-      })])),
+        }).pipe(Schema.encodeKeys({ listenPort: "listen_port" }))),
+      }).pipe(Schema.encodeKeys({ healthStatus: "health_status" }))])),
       algorithm: Schema.Struct({
         type: Schema.Literals(["round_robin", "least_connections"]),
       }),
-      outgoing_traffic: Schema.NullOr(Schema.Int),
-      ingoing_traffic: Schema.NullOr(Schema.Int),
-      included_traffic: Schema.Int,
-    }),
-  });
+      outgoingTraffic: Schema.NullOr(Schema.Int),
+      ingoingTraffic: Schema.NullOr(Schema.Int),
+      includedTraffic: Schema.Int,
+    }).pipe(Schema.encodeKeys({ publicNet: "public_net", privateNet: "private_net", loadBalancerType: "load_balancer_type", outgoingTraffic: "outgoing_traffic", ingoingTraffic: "ingoing_traffic", includedTraffic: "included_traffic" })),
+  }).pipe(Schema.encodeKeys({ loadBalancer: "load_balancer" }));
 export type UpdateLoadBalancerResponse = typeof UpdateLoadBalancerResponse.Type;
 
 export const UpdateLoadBalancerServiceRequest = Schema.Struct({
     protocol: Schema.optional(Schema.Literals(["tcp", "http", "https"])),
-    listen_port: Schema.Int,
-    destination_port: Schema.optional(Schema.Int),
+    listenPort: Schema.Int,
+    destinationPort: Schema.optional(Schema.Int),
     proxyprotocol: Schema.optional(Schema.Boolean),
-    health_check: Schema.optional(Schema.Struct({
+    healthCheck: Schema.optional(Schema.Struct({
       protocol: Schema.optional(Schema.Literals(["tcp", "http"])),
       port: Schema.optional(Schema.Int),
       interval: Schema.optional(Schema.Int),
@@ -1360,19 +1360,19 @@ export const UpdateLoadBalancerServiceRequest = Schema.Struct({
         domain: Schema.optional(Schema.NullOr(Schema.String)),
         path: Schema.optional(Schema.String),
         response: Schema.optional(Schema.String),
-        status_codes: Schema.optional(Schema.Array(Schema.String)),
+        statusCodes: Schema.optional(Schema.Array(Schema.String)),
         tls: Schema.optional(Schema.Boolean),
-      })),
+      }).pipe(Schema.encodeKeys({ statusCodes: "status_codes" }))),
     })),
     http: Schema.optional(Schema.Struct({
-      cookie_name: Schema.optional(Schema.String),
-      cookie_lifetime: Schema.optional(Schema.Int),
-      timeout_idle: Schema.optional(Schema.Int),
+      cookieName: Schema.optional(Schema.String),
+      cookieLifetime: Schema.optional(Schema.Int),
+      timeoutIdle: Schema.optional(Schema.Int),
       certificates: Schema.optional(Schema.Array(Schema.Int)),
-      redirect_http: Schema.optional(Schema.Boolean),
-      sticky_sessions: Schema.optional(Schema.Boolean),
-    })),
-  });
+      redirectHttp: Schema.optional(Schema.Boolean),
+      stickySessions: Schema.optional(Schema.Boolean),
+    }).pipe(Schema.encodeKeys({ cookieName: "cookie_name", cookieLifetime: "cookie_lifetime", timeoutIdle: "timeout_idle", redirectHttp: "redirect_http", stickySessions: "sticky_sessions" }))),
+  }).pipe(Schema.encodeKeys({ listenPort: "listen_port", destinationPort: "destination_port", healthCheck: "health_check" }));
 export type UpdateLoadBalancerServiceRequest = typeof UpdateLoadBalancerServiceRequest.Type;
 export const UpdateLoadBalancerServiceResponse = Schema.Struct({
     action: Schema.Struct({
@@ -1532,8 +1532,8 @@ export const makeLoadBalancers = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Get an Action for a Load Balancer */
-    getAction: (id: number, action_id: number): Effect.Effect<GetLoadBalancerActionResponse, HetznerErrors> =>
-      HttpClientRequest.get(`/load_balancers/${id}/actions/${action_id}`).pipe(
+    getAction: (id: number, actionId: number): Effect.Effect<GetLoadBalancerActionResponse, HetznerErrors> =>
+      HttpClientRequest.get(`/load_balancers/${id}/actions/${actionId}`).pipe(
         http.execute,
         Effect.flatMap(decodeJson(GetLoadBalancerActionResponse)),
         Effect.catch(handleHetznerError),
@@ -1552,7 +1552,7 @@ export const makeLoadBalancers = (http: HttpClient.HttpClient) => ({
     /** Get Metrics for a LoadBalancer */
     getMetrics: (id: number, query?: GetLoadBalancerMetricsQuery): Effect.Effect<GetLoadBalancerMetricsResponse, HetznerErrors> =>
       HttpClientRequest.get(`/load_balancers/${id}/metrics`).pipe(
-        HttpClientRequest.setUrlParams(toUrlParams(query)),
+        HttpClientRequest.setUrlParams(toUrlParams({ type: query?.type, start: query?.start, end: query?.end, step: query?.step })),
         http.execute,
         Effect.flatMap(decodeJson(GetLoadBalancerMetricsResponse)),
         Effect.catch(handleHetznerError),
@@ -1562,7 +1562,7 @@ export const makeLoadBalancers = (http: HttpClient.HttpClient) => ({
     /** List Load Balancers */
     list: (query?: ListLoadBalancersQuery): Effect.Effect<ListLoadBalancersResponse, HetznerErrors> =>
       HttpClientRequest.get("/load_balancers").pipe(
-        HttpClientRequest.setUrlParams(toUrlParams(query)),
+        HttpClientRequest.setUrlParams(toUrlParams({ sort: query?.sort, name: query?.name, label_selector: query?.labelSelector, page: query?.page, per_page: query?.perPage })),
         http.execute,
         Effect.flatMap(decodeJson(ListLoadBalancersResponse)),
         Effect.catch(handleHetznerError),
@@ -1572,7 +1572,7 @@ export const makeLoadBalancers = (http: HttpClient.HttpClient) => ({
     /** List Actions for a Load Balancer */
     listActions: (id: number, query?: ListLoadBalancerActionsQuery): Effect.Effect<ListLoadBalancerActionsResponse, HetznerErrors> =>
       HttpClientRequest.get(`/load_balancers/${id}/actions`).pipe(
-        HttpClientRequest.setUrlParams(toUrlParams(query)),
+        HttpClientRequest.setUrlParams(toUrlParams({ sort: query?.sort, status: query?.status, page: query?.page, per_page: query?.perPage })),
         http.execute,
         Effect.flatMap(decodeJson(ListLoadBalancerActionsResponse)),
         Effect.catch(handleHetznerError),
@@ -1582,7 +1582,7 @@ export const makeLoadBalancers = (http: HttpClient.HttpClient) => ({
     /** List Actions */
     listLoadBalancersActions: (query?: ListLoadBalancersActionsQuery): Effect.Effect<ListLoadBalancersActionsResponse, HetznerErrors> =>
       HttpClientRequest.get("/load_balancers/actions").pipe(
-        HttpClientRequest.setUrlParams(toUrlParams(query)),
+        HttpClientRequest.setUrlParams(toUrlParams({ id: query?.id, sort: query?.sort, status: query?.status, page: query?.page, per_page: query?.perPage })),
         http.execute,
         Effect.flatMap(decodeJson(ListLoadBalancersActionsResponse)),
         Effect.catch(handleHetznerError),

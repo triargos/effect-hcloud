@@ -37,13 +37,13 @@ export const AddZoneRrsetRecordsResponse = Schema.Struct({
 export type AddZoneRrsetRecordsResponse = typeof AddZoneRrsetRecordsResponse.Type;
 
 export const ChangeZonePrimaryNameserversRequest = Schema.Struct({
-    primary_nameservers: Schema.Array(Schema.Struct({
+    primaryNameservers: Schema.Array(Schema.Struct({
       address: Schema.String,
       port: Schema.optional(Schema.Int),
-      tsig_key: Schema.optional(Schema.String),
-      tsig_algorithm: Schema.optional(Schema.Literals(["hmac-md5", "hmac-sha1", "hmac-sha256"])),
-    })),
-  });
+      tsigKey: Schema.optional(Schema.String),
+      tsigAlgorithm: Schema.optional(Schema.Literals(["hmac-md5", "hmac-sha1", "hmac-sha256"])),
+    }).pipe(Schema.encodeKeys({ tsigKey: "tsig_key", tsigAlgorithm: "tsig_algorithm" }))),
+  }).pipe(Schema.encodeKeys({ primaryNameservers: "primary_nameservers" }));
 export type ChangeZonePrimaryNameserversRequest = typeof ChangeZonePrimaryNameserversRequest.Type;
 export const ChangeZonePrimaryNameserversResponse = Schema.Struct({
     action: Schema.Struct({
@@ -166,12 +166,12 @@ export const CreateZoneRequest = Schema.Struct({
     mode: Schema.Literals(["primary", "secondary"]),
     ttl: Schema.optional(Schema.Int),
     labels: Schema.optional(Schema.Record(Schema.String, Schema.String)),
-    primary_nameservers: Schema.optional(Schema.Array(Schema.Struct({
+    primaryNameservers: Schema.optional(Schema.Array(Schema.Struct({
       address: Schema.String,
       port: Schema.optional(Schema.Int),
-      tsig_key: Schema.optional(Schema.String),
-      tsig_algorithm: Schema.optional(Schema.Literals(["hmac-md5", "hmac-sha1", "hmac-sha256"])),
-    }))),
+      tsigKey: Schema.optional(Schema.String),
+      tsigAlgorithm: Schema.optional(Schema.Literals(["hmac-md5", "hmac-sha1", "hmac-sha256"])),
+    }).pipe(Schema.encodeKeys({ tsigKey: "tsig_key", tsigAlgorithm: "tsig_algorithm" })))),
     rrsets: Schema.optional(Schema.Array(Schema.Struct({
       name: Schema.String,
       type: Schema.Literals(["A", "AAAA", "CAA", "CNAME", "DS", "HINFO", "HTTPS", "MX", "NS", "PTR", "RP", "SOA", "SRV", "SVCB", "TLSA", "TXT"]),
@@ -183,60 +183,60 @@ export const CreateZoneRequest = Schema.Struct({
       labels: Schema.optional(Schema.Record(Schema.String, Schema.String)),
     }))),
     zonefile: Schema.optional(Schema.String),
-  });
+  }).pipe(Schema.encodeKeys({ primaryNameservers: "primary_nameservers" }));
 export type CreateZoneRequest = typeof CreateZoneRequest.Type;
 export const CreateZoneResponse = Schema.Struct({
     zone: Schema.Union([Schema.Struct({
       id: Schema.Int,
       name: Schema.String,
       created: Schema.String,
-      primary_nameservers: Schema.optional(Schema.Array(Schema.Struct({
+      primaryNameservers: Schema.optional(Schema.Array(Schema.Struct({
         address: Schema.String,
         port: Schema.optional(Schema.Int),
-        tsig_key: Schema.optional(Schema.String),
-        tsig_algorithm: Schema.optional(Schema.Literals(["hmac-md5", "hmac-sha1", "hmac-sha256"])),
-      }))),
+        tsigKey: Schema.optional(Schema.String),
+        tsigAlgorithm: Schema.optional(Schema.Literals(["hmac-md5", "hmac-sha1", "hmac-sha256"])),
+      }).pipe(Schema.encodeKeys({ tsigKey: "tsig_key", tsigAlgorithm: "tsig_algorithm" })))),
       labels: Schema.Record(Schema.String, Schema.String),
       protection: Schema.Struct({
         delete: Schema.Boolean,
       }),
       ttl: Schema.Int,
       status: Schema.Literals(["ok", "updating", "error"]),
-      record_count: Schema.Int,
-      authoritative_nameservers: Schema.Struct({
+      recordCount: Schema.Int,
+      authoritativeNameservers: Schema.Struct({
         assigned: Schema.Array(Schema.String),
         delegated: Schema.Array(Schema.String),
-        delegation_last_check: Schema.NullOr(Schema.String),
-        delegation_status: Schema.optional(Schema.Literals(["valid", "partially-valid", "invalid", "lame", "unregistered", "unknown"])),
-      }),
+        delegationLastCheck: Schema.NullOr(Schema.String),
+        delegationStatus: Schema.optional(Schema.Literals(["valid", "partially-valid", "invalid", "lame", "unregistered", "unknown"])),
+      }).pipe(Schema.encodeKeys({ delegationLastCheck: "delegation_last_check", delegationStatus: "delegation_status" })),
       registrar: Schema.Literals(["hetzner", "other", "unknown"]),
       mode: Schema.Literal("primary"),
-    }), Schema.Struct({
+    }).pipe(Schema.encodeKeys({ primaryNameservers: "primary_nameservers", recordCount: "record_count", authoritativeNameservers: "authoritative_nameservers" })), Schema.Struct({
       id: Schema.Int,
       name: Schema.String,
       created: Schema.String,
-      primary_nameservers: Schema.optional(Schema.Array(Schema.Struct({
+      primaryNameservers: Schema.optional(Schema.Array(Schema.Struct({
         address: Schema.String,
         port: Schema.optional(Schema.Int),
-        tsig_key: Schema.optional(Schema.String),
-        tsig_algorithm: Schema.optional(Schema.Literals(["hmac-md5", "hmac-sha1", "hmac-sha256"])),
-      }))),
+        tsigKey: Schema.optional(Schema.String),
+        tsigAlgorithm: Schema.optional(Schema.Literals(["hmac-md5", "hmac-sha1", "hmac-sha256"])),
+      }).pipe(Schema.encodeKeys({ tsigKey: "tsig_key", tsigAlgorithm: "tsig_algorithm" })))),
       labels: Schema.Record(Schema.String, Schema.String),
       protection: Schema.Struct({
         delete: Schema.Boolean,
       }),
       ttl: Schema.Int,
       status: Schema.Literals(["ok", "updating", "error"]),
-      record_count: Schema.Int,
-      authoritative_nameservers: Schema.Struct({
+      recordCount: Schema.Int,
+      authoritativeNameservers: Schema.Struct({
         assigned: Schema.Array(Schema.String),
         delegated: Schema.Array(Schema.String),
-        delegation_last_check: Schema.NullOr(Schema.String),
-        delegation_status: Schema.optional(Schema.Literals(["valid", "partially-valid", "invalid", "lame", "unregistered", "unknown"])),
-      }),
+        delegationLastCheck: Schema.NullOr(Schema.String),
+        delegationStatus: Schema.optional(Schema.Literals(["valid", "partially-valid", "invalid", "lame", "unregistered", "unknown"])),
+      }).pipe(Schema.encodeKeys({ delegationLastCheck: "delegation_last_check", delegationStatus: "delegation_status" })),
       registrar: Schema.Literals(["hetzner", "other", "unknown"]),
       mode: Schema.Literal("secondary"),
-    })]),
+    }).pipe(Schema.encodeKeys({ primaryNameservers: "primary_nameservers", recordCount: "record_count", authoritativeNameservers: "authoritative_nameservers" }))]),
     action: Schema.Struct({
       id: Schema.Int,
       command: Schema.String,
@@ -347,53 +347,53 @@ export const GetZoneResponse = Schema.Struct({
       id: Schema.Int,
       name: Schema.String,
       created: Schema.String,
-      primary_nameservers: Schema.optional(Schema.Array(Schema.Struct({
+      primaryNameservers: Schema.optional(Schema.Array(Schema.Struct({
         address: Schema.String,
         port: Schema.optional(Schema.Int),
-        tsig_key: Schema.optional(Schema.String),
-        tsig_algorithm: Schema.optional(Schema.Literals(["hmac-md5", "hmac-sha1", "hmac-sha256"])),
-      }))),
+        tsigKey: Schema.optional(Schema.String),
+        tsigAlgorithm: Schema.optional(Schema.Literals(["hmac-md5", "hmac-sha1", "hmac-sha256"])),
+      }).pipe(Schema.encodeKeys({ tsigKey: "tsig_key", tsigAlgorithm: "tsig_algorithm" })))),
       labels: Schema.Record(Schema.String, Schema.String),
       protection: Schema.Struct({
         delete: Schema.Boolean,
       }),
       ttl: Schema.Int,
       status: Schema.Literals(["ok", "updating", "error"]),
-      record_count: Schema.Int,
-      authoritative_nameservers: Schema.Struct({
+      recordCount: Schema.Int,
+      authoritativeNameservers: Schema.Struct({
         assigned: Schema.Array(Schema.String),
         delegated: Schema.Array(Schema.String),
-        delegation_last_check: Schema.NullOr(Schema.String),
-        delegation_status: Schema.optional(Schema.Literals(["valid", "partially-valid", "invalid", "lame", "unregistered", "unknown"])),
-      }),
+        delegationLastCheck: Schema.NullOr(Schema.String),
+        delegationStatus: Schema.optional(Schema.Literals(["valid", "partially-valid", "invalid", "lame", "unregistered", "unknown"])),
+      }).pipe(Schema.encodeKeys({ delegationLastCheck: "delegation_last_check", delegationStatus: "delegation_status" })),
       registrar: Schema.Literals(["hetzner", "other", "unknown"]),
       mode: Schema.Literal("primary"),
-    }), Schema.Struct({
+    }).pipe(Schema.encodeKeys({ primaryNameservers: "primary_nameservers", recordCount: "record_count", authoritativeNameservers: "authoritative_nameservers" })), Schema.Struct({
       id: Schema.Int,
       name: Schema.String,
       created: Schema.String,
-      primary_nameservers: Schema.optional(Schema.Array(Schema.Struct({
+      primaryNameservers: Schema.optional(Schema.Array(Schema.Struct({
         address: Schema.String,
         port: Schema.optional(Schema.Int),
-        tsig_key: Schema.optional(Schema.String),
-        tsig_algorithm: Schema.optional(Schema.Literals(["hmac-md5", "hmac-sha1", "hmac-sha256"])),
-      }))),
+        tsigKey: Schema.optional(Schema.String),
+        tsigAlgorithm: Schema.optional(Schema.Literals(["hmac-md5", "hmac-sha1", "hmac-sha256"])),
+      }).pipe(Schema.encodeKeys({ tsigKey: "tsig_key", tsigAlgorithm: "tsig_algorithm" })))),
       labels: Schema.Record(Schema.String, Schema.String),
       protection: Schema.Struct({
         delete: Schema.Boolean,
       }),
       ttl: Schema.Int,
       status: Schema.Literals(["ok", "updating", "error"]),
-      record_count: Schema.Int,
-      authoritative_nameservers: Schema.Struct({
+      recordCount: Schema.Int,
+      authoritativeNameservers: Schema.Struct({
         assigned: Schema.Array(Schema.String),
         delegated: Schema.Array(Schema.String),
-        delegation_last_check: Schema.NullOr(Schema.String),
-        delegation_status: Schema.optional(Schema.Literals(["valid", "partially-valid", "invalid", "lame", "unregistered", "unknown"])),
-      }),
+        delegationLastCheck: Schema.NullOr(Schema.String),
+        delegationStatus: Schema.optional(Schema.Literals(["valid", "partially-valid", "invalid", "lame", "unregistered", "unknown"])),
+      }).pipe(Schema.encodeKeys({ delegationLastCheck: "delegation_last_check", delegationStatus: "delegation_status" })),
       registrar: Schema.Literals(["hetzner", "other", "unknown"]),
       mode: Schema.Literal("secondary"),
-    })]),
+    }).pipe(Schema.encodeKeys({ primaryNameservers: "primary_nameservers", recordCount: "record_count", authoritativeNameservers: "authoritative_nameservers" }))]),
   });
 export type GetZoneResponse = typeof GetZoneResponse.Type;
 
@@ -490,72 +490,72 @@ export const ListZonesResponse = Schema.Struct({
       id: Schema.Int,
       name: Schema.String,
       created: Schema.String,
-      primary_nameservers: Schema.optional(Schema.Array(Schema.Struct({
+      primaryNameservers: Schema.optional(Schema.Array(Schema.Struct({
         address: Schema.String,
         port: Schema.optional(Schema.Int),
-        tsig_key: Schema.optional(Schema.String),
-        tsig_algorithm: Schema.optional(Schema.Literals(["hmac-md5", "hmac-sha1", "hmac-sha256"])),
-      }))),
+        tsigKey: Schema.optional(Schema.String),
+        tsigAlgorithm: Schema.optional(Schema.Literals(["hmac-md5", "hmac-sha1", "hmac-sha256"])),
+      }).pipe(Schema.encodeKeys({ tsigKey: "tsig_key", tsigAlgorithm: "tsig_algorithm" })))),
       labels: Schema.Record(Schema.String, Schema.String),
       protection: Schema.Struct({
         delete: Schema.Boolean,
       }),
       ttl: Schema.Int,
       status: Schema.Literals(["ok", "updating", "error"]),
-      record_count: Schema.Int,
-      authoritative_nameservers: Schema.Struct({
+      recordCount: Schema.Int,
+      authoritativeNameservers: Schema.Struct({
         assigned: Schema.Array(Schema.String),
         delegated: Schema.Array(Schema.String),
-        delegation_last_check: Schema.NullOr(Schema.String),
-        delegation_status: Schema.optional(Schema.Literals(["valid", "partially-valid", "invalid", "lame", "unregistered", "unknown"])),
-      }),
+        delegationLastCheck: Schema.NullOr(Schema.String),
+        delegationStatus: Schema.optional(Schema.Literals(["valid", "partially-valid", "invalid", "lame", "unregistered", "unknown"])),
+      }).pipe(Schema.encodeKeys({ delegationLastCheck: "delegation_last_check", delegationStatus: "delegation_status" })),
       registrar: Schema.Literals(["hetzner", "other", "unknown"]),
       mode: Schema.Literal("primary"),
-    }), Schema.Struct({
+    }).pipe(Schema.encodeKeys({ primaryNameservers: "primary_nameservers", recordCount: "record_count", authoritativeNameservers: "authoritative_nameservers" })), Schema.Struct({
       id: Schema.Int,
       name: Schema.String,
       created: Schema.String,
-      primary_nameservers: Schema.optional(Schema.Array(Schema.Struct({
+      primaryNameservers: Schema.optional(Schema.Array(Schema.Struct({
         address: Schema.String,
         port: Schema.optional(Schema.Int),
-        tsig_key: Schema.optional(Schema.String),
-        tsig_algorithm: Schema.optional(Schema.Literals(["hmac-md5", "hmac-sha1", "hmac-sha256"])),
-      }))),
+        tsigKey: Schema.optional(Schema.String),
+        tsigAlgorithm: Schema.optional(Schema.Literals(["hmac-md5", "hmac-sha1", "hmac-sha256"])),
+      }).pipe(Schema.encodeKeys({ tsigKey: "tsig_key", tsigAlgorithm: "tsig_algorithm" })))),
       labels: Schema.Record(Schema.String, Schema.String),
       protection: Schema.Struct({
         delete: Schema.Boolean,
       }),
       ttl: Schema.Int,
       status: Schema.Literals(["ok", "updating", "error"]),
-      record_count: Schema.Int,
-      authoritative_nameservers: Schema.Struct({
+      recordCount: Schema.Int,
+      authoritativeNameservers: Schema.Struct({
         assigned: Schema.Array(Schema.String),
         delegated: Schema.Array(Schema.String),
-        delegation_last_check: Schema.NullOr(Schema.String),
-        delegation_status: Schema.optional(Schema.Literals(["valid", "partially-valid", "invalid", "lame", "unregistered", "unknown"])),
-      }),
+        delegationLastCheck: Schema.NullOr(Schema.String),
+        delegationStatus: Schema.optional(Schema.Literals(["valid", "partially-valid", "invalid", "lame", "unregistered", "unknown"])),
+      }).pipe(Schema.encodeKeys({ delegationLastCheck: "delegation_last_check", delegationStatus: "delegation_status" })),
       registrar: Schema.Literals(["hetzner", "other", "unknown"]),
       mode: Schema.Literal("secondary"),
-    })])),
+    }).pipe(Schema.encodeKeys({ primaryNameservers: "primary_nameservers", recordCount: "record_count", authoritativeNameservers: "authoritative_nameservers" }))])),
     meta: Schema.Struct({
       pagination: Schema.Struct({
         page: Schema.Int,
-        per_page: Schema.Int,
-        previous_page: Schema.NullOr(Schema.Int),
-        next_page: Schema.NullOr(Schema.Int),
-        last_page: Schema.NullOr(Schema.Int),
-        total_entries: Schema.NullOr(Schema.Int),
-      }),
+        perPage: Schema.Int,
+        previousPage: Schema.NullOr(Schema.Int),
+        nextPage: Schema.NullOr(Schema.Int),
+        lastPage: Schema.NullOr(Schema.Int),
+        totalEntries: Schema.NullOr(Schema.Int),
+      }).pipe(Schema.encodeKeys({ perPage: "per_page", previousPage: "previous_page", nextPage: "next_page", lastPage: "last_page", totalEntries: "total_entries" })),
     }),
   });
 export type ListZonesResponse = typeof ListZonesResponse.Type;
 export interface ListZonesQuery {
   name?: string;
   mode?: "primary" | "secondary";
-  label_selector?: string;
+  labelSelector?: string;
   sort?: ReadonlyArray<"id" | "id:asc" | "id:desc" | "name" | "name:asc" | "name:desc" | "created" | "created:asc" | "created:desc">;
   page?: number;
-  per_page?: number;
+  perPage?: number;
 }
 
 export const ListZoneActionsResponse = Schema.Struct({
@@ -578,12 +578,12 @@ export const ListZoneActionsResponse = Schema.Struct({
     meta: Schema.Struct({
       pagination: Schema.Struct({
         page: Schema.Int,
-        per_page: Schema.Int,
-        previous_page: Schema.NullOr(Schema.Int),
-        next_page: Schema.NullOr(Schema.Int),
-        last_page: Schema.NullOr(Schema.Int),
-        total_entries: Schema.NullOr(Schema.Int),
-      }),
+        perPage: Schema.Int,
+        previousPage: Schema.NullOr(Schema.Int),
+        nextPage: Schema.NullOr(Schema.Int),
+        lastPage: Schema.NullOr(Schema.Int),
+        totalEntries: Schema.NullOr(Schema.Int),
+      }).pipe(Schema.encodeKeys({ perPage: "per_page", previousPage: "previous_page", nextPage: "next_page", lastPage: "last_page", totalEntries: "total_entries" })),
     }),
   });
 export type ListZoneActionsResponse = typeof ListZoneActionsResponse.Type;
@@ -591,7 +591,7 @@ export interface ListZoneActionsQuery {
   sort?: ReadonlyArray<"id" | "id:asc" | "id:desc" | "command" | "command:asc" | "command:desc" | "status" | "status:asc" | "status:desc" | "started" | "started:asc" | "started:desc" | "finished" | "finished:asc" | "finished:desc">;
   status?: ReadonlyArray<"running" | "success" | "error">;
   page?: number;
-  per_page?: number;
+  perPage?: number;
 }
 
 export const ListZoneRrsetsResponse = Schema.Struct({
@@ -613,22 +613,22 @@ export const ListZoneRrsetsResponse = Schema.Struct({
     meta: Schema.Struct({
       pagination: Schema.Struct({
         page: Schema.Int,
-        per_page: Schema.Int,
-        previous_page: Schema.NullOr(Schema.Int),
-        next_page: Schema.NullOr(Schema.Int),
-        last_page: Schema.NullOr(Schema.Int),
-        total_entries: Schema.NullOr(Schema.Int),
-      }),
+        perPage: Schema.Int,
+        previousPage: Schema.NullOr(Schema.Int),
+        nextPage: Schema.NullOr(Schema.Int),
+        lastPage: Schema.NullOr(Schema.Int),
+        totalEntries: Schema.NullOr(Schema.Int),
+      }).pipe(Schema.encodeKeys({ perPage: "per_page", previousPage: "previous_page", nextPage: "next_page", lastPage: "last_page", totalEntries: "total_entries" })),
     }),
   });
 export type ListZoneRrsetsResponse = typeof ListZoneRrsetsResponse.Type;
 export interface ListZoneRrsetsQuery {
   name?: string;
   type?: ReadonlyArray<"A" | "AAAA" | "CAA" | "CNAME" | "DS" | "HINFO" | "HTTPS" | "MX" | "NS" | "PTR" | "RP" | "SOA" | "SRV" | "SVCB" | "TLSA" | "TXT">;
-  label_selector?: string;
+  labelSelector?: string;
   sort?: ReadonlyArray<"id" | "id:asc" | "id:desc" | "name" | "name:asc" | "name:desc" | "created" | "created:asc" | "created:desc">;
   page?: number;
-  per_page?: number;
+  perPage?: number;
 }
 
 export const ListZonesActionsResponse = Schema.Struct({
@@ -651,12 +651,12 @@ export const ListZonesActionsResponse = Schema.Struct({
     meta: Schema.Struct({
       pagination: Schema.Struct({
         page: Schema.Int,
-        per_page: Schema.Int,
-        previous_page: Schema.NullOr(Schema.Int),
-        next_page: Schema.NullOr(Schema.Int),
-        last_page: Schema.NullOr(Schema.Int),
-        total_entries: Schema.NullOr(Schema.Int),
-      }),
+        perPage: Schema.Int,
+        previousPage: Schema.NullOr(Schema.Int),
+        nextPage: Schema.NullOr(Schema.Int),
+        lastPage: Schema.NullOr(Schema.Int),
+        totalEntries: Schema.NullOr(Schema.Int),
+      }).pipe(Schema.encodeKeys({ perPage: "per_page", previousPage: "previous_page", nextPage: "next_page", lastPage: "last_page", totalEntries: "total_entries" })),
     }),
   });
 export type ListZonesActionsResponse = typeof ListZonesActionsResponse.Type;
@@ -665,7 +665,7 @@ export interface ListZonesActionsQuery {
   sort?: ReadonlyArray<"id" | "id:asc" | "id:desc" | "command" | "command:asc" | "command:desc" | "status" | "status:asc" | "status:desc" | "started" | "started:asc" | "started:desc" | "finished" | "finished:asc" | "finished:desc">;
   status?: ReadonlyArray<"running" | "success" | "error">;
   page?: number;
-  per_page?: number;
+  perPage?: number;
 }
 
 export const RemoveZoneRrsetRecordsRequest = Schema.Struct({
@@ -731,53 +731,53 @@ export const UpdateZoneResponse = Schema.Struct({
       id: Schema.Int,
       name: Schema.String,
       created: Schema.String,
-      primary_nameservers: Schema.optional(Schema.Array(Schema.Struct({
+      primaryNameservers: Schema.optional(Schema.Array(Schema.Struct({
         address: Schema.String,
         port: Schema.optional(Schema.Int),
-        tsig_key: Schema.optional(Schema.String),
-        tsig_algorithm: Schema.optional(Schema.Literals(["hmac-md5", "hmac-sha1", "hmac-sha256"])),
-      }))),
+        tsigKey: Schema.optional(Schema.String),
+        tsigAlgorithm: Schema.optional(Schema.Literals(["hmac-md5", "hmac-sha1", "hmac-sha256"])),
+      }).pipe(Schema.encodeKeys({ tsigKey: "tsig_key", tsigAlgorithm: "tsig_algorithm" })))),
       labels: Schema.Record(Schema.String, Schema.String),
       protection: Schema.Struct({
         delete: Schema.Boolean,
       }),
       ttl: Schema.Int,
       status: Schema.Literals(["ok", "updating", "error"]),
-      record_count: Schema.Int,
-      authoritative_nameservers: Schema.Struct({
+      recordCount: Schema.Int,
+      authoritativeNameservers: Schema.Struct({
         assigned: Schema.Array(Schema.String),
         delegated: Schema.Array(Schema.String),
-        delegation_last_check: Schema.NullOr(Schema.String),
-        delegation_status: Schema.optional(Schema.Literals(["valid", "partially-valid", "invalid", "lame", "unregistered", "unknown"])),
-      }),
+        delegationLastCheck: Schema.NullOr(Schema.String),
+        delegationStatus: Schema.optional(Schema.Literals(["valid", "partially-valid", "invalid", "lame", "unregistered", "unknown"])),
+      }).pipe(Schema.encodeKeys({ delegationLastCheck: "delegation_last_check", delegationStatus: "delegation_status" })),
       registrar: Schema.Literals(["hetzner", "other", "unknown"]),
       mode: Schema.Literal("primary"),
-    }), Schema.Struct({
+    }).pipe(Schema.encodeKeys({ primaryNameservers: "primary_nameservers", recordCount: "record_count", authoritativeNameservers: "authoritative_nameservers" })), Schema.Struct({
       id: Schema.Int,
       name: Schema.String,
       created: Schema.String,
-      primary_nameservers: Schema.optional(Schema.Array(Schema.Struct({
+      primaryNameservers: Schema.optional(Schema.Array(Schema.Struct({
         address: Schema.String,
         port: Schema.optional(Schema.Int),
-        tsig_key: Schema.optional(Schema.String),
-        tsig_algorithm: Schema.optional(Schema.Literals(["hmac-md5", "hmac-sha1", "hmac-sha256"])),
-      }))),
+        tsigKey: Schema.optional(Schema.String),
+        tsigAlgorithm: Schema.optional(Schema.Literals(["hmac-md5", "hmac-sha1", "hmac-sha256"])),
+      }).pipe(Schema.encodeKeys({ tsigKey: "tsig_key", tsigAlgorithm: "tsig_algorithm" })))),
       labels: Schema.Record(Schema.String, Schema.String),
       protection: Schema.Struct({
         delete: Schema.Boolean,
       }),
       ttl: Schema.Int,
       status: Schema.Literals(["ok", "updating", "error"]),
-      record_count: Schema.Int,
-      authoritative_nameservers: Schema.Struct({
+      recordCount: Schema.Int,
+      authoritativeNameservers: Schema.Struct({
         assigned: Schema.Array(Schema.String),
         delegated: Schema.Array(Schema.String),
-        delegation_last_check: Schema.NullOr(Schema.String),
-        delegation_status: Schema.optional(Schema.Literals(["valid", "partially-valid", "invalid", "lame", "unregistered", "unknown"])),
-      }),
+        delegationLastCheck: Schema.NullOr(Schema.String),
+        delegationStatus: Schema.optional(Schema.Literals(["valid", "partially-valid", "invalid", "lame", "unregistered", "unknown"])),
+      }).pipe(Schema.encodeKeys({ delegationLastCheck: "delegation_last_check", delegationStatus: "delegation_status" })),
       registrar: Schema.Literals(["hetzner", "other", "unknown"]),
       mode: Schema.Literal("secondary"),
-    })]),
+    }).pipe(Schema.encodeKeys({ primaryNameservers: "primary_nameservers", recordCount: "record_count", authoritativeNameservers: "authoritative_nameservers" }))]),
   });
 export type UpdateZoneResponse = typeof UpdateZoneResponse.Type;
 
@@ -834,8 +834,8 @@ export type UpdateZoneRrsetRecordsResponse = typeof UpdateZoneRrsetRecordsRespon
 
 export const makeZones = (http: HttpClient.HttpClient) => ({
     /** Add Records to an RRSet */
-    addRrsetRecords: (id_or_name: string, rr_name: string, rr_type: string, body: AddZoneRrsetRecordsRequest): Effect.Effect<AddZoneRrsetRecordsResponse, HetznerErrors> =>
-      HttpClientRequest.post(`/zones/${id_or_name}/rrsets/${rr_name}/${rr_type}/actions/add_records`).pipe(
+    addRrsetRecords: (idOrName: string, rrName: string, rrType: string, body: AddZoneRrsetRecordsRequest): Effect.Effect<AddZoneRrsetRecordsResponse, HetznerErrors> =>
+      HttpClientRequest.post(`/zones/${idOrName}/rrsets/${rrName}/${rrType}/actions/add_records`).pipe(
         HttpClientRequest.schemaBodyJson(AddZoneRrsetRecordsRequest)(body),
         Effect.flatMap(http.execute),
         Effect.flatMap(decodeJson(AddZoneRrsetRecordsResponse)),
@@ -844,8 +844,8 @@ export const makeZones = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Change a Zone's Primary Nameservers */
-    changePrimaryNameservers: (id_or_name: string, body: ChangeZonePrimaryNameserversRequest): Effect.Effect<ChangeZonePrimaryNameserversResponse, HetznerErrors> =>
-      HttpClientRequest.post(`/zones/${id_or_name}/actions/change_primary_nameservers`).pipe(
+    changePrimaryNameservers: (idOrName: string, body: ChangeZonePrimaryNameserversRequest): Effect.Effect<ChangeZonePrimaryNameserversResponse, HetznerErrors> =>
+      HttpClientRequest.post(`/zones/${idOrName}/actions/change_primary_nameservers`).pipe(
         HttpClientRequest.schemaBodyJson(ChangeZonePrimaryNameserversRequest)(body),
         Effect.flatMap(http.execute),
         Effect.flatMap(decodeJson(ChangeZonePrimaryNameserversResponse)),
@@ -854,8 +854,8 @@ export const makeZones = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Change a Zone's Protection */
-    changeProtection: (id_or_name: string, body: ChangeZoneProtectionRequest): Effect.Effect<ChangeZoneProtectionResponse, HetznerErrors> =>
-      HttpClientRequest.post(`/zones/${id_or_name}/actions/change_protection`).pipe(
+    changeProtection: (idOrName: string, body: ChangeZoneProtectionRequest): Effect.Effect<ChangeZoneProtectionResponse, HetznerErrors> =>
+      HttpClientRequest.post(`/zones/${idOrName}/actions/change_protection`).pipe(
         HttpClientRequest.schemaBodyJson(ChangeZoneProtectionRequest)(body),
         Effect.flatMap(http.execute),
         Effect.flatMap(decodeJson(ChangeZoneProtectionResponse)),
@@ -864,8 +864,8 @@ export const makeZones = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Change an RRSet's Protection */
-    changeRrsetProtection: (id_or_name: string, rr_name: string, rr_type: string, body: ChangeZoneRrsetProtectionRequest): Effect.Effect<ChangeZoneRrsetProtectionResponse, HetznerErrors> =>
-      HttpClientRequest.post(`/zones/${id_or_name}/rrsets/${rr_name}/${rr_type}/actions/change_protection`).pipe(
+    changeRrsetProtection: (idOrName: string, rrName: string, rrType: string, body: ChangeZoneRrsetProtectionRequest): Effect.Effect<ChangeZoneRrsetProtectionResponse, HetznerErrors> =>
+      HttpClientRequest.post(`/zones/${idOrName}/rrsets/${rrName}/${rrType}/actions/change_protection`).pipe(
         HttpClientRequest.schemaBodyJson(ChangeZoneRrsetProtectionRequest)(body),
         Effect.flatMap(http.execute),
         Effect.flatMap(decodeJson(ChangeZoneRrsetProtectionResponse)),
@@ -874,8 +874,8 @@ export const makeZones = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Change an RRSet's TTL */
-    changeRrsetTtl: (id_or_name: string, rr_name: string, rr_type: string, body: ChangeZoneRrsetTtlRequest): Effect.Effect<ChangeZoneRrsetTtlResponse, HetznerErrors> =>
-      HttpClientRequest.post(`/zones/${id_or_name}/rrsets/${rr_name}/${rr_type}/actions/change_ttl`).pipe(
+    changeRrsetTtl: (idOrName: string, rrName: string, rrType: string, body: ChangeZoneRrsetTtlRequest): Effect.Effect<ChangeZoneRrsetTtlResponse, HetznerErrors> =>
+      HttpClientRequest.post(`/zones/${idOrName}/rrsets/${rrName}/${rrType}/actions/change_ttl`).pipe(
         HttpClientRequest.schemaBodyJson(ChangeZoneRrsetTtlRequest)(body),
         Effect.flatMap(http.execute),
         Effect.flatMap(decodeJson(ChangeZoneRrsetTtlResponse)),
@@ -884,8 +884,8 @@ export const makeZones = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Change a Zone's Default TTL */
-    changeTtl: (id_or_name: string, body: ChangeZoneTtlRequest): Effect.Effect<ChangeZoneTtlResponse, HetznerErrors> =>
-      HttpClientRequest.post(`/zones/${id_or_name}/actions/change_ttl`).pipe(
+    changeTtl: (idOrName: string, body: ChangeZoneTtlRequest): Effect.Effect<ChangeZoneTtlResponse, HetznerErrors> =>
+      HttpClientRequest.post(`/zones/${idOrName}/actions/change_ttl`).pipe(
         HttpClientRequest.schemaBodyJson(ChangeZoneTtlRequest)(body),
         Effect.flatMap(http.execute),
         Effect.flatMap(decodeJson(ChangeZoneTtlResponse)),
@@ -904,8 +904,8 @@ export const makeZones = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Create an RRSet */
-    createRrset: (id_or_name: string, body: CreateZoneRrsetRequest): Effect.Effect<CreateZoneRrsetResponse, HetznerErrors> =>
-      HttpClientRequest.post(`/zones/${id_or_name}/rrsets`).pipe(
+    createRrset: (idOrName: string, body: CreateZoneRrsetRequest): Effect.Effect<CreateZoneRrsetResponse, HetznerErrors> =>
+      HttpClientRequest.post(`/zones/${idOrName}/rrsets`).pipe(
         HttpClientRequest.schemaBodyJson(CreateZoneRrsetRequest)(body),
         Effect.flatMap(http.execute),
         Effect.flatMap(decodeJson(CreateZoneRrsetResponse)),
@@ -914,24 +914,24 @@ export const makeZones = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Delete a Zone */
-    delete: (id_or_name: string): Effect.Effect<DeleteZoneResponse, HetznerErrors> =>
-      http.del(`/zones/${id_or_name}`).pipe(
+    delete: (idOrName: string): Effect.Effect<DeleteZoneResponse, HetznerErrors> =>
+      http.del(`/zones/${idOrName}`).pipe(
         Effect.flatMap(decodeJson(DeleteZoneResponse)),
         Effect.catch(handleHetznerError),
         Effect.withSpan("HetznerClient.zones.delete"),
       ),
 
     /** Delete an RRSet */
-    deleteRrset: (id_or_name: string, rr_name: string, rr_type: string): Effect.Effect<DeleteZoneRrsetResponse, HetznerErrors> =>
-      http.del(`/zones/${id_or_name}/rrsets/${rr_name}/${rr_type}`).pipe(
+    deleteRrset: (idOrName: string, rrName: string, rrType: string): Effect.Effect<DeleteZoneRrsetResponse, HetznerErrors> =>
+      http.del(`/zones/${idOrName}/rrsets/${rrName}/${rrType}`).pipe(
         Effect.flatMap(decodeJson(DeleteZoneRrsetResponse)),
         Effect.catch(handleHetznerError),
         Effect.withSpan("HetznerClient.zones.deleteRrset"),
       ),
 
     /** Get a Zone */
-    get: (id_or_name: string): Effect.Effect<GetZoneResponse, HetznerErrors> =>
-      HttpClientRequest.get(`/zones/${id_or_name}`).pipe(
+    get: (idOrName: string): Effect.Effect<GetZoneResponse, HetznerErrors> =>
+      HttpClientRequest.get(`/zones/${idOrName}`).pipe(
         http.execute,
         Effect.flatMap(decodeJson(GetZoneResponse)),
         Effect.catch(handleHetznerError),
@@ -939,8 +939,8 @@ export const makeZones = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Get an Action for a Zone */
-    getAction: (id_or_name: string, action_id: number): Effect.Effect<GetZoneActionResponse, HetznerErrors> =>
-      HttpClientRequest.get(`/zones/${id_or_name}/actions/${action_id}`).pipe(
+    getAction: (idOrName: string, actionId: number): Effect.Effect<GetZoneActionResponse, HetznerErrors> =>
+      HttpClientRequest.get(`/zones/${idOrName}/actions/${actionId}`).pipe(
         http.execute,
         Effect.flatMap(decodeJson(GetZoneActionResponse)),
         Effect.catch(handleHetznerError),
@@ -948,8 +948,8 @@ export const makeZones = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Get an RRSet */
-    getRrset: (id_or_name: string, rr_name: string, rr_type: string): Effect.Effect<GetZoneRrsetResponse, HetznerErrors> =>
-      HttpClientRequest.get(`/zones/${id_or_name}/rrsets/${rr_name}/${rr_type}`).pipe(
+    getRrset: (idOrName: string, rrName: string, rrType: string): Effect.Effect<GetZoneRrsetResponse, HetznerErrors> =>
+      HttpClientRequest.get(`/zones/${idOrName}/rrsets/${rrName}/${rrType}`).pipe(
         http.execute,
         Effect.flatMap(decodeJson(GetZoneRrsetResponse)),
         Effect.catch(handleHetznerError),
@@ -957,8 +957,8 @@ export const makeZones = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Export a Zone file */
-    getZonefile: (id_or_name: string): Effect.Effect<GetZoneZonefileResponse, HetznerErrors> =>
-      HttpClientRequest.get(`/zones/${id_or_name}/zonefile`).pipe(
+    getZonefile: (idOrName: string): Effect.Effect<GetZoneZonefileResponse, HetznerErrors> =>
+      HttpClientRequest.get(`/zones/${idOrName}/zonefile`).pipe(
         http.execute,
         Effect.flatMap(decodeJson(GetZoneZonefileResponse)),
         Effect.catch(handleHetznerError),
@@ -975,8 +975,8 @@ export const makeZones = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Import a Zone file */
-    importZonefile: (id_or_name: string, body: ImportZoneZonefileRequest): Effect.Effect<ImportZoneZonefileResponse, HetznerErrors> =>
-      HttpClientRequest.post(`/zones/${id_or_name}/actions/import_zonefile`).pipe(
+    importZonefile: (idOrName: string, body: ImportZoneZonefileRequest): Effect.Effect<ImportZoneZonefileResponse, HetznerErrors> =>
+      HttpClientRequest.post(`/zones/${idOrName}/actions/import_zonefile`).pipe(
         HttpClientRequest.schemaBodyJson(ImportZoneZonefileRequest)(body),
         Effect.flatMap(http.execute),
         Effect.flatMap(decodeJson(ImportZoneZonefileResponse)),
@@ -987,7 +987,7 @@ export const makeZones = (http: HttpClient.HttpClient) => ({
     /** List Zones */
     list: (query?: ListZonesQuery): Effect.Effect<ListZonesResponse, HetznerErrors> =>
       HttpClientRequest.get("/zones").pipe(
-        HttpClientRequest.setUrlParams(toUrlParams(query)),
+        HttpClientRequest.setUrlParams(toUrlParams({ name: query?.name, mode: query?.mode, label_selector: query?.labelSelector, sort: query?.sort, page: query?.page, per_page: query?.perPage })),
         http.execute,
         Effect.flatMap(decodeJson(ListZonesResponse)),
         Effect.catch(handleHetznerError),
@@ -995,9 +995,9 @@ export const makeZones = (http: HttpClient.HttpClient) => ({
       ),
 
     /** List Actions for a Zone */
-    listActions: (id_or_name: string, query?: ListZoneActionsQuery): Effect.Effect<ListZoneActionsResponse, HetznerErrors> =>
-      HttpClientRequest.get(`/zones/${id_or_name}/actions`).pipe(
-        HttpClientRequest.setUrlParams(toUrlParams(query)),
+    listActions: (idOrName: string, query?: ListZoneActionsQuery): Effect.Effect<ListZoneActionsResponse, HetznerErrors> =>
+      HttpClientRequest.get(`/zones/${idOrName}/actions`).pipe(
+        HttpClientRequest.setUrlParams(toUrlParams({ sort: query?.sort, status: query?.status, page: query?.page, per_page: query?.perPage })),
         http.execute,
         Effect.flatMap(decodeJson(ListZoneActionsResponse)),
         Effect.catch(handleHetznerError),
@@ -1005,9 +1005,9 @@ export const makeZones = (http: HttpClient.HttpClient) => ({
       ),
 
     /** List RRSets */
-    listRrsets: (id_or_name: string, query?: ListZoneRrsetsQuery): Effect.Effect<ListZoneRrsetsResponse, HetznerErrors> =>
-      HttpClientRequest.get(`/zones/${id_or_name}/rrsets`).pipe(
-        HttpClientRequest.setUrlParams(toUrlParams(query)),
+    listRrsets: (idOrName: string, query?: ListZoneRrsetsQuery): Effect.Effect<ListZoneRrsetsResponse, HetznerErrors> =>
+      HttpClientRequest.get(`/zones/${idOrName}/rrsets`).pipe(
+        HttpClientRequest.setUrlParams(toUrlParams({ name: query?.name, type: query?.type, label_selector: query?.labelSelector, sort: query?.sort, page: query?.page, per_page: query?.perPage })),
         http.execute,
         Effect.flatMap(decodeJson(ListZoneRrsetsResponse)),
         Effect.catch(handleHetznerError),
@@ -1017,7 +1017,7 @@ export const makeZones = (http: HttpClient.HttpClient) => ({
     /** List Actions */
     listZonesActions: (query?: ListZonesActionsQuery): Effect.Effect<ListZonesActionsResponse, HetznerErrors> =>
       HttpClientRequest.get("/zones/actions").pipe(
-        HttpClientRequest.setUrlParams(toUrlParams(query)),
+        HttpClientRequest.setUrlParams(toUrlParams({ id: query?.id, sort: query?.sort, status: query?.status, page: query?.page, per_page: query?.perPage })),
         http.execute,
         Effect.flatMap(decodeJson(ListZonesActionsResponse)),
         Effect.catch(handleHetznerError),
@@ -1025,8 +1025,8 @@ export const makeZones = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Remove Records from an RRSet */
-    removeRrsetRecords: (id_or_name: string, rr_name: string, rr_type: string, body: RemoveZoneRrsetRecordsRequest): Effect.Effect<RemoveZoneRrsetRecordsResponse, HetznerErrors> =>
-      HttpClientRequest.post(`/zones/${id_or_name}/rrsets/${rr_name}/${rr_type}/actions/remove_records`).pipe(
+    removeRrsetRecords: (idOrName: string, rrName: string, rrType: string, body: RemoveZoneRrsetRecordsRequest): Effect.Effect<RemoveZoneRrsetRecordsResponse, HetznerErrors> =>
+      HttpClientRequest.post(`/zones/${idOrName}/rrsets/${rrName}/${rrType}/actions/remove_records`).pipe(
         HttpClientRequest.schemaBodyJson(RemoveZoneRrsetRecordsRequest)(body),
         Effect.flatMap(http.execute),
         Effect.flatMap(decodeJson(RemoveZoneRrsetRecordsResponse)),
@@ -1035,8 +1035,8 @@ export const makeZones = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Set Records of an RRSet */
-    setRrsetRecords: (id_or_name: string, rr_name: string, rr_type: string, body: SetZoneRrsetRecordsRequest): Effect.Effect<SetZoneRrsetRecordsResponse, HetznerErrors> =>
-      HttpClientRequest.post(`/zones/${id_or_name}/rrsets/${rr_name}/${rr_type}/actions/set_records`).pipe(
+    setRrsetRecords: (idOrName: string, rrName: string, rrType: string, body: SetZoneRrsetRecordsRequest): Effect.Effect<SetZoneRrsetRecordsResponse, HetznerErrors> =>
+      HttpClientRequest.post(`/zones/${idOrName}/rrsets/${rrName}/${rrType}/actions/set_records`).pipe(
         HttpClientRequest.schemaBodyJson(SetZoneRrsetRecordsRequest)(body),
         Effect.flatMap(http.execute),
         Effect.flatMap(decodeJson(SetZoneRrsetRecordsResponse)),
@@ -1045,8 +1045,8 @@ export const makeZones = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Update a Zone */
-    update: (id_or_name: string, body: UpdateZoneRequest): Effect.Effect<UpdateZoneResponse, HetznerErrors> =>
-      HttpClientRequest.put(`/zones/${id_or_name}`).pipe(
+    update: (idOrName: string, body: UpdateZoneRequest): Effect.Effect<UpdateZoneResponse, HetznerErrors> =>
+      HttpClientRequest.put(`/zones/${idOrName}`).pipe(
         HttpClientRequest.schemaBodyJson(UpdateZoneRequest)(body),
         Effect.flatMap(http.execute),
         Effect.flatMap(decodeJson(UpdateZoneResponse)),
@@ -1055,8 +1055,8 @@ export const makeZones = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Update an RRSet */
-    updateRrset: (id_or_name: string, rr_name: string, rr_type: string, body: UpdateZoneRrsetRequest): Effect.Effect<UpdateZoneRrsetResponse, HetznerErrors> =>
-      HttpClientRequest.put(`/zones/${id_or_name}/rrsets/${rr_name}/${rr_type}`).pipe(
+    updateRrset: (idOrName: string, rrName: string, rrType: string, body: UpdateZoneRrsetRequest): Effect.Effect<UpdateZoneRrsetResponse, HetznerErrors> =>
+      HttpClientRequest.put(`/zones/${idOrName}/rrsets/${rrName}/${rrType}`).pipe(
         HttpClientRequest.schemaBodyJson(UpdateZoneRrsetRequest)(body),
         Effect.flatMap(http.execute),
         Effect.flatMap(decodeJson(UpdateZoneRrsetResponse)),
@@ -1065,8 +1065,8 @@ export const makeZones = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Update Records of an RRSet */
-    updateRrsetRecords: (id_or_name: string, rr_name: string, rr_type: string, body: UpdateZoneRrsetRecordsRequest): Effect.Effect<UpdateZoneRrsetRecordsResponse, HetznerErrors> =>
-      HttpClientRequest.post(`/zones/${id_or_name}/rrsets/${rr_name}/${rr_type}/actions/update_records`).pipe(
+    updateRrsetRecords: (idOrName: string, rrName: string, rrType: string, body: UpdateZoneRrsetRecordsRequest): Effect.Effect<UpdateZoneRrsetRecordsResponse, HetznerErrors> =>
+      HttpClientRequest.post(`/zones/${idOrName}/rrsets/${rrName}/${rrType}/actions/update_records`).pipe(
         HttpClientRequest.schemaBodyJson(UpdateZoneRrsetRecordsRequest)(body),
         Effect.flatMap(http.execute),
         Effect.flatMap(decodeJson(UpdateZoneRrsetRecordsResponse)),

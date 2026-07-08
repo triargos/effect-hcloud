@@ -24,10 +24,24 @@ export type Dialect = {
   /** A closed set of literal values → the smallest correct literal schema. */
   literal(values: Array<string | number | boolean>): string;
   struct(fieldsSource: string): string;
+
+  // --- key normalization (camelCase Type keys ↔ snake_case wire keys) ---
+  /**
+   * Attach the wire key to a single field whose Type key was camelCased. v3 wraps
+   * the field with `fromKey`; v4 is a no-op (renames are applied at the struct level).
+   */
+  fieldRename(fieldSource: string, wireKey: string, optional: boolean): string;
+  /**
+   * Attach all wire keys to a struct. v4 appends `.pipe(Schema.encodeKeys({...}))`;
+   * v3 is a no-op (each field already carries its own `fromKey`).
+   */
+  structRename(structSource: string, renames: ReadonlyArray<readonly [typeKey: string, wireKey: string]>): string;
 };
 
 const q = (v: string | number | boolean): string =>
   typeof v === "string" ? JSON.stringify(v) : String(v);
+
+const objKey = (k: string): string => (/^[A-Za-z_$][A-Za-z0-9_$]*$/.test(k) ? k : JSON.stringify(k));
 
 export const v3: Dialect = {
   effectMajor: 3,
@@ -43,6 +57,11 @@ export const v3: Dialect = {
   union: (members) => `Schema.Union(${members.join(", ")})`,
   literal: (values) => `Schema.Literal(${values.map(q).join(", ")})`,
   struct: (fields) => `Schema.Struct({${fields}})`,
+  fieldRename: (field, wireKey, optional) =>
+    optional
+      ? `${field}.pipe(Schema.fromKey(${JSON.stringify(wireKey)}))`
+      : `Schema.propertySignature(${field}).pipe(Schema.fromKey(${JSON.stringify(wireKey)}))`,
+  structRename: (struct) => struct,
 };
 
 export const v4: Dialect = {
@@ -63,4 +82,9 @@ export const v4: Dialect = {
   literal: (values) =>
     values.length === 1 ? `Schema.Literal(${q(values[0]!)})` : `Schema.Literals([${values.map(q).join(", ")}])`,
   struct: (fields) => `Schema.Struct({${fields}})`,
+  fieldRename: (field) => field,
+  structRename: (struct, renames) =>
+    renames.length === 0
+      ? struct
+      : `${struct}.pipe(Schema.encodeKeys({ ${renames.map(([t, w]) => `${objKey(t)}: ${JSON.stringify(w)}`).join(", ")} }))`,
 };

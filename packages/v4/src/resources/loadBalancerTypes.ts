@@ -9,86 +9,86 @@ import { toUrlParams } from "../internal/url-params.js";
 
 
 export const GetLoadBalancerTypeResponse = Schema.Struct({
-    load_balancer_type: Schema.Struct({
+    loadBalancerType: Schema.Struct({
       id: Schema.Int,
       name: Schema.String,
       description: Schema.String,
-      max_connections: Schema.Int,
-      max_services: Schema.Int,
-      max_targets: Schema.Int,
-      max_assigned_certificates: Schema.Int,
+      maxConnections: Schema.Int,
+      maxServices: Schema.Int,
+      maxTargets: Schema.Int,
+      maxAssignedCertificates: Schema.Int,
       deprecated: Schema.NullOr(Schema.String),
       deprecation: Schema.NullOr(Schema.Struct({
-        unavailable_after: Schema.String,
+        unavailableAfter: Schema.String,
         announced: Schema.String,
-      })),
+      }).pipe(Schema.encodeKeys({ unavailableAfter: "unavailable_after" }))),
       prices: Schema.Array(Schema.Struct({
         location: Schema.String,
-        price_hourly: Schema.Struct({
+        priceHourly: Schema.Struct({
           net: Schema.String,
           gross: Schema.String,
         }),
-        price_monthly: Schema.Struct({
+        priceMonthly: Schema.Struct({
           net: Schema.String,
           gross: Schema.String,
         }),
-        included_traffic: Schema.Int,
-        price_per_tb_traffic: Schema.Struct({
+        includedTraffic: Schema.Int,
+        pricePerTbTraffic: Schema.Struct({
           net: Schema.String,
           gross: Schema.String,
         }),
-      })),
-    }),
-  });
+      }).pipe(Schema.encodeKeys({ priceHourly: "price_hourly", priceMonthly: "price_monthly", includedTraffic: "included_traffic", pricePerTbTraffic: "price_per_tb_traffic" }))),
+    }).pipe(Schema.encodeKeys({ maxConnections: "max_connections", maxServices: "max_services", maxTargets: "max_targets", maxAssignedCertificates: "max_assigned_certificates" })),
+  }).pipe(Schema.encodeKeys({ loadBalancerType: "load_balancer_type" }));
 export type GetLoadBalancerTypeResponse = typeof GetLoadBalancerTypeResponse.Type;
 
 export const ListLoadBalancerTypesResponse = Schema.Struct({
-    load_balancer_types: Schema.Array(Schema.Struct({
+    loadBalancerTypes: Schema.Array(Schema.Struct({
       id: Schema.Int,
       name: Schema.String,
       description: Schema.String,
-      max_connections: Schema.Int,
-      max_services: Schema.Int,
-      max_targets: Schema.Int,
-      max_assigned_certificates: Schema.Int,
+      maxConnections: Schema.Int,
+      maxServices: Schema.Int,
+      maxTargets: Schema.Int,
+      maxAssignedCertificates: Schema.Int,
       deprecated: Schema.NullOr(Schema.String),
       deprecation: Schema.NullOr(Schema.Struct({
-        unavailable_after: Schema.String,
+        unavailableAfter: Schema.String,
         announced: Schema.String,
-      })),
+      }).pipe(Schema.encodeKeys({ unavailableAfter: "unavailable_after" }))),
       prices: Schema.Array(Schema.Struct({
         location: Schema.String,
-        price_hourly: Schema.Struct({
+        priceHourly: Schema.Struct({
           net: Schema.String,
           gross: Schema.String,
         }),
-        price_monthly: Schema.Struct({
+        priceMonthly: Schema.Struct({
           net: Schema.String,
           gross: Schema.String,
         }),
-        included_traffic: Schema.Int,
-        price_per_tb_traffic: Schema.Struct({
+        includedTraffic: Schema.Int,
+        pricePerTbTraffic: Schema.Struct({
           net: Schema.String,
           gross: Schema.String,
         }),
-      })),
-    })),
+      }).pipe(Schema.encodeKeys({ priceHourly: "price_hourly", priceMonthly: "price_monthly", includedTraffic: "included_traffic", pricePerTbTraffic: "price_per_tb_traffic" }))),
+    }).pipe(Schema.encodeKeys({ maxConnections: "max_connections", maxServices: "max_services", maxTargets: "max_targets", maxAssignedCertificates: "max_assigned_certificates" }))),
     meta: Schema.Struct({
       pagination: Schema.Struct({
         page: Schema.Int,
-        per_page: Schema.Int,
-        previous_page: Schema.NullOr(Schema.Int),
-        next_page: Schema.NullOr(Schema.Int),
-        last_page: Schema.NullOr(Schema.Int),
-        total_entries: Schema.NullOr(Schema.Int),
-      }),
+        perPage: Schema.Int,
+        previousPage: Schema.NullOr(Schema.Int),
+        nextPage: Schema.NullOr(Schema.Int),
+        lastPage: Schema.NullOr(Schema.Int),
+        totalEntries: Schema.NullOr(Schema.Int),
+      }).pipe(Schema.encodeKeys({ perPage: "per_page", previousPage: "previous_page", nextPage: "next_page", lastPage: "last_page", totalEntries: "total_entries" })),
     }),
-  });
+  }).pipe(Schema.encodeKeys({ loadBalancerTypes: "load_balancer_types" }));
 export type ListLoadBalancerTypesResponse = typeof ListLoadBalancerTypesResponse.Type;
 export interface ListLoadBalancerTypesQuery {
   name?: string;
   page?: number;
-  per_page?: number;
+  perPage?: number;
 }
 
 
@@ -105,7 +105,7 @@ export const makeLoadBalancerTypes = (http: HttpClient.HttpClient) => ({
     /** List Load Balancer Types */
     list: (query?: ListLoadBalancerTypesQuery): Effect.Effect<ListLoadBalancerTypesResponse, HetznerErrors> =>
       HttpClientRequest.get("/load_balancer_types").pipe(
-        HttpClientRequest.setUrlParams(toUrlParams(query)),
+        HttpClientRequest.setUrlParams(toUrlParams({ name: query?.name, page: query?.page, per_page: query?.perPage })),
         http.execute,
         Effect.flatMap(decodeJson(ListLoadBalancerTypesResponse)),
         Effect.catch(handleHetznerError),

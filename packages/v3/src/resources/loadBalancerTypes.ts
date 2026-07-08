@@ -9,78 +9,78 @@ import { toUrlParams } from "../internal/url-params.js";
 
 
 export const GetLoadBalancerTypeResponse = Schema.Struct({
-    load_balancer_type: Schema.Struct({
+    loadBalancerType: Schema.propertySignature(Schema.Struct({
       id: Schema.Int,
       name: Schema.String,
       description: Schema.String,
-      max_connections: Schema.Int,
-      max_services: Schema.Int,
-      max_targets: Schema.Int,
-      max_assigned_certificates: Schema.Int,
+      maxConnections: Schema.propertySignature(Schema.Int).pipe(Schema.fromKey("max_connections")),
+      maxServices: Schema.propertySignature(Schema.Int).pipe(Schema.fromKey("max_services")),
+      maxTargets: Schema.propertySignature(Schema.Int).pipe(Schema.fromKey("max_targets")),
+      maxAssignedCertificates: Schema.propertySignature(Schema.Int).pipe(Schema.fromKey("max_assigned_certificates")),
       deprecated: Schema.NullOr(Schema.String),
       deprecation: Schema.NullOr(Schema.Struct({
-        unavailable_after: Schema.String,
+        unavailableAfter: Schema.propertySignature(Schema.String).pipe(Schema.fromKey("unavailable_after")),
         announced: Schema.String,
       })),
       prices: Schema.Array(Schema.Struct({
         location: Schema.String,
-        price_hourly: Schema.Struct({
+        priceHourly: Schema.propertySignature(Schema.Struct({
           net: Schema.String,
           gross: Schema.String,
-        }),
-        price_monthly: Schema.Struct({
+        })).pipe(Schema.fromKey("price_hourly")),
+        priceMonthly: Schema.propertySignature(Schema.Struct({
           net: Schema.String,
           gross: Schema.String,
-        }),
-        included_traffic: Schema.Int,
-        price_per_tb_traffic: Schema.Struct({
+        })).pipe(Schema.fromKey("price_monthly")),
+        includedTraffic: Schema.propertySignature(Schema.Int).pipe(Schema.fromKey("included_traffic")),
+        pricePerTbTraffic: Schema.propertySignature(Schema.Struct({
           net: Schema.String,
           gross: Schema.String,
-        }),
+        })).pipe(Schema.fromKey("price_per_tb_traffic")),
       })),
-    }),
+    })).pipe(Schema.fromKey("load_balancer_type")),
   });
 export type GetLoadBalancerTypeResponse = typeof GetLoadBalancerTypeResponse.Type;
 
 export const ListLoadBalancerTypesResponse = Schema.Struct({
-    load_balancer_types: Schema.Array(Schema.Struct({
+    loadBalancerTypes: Schema.propertySignature(Schema.Array(Schema.Struct({
       id: Schema.Int,
       name: Schema.String,
       description: Schema.String,
-      max_connections: Schema.Int,
-      max_services: Schema.Int,
-      max_targets: Schema.Int,
-      max_assigned_certificates: Schema.Int,
+      maxConnections: Schema.propertySignature(Schema.Int).pipe(Schema.fromKey("max_connections")),
+      maxServices: Schema.propertySignature(Schema.Int).pipe(Schema.fromKey("max_services")),
+      maxTargets: Schema.propertySignature(Schema.Int).pipe(Schema.fromKey("max_targets")),
+      maxAssignedCertificates: Schema.propertySignature(Schema.Int).pipe(Schema.fromKey("max_assigned_certificates")),
       deprecated: Schema.NullOr(Schema.String),
       deprecation: Schema.NullOr(Schema.Struct({
-        unavailable_after: Schema.String,
+        unavailableAfter: Schema.propertySignature(Schema.String).pipe(Schema.fromKey("unavailable_after")),
         announced: Schema.String,
       })),
       prices: Schema.Array(Schema.Struct({
         location: Schema.String,
-        price_hourly: Schema.Struct({
+        priceHourly: Schema.propertySignature(Schema.Struct({
           net: Schema.String,
           gross: Schema.String,
-        }),
-        price_monthly: Schema.Struct({
+        })).pipe(Schema.fromKey("price_hourly")),
+        priceMonthly: Schema.propertySignature(Schema.Struct({
           net: Schema.String,
           gross: Schema.String,
-        }),
-        included_traffic: Schema.Int,
-        price_per_tb_traffic: Schema.Struct({
+        })).pipe(Schema.fromKey("price_monthly")),
+        includedTraffic: Schema.propertySignature(Schema.Int).pipe(Schema.fromKey("included_traffic")),
+        pricePerTbTraffic: Schema.propertySignature(Schema.Struct({
           net: Schema.String,
           gross: Schema.String,
-        }),
+        })).pipe(Schema.fromKey("price_per_tb_traffic")),
       })),
-    })),
+    }))).pipe(Schema.fromKey("load_balancer_types")),
     meta: Schema.Struct({
       pagination: Schema.Struct({
         page: Schema.Int,
-        per_page: Schema.Int,
-        previous_page: Schema.NullOr(Schema.Int),
-        next_page: Schema.NullOr(Schema.Int),
-        last_page: Schema.NullOr(Schema.Int),
-        total_entries: Schema.NullOr(Schema.Int),
+        perPage: Schema.propertySignature(Schema.Int).pipe(Schema.fromKey("per_page")),
+        previousPage: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("previous_page")),
+        nextPage: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("next_page")),
+        lastPage: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("last_page")),
+        totalEntries: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("total_entries")),
       }),
     }),
   });
@@ -88,7 +88,7 @@ export type ListLoadBalancerTypesResponse = typeof ListLoadBalancerTypesResponse
 export interface ListLoadBalancerTypesQuery {
   name?: string;
   page?: number;
-  per_page?: number;
+  perPage?: number;
 }
 
 
@@ -105,7 +105,7 @@ export const makeLoadBalancerTypes = (http: HttpClient.HttpClient) => ({
     /** List Load Balancer Types */
     list: (query?: ListLoadBalancerTypesQuery): Effect.Effect<ListLoadBalancerTypesResponse, HetznerErrors> =>
       HttpClientRequest.get("/load_balancer_types").pipe(
-        HttpClientRequest.setUrlParams(toUrlParams(query)),
+        HttpClientRequest.setUrlParams(toUrlParams({ name: query?.name, page: query?.page, per_page: query?.perPage })),
         http.execute,
         Effect.flatMap(HttpClientResponse.schemaBodyJson(ListLoadBalancerTypesResponse)),
         Effect.catchAll(handleHetznerError),

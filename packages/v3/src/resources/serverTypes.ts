@@ -9,7 +9,7 @@ import { toUrlParams } from "../internal/url-params.js";
 
 
 export const GetServerTypeResponse = Schema.Struct({
-    server_type: Schema.Struct({
+    serverType: Schema.propertySignature(Schema.Struct({
       id: Schema.Int,
       name: Schema.String,
       description: Schema.String,
@@ -19,44 +19,44 @@ export const GetServerTypeResponse = Schema.Struct({
       deprecated: Schema.Boolean,
       prices: Schema.Array(Schema.Struct({
         location: Schema.String,
-        price_hourly: Schema.Struct({
+        priceHourly: Schema.propertySignature(Schema.Struct({
           net: Schema.String,
           gross: Schema.String,
-        }),
-        price_monthly: Schema.Struct({
+        })).pipe(Schema.fromKey("price_hourly")),
+        priceMonthly: Schema.propertySignature(Schema.Struct({
           net: Schema.String,
           gross: Schema.String,
-        }),
-        included_traffic: Schema.Int,
-        price_per_tb_traffic: Schema.Struct({
+        })).pipe(Schema.fromKey("price_monthly")),
+        includedTraffic: Schema.propertySignature(Schema.Int).pipe(Schema.fromKey("included_traffic")),
+        pricePerTbTraffic: Schema.propertySignature(Schema.Struct({
           net: Schema.String,
           gross: Schema.String,
-        }),
+        })).pipe(Schema.fromKey("price_per_tb_traffic")),
       })),
-      storage_type: Schema.Literal("local", "network"),
-      cpu_type: Schema.Literal("shared", "dedicated"),
+      storageType: Schema.propertySignature(Schema.Literal("local", "network")).pipe(Schema.fromKey("storage_type")),
+      cpuType: Schema.propertySignature(Schema.Literal("shared", "dedicated")).pipe(Schema.fromKey("cpu_type")),
       category: Schema.optional(Schema.String),
       architecture: Schema.Literal("x86", "arm"),
       deprecation: Schema.optional(Schema.NullOr(Schema.Struct({
-        unavailable_after: Schema.String,
+        unavailableAfter: Schema.propertySignature(Schema.String).pipe(Schema.fromKey("unavailable_after")),
         announced: Schema.String,
       }))),
       locations: Schema.Array(Schema.Struct({
         id: Schema.Int,
         name: Schema.String,
         deprecation: Schema.NullOr(Schema.Struct({
-          unavailable_after: Schema.String,
+          unavailableAfter: Schema.propertySignature(Schema.String).pipe(Schema.fromKey("unavailable_after")),
           announced: Schema.String,
         })),
         recommended: Schema.Boolean,
         available: Schema.Boolean,
       })),
-    }),
+    })).pipe(Schema.fromKey("server_type")),
   });
 export type GetServerTypeResponse = typeof GetServerTypeResponse.Type;
 
 export const ListServerTypesResponse = Schema.Struct({
-    server_types: Schema.Array(Schema.Struct({
+    serverTypes: Schema.propertySignature(Schema.Array(Schema.Struct({
       id: Schema.Int,
       name: Schema.String,
       description: Schema.String,
@@ -66,47 +66,47 @@ export const ListServerTypesResponse = Schema.Struct({
       deprecated: Schema.Boolean,
       prices: Schema.Array(Schema.Struct({
         location: Schema.String,
-        price_hourly: Schema.Struct({
+        priceHourly: Schema.propertySignature(Schema.Struct({
           net: Schema.String,
           gross: Schema.String,
-        }),
-        price_monthly: Schema.Struct({
+        })).pipe(Schema.fromKey("price_hourly")),
+        priceMonthly: Schema.propertySignature(Schema.Struct({
           net: Schema.String,
           gross: Schema.String,
-        }),
-        included_traffic: Schema.Int,
-        price_per_tb_traffic: Schema.Struct({
+        })).pipe(Schema.fromKey("price_monthly")),
+        includedTraffic: Schema.propertySignature(Schema.Int).pipe(Schema.fromKey("included_traffic")),
+        pricePerTbTraffic: Schema.propertySignature(Schema.Struct({
           net: Schema.String,
           gross: Schema.String,
-        }),
+        })).pipe(Schema.fromKey("price_per_tb_traffic")),
       })),
-      storage_type: Schema.Literal("local", "network"),
-      cpu_type: Schema.Literal("shared", "dedicated"),
+      storageType: Schema.propertySignature(Schema.Literal("local", "network")).pipe(Schema.fromKey("storage_type")),
+      cpuType: Schema.propertySignature(Schema.Literal("shared", "dedicated")).pipe(Schema.fromKey("cpu_type")),
       category: Schema.optional(Schema.String),
       architecture: Schema.Literal("x86", "arm"),
       deprecation: Schema.optional(Schema.NullOr(Schema.Struct({
-        unavailable_after: Schema.String,
+        unavailableAfter: Schema.propertySignature(Schema.String).pipe(Schema.fromKey("unavailable_after")),
         announced: Schema.String,
       }))),
       locations: Schema.Array(Schema.Struct({
         id: Schema.Int,
         name: Schema.String,
         deprecation: Schema.NullOr(Schema.Struct({
-          unavailable_after: Schema.String,
+          unavailableAfter: Schema.propertySignature(Schema.String).pipe(Schema.fromKey("unavailable_after")),
           announced: Schema.String,
         })),
         recommended: Schema.Boolean,
         available: Schema.Boolean,
       })),
-    })),
+    }))).pipe(Schema.fromKey("server_types")),
     meta: Schema.Struct({
       pagination: Schema.Struct({
         page: Schema.Int,
-        per_page: Schema.Int,
-        previous_page: Schema.NullOr(Schema.Int),
-        next_page: Schema.NullOr(Schema.Int),
-        last_page: Schema.NullOr(Schema.Int),
-        total_entries: Schema.NullOr(Schema.Int),
+        perPage: Schema.propertySignature(Schema.Int).pipe(Schema.fromKey("per_page")),
+        previousPage: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("previous_page")),
+        nextPage: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("next_page")),
+        lastPage: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("last_page")),
+        totalEntries: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("total_entries")),
       }),
     }),
   });
@@ -114,7 +114,7 @@ export type ListServerTypesResponse = typeof ListServerTypesResponse.Type;
 export interface ListServerTypesQuery {
   name?: string;
   page?: number;
-  per_page?: number;
+  perPage?: number;
 }
 
 
@@ -131,7 +131,7 @@ export const makeServerTypes = (http: HttpClient.HttpClient) => ({
     /** List Server Types */
     list: (query?: ListServerTypesQuery): Effect.Effect<ListServerTypesResponse, HetznerErrors> =>
       HttpClientRequest.get("/server_types").pipe(
-        HttpClientRequest.setUrlParams(toUrlParams(query)),
+        HttpClientRequest.setUrlParams(toUrlParams({ name: query?.name, page: query?.page, per_page: query?.perPage })),
         http.execute,
         Effect.flatMap(HttpClientResponse.schemaBodyJson(ListServerTypesResponse)),
         Effect.catchAll(handleHetznerError),

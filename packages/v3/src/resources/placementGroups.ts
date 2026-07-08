@@ -15,14 +15,14 @@ export const CreatePlacementGroupRequest = Schema.Struct({
   });
 export type CreatePlacementGroupRequest = typeof CreatePlacementGroupRequest.Type;
 export const CreatePlacementGroupResponse = Schema.Struct({
-    placement_group: Schema.Struct({
+    placementGroup: Schema.propertySignature(Schema.Struct({
       id: Schema.Int,
       name: Schema.String,
       labels: Schema.Record({ key: Schema.String, value: Schema.String }),
       type: Schema.Literal("spread"),
       created: Schema.String,
       servers: Schema.Array(Schema.Int),
-    }),
+    })).pipe(Schema.fromKey("placement_group")),
     action: Schema.optional(Schema.NullOr(Schema.Struct({
       id: Schema.Int,
       command: Schema.String,
@@ -43,34 +43,34 @@ export const CreatePlacementGroupResponse = Schema.Struct({
 export type CreatePlacementGroupResponse = typeof CreatePlacementGroupResponse.Type;
 
 export const GetPlacementGroupResponse = Schema.Struct({
-    placement_group: Schema.Struct({
+    placementGroup: Schema.propertySignature(Schema.Struct({
       id: Schema.Int,
       name: Schema.String,
       labels: Schema.Record({ key: Schema.String, value: Schema.String }),
       type: Schema.Literal("spread"),
       created: Schema.String,
       servers: Schema.Array(Schema.Int),
-    }),
+    })).pipe(Schema.fromKey("placement_group")),
   });
 export type GetPlacementGroupResponse = typeof GetPlacementGroupResponse.Type;
 
 export const ListPlacementGroupsResponse = Schema.Struct({
-    placement_groups: Schema.Array(Schema.Struct({
+    placementGroups: Schema.propertySignature(Schema.Array(Schema.Struct({
       id: Schema.Int,
       name: Schema.String,
       labels: Schema.Record({ key: Schema.String, value: Schema.String }),
       type: Schema.Literal("spread"),
       created: Schema.String,
       servers: Schema.Array(Schema.Int),
-    })),
+    }))).pipe(Schema.fromKey("placement_groups")),
     meta: Schema.Struct({
       pagination: Schema.Struct({
         page: Schema.Int,
-        per_page: Schema.Int,
-        previous_page: Schema.NullOr(Schema.Int),
-        next_page: Schema.NullOr(Schema.Int),
-        last_page: Schema.NullOr(Schema.Int),
-        total_entries: Schema.NullOr(Schema.Int),
+        perPage: Schema.propertySignature(Schema.Int).pipe(Schema.fromKey("per_page")),
+        previousPage: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("previous_page")),
+        nextPage: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("next_page")),
+        lastPage: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("last_page")),
+        totalEntries: Schema.propertySignature(Schema.NullOr(Schema.Int)).pipe(Schema.fromKey("total_entries")),
       }),
     }),
   });
@@ -78,10 +78,10 @@ export type ListPlacementGroupsResponse = typeof ListPlacementGroupsResponse.Typ
 export interface ListPlacementGroupsQuery {
   sort?: ReadonlyArray<"id" | "id:asc" | "id:desc" | "name" | "name:asc" | "name:desc" | "created" | "created:asc" | "created:desc">;
   name?: string;
-  label_selector?: string;
+  labelSelector?: string;
   type?: ReadonlyArray<"spread">;
   page?: number;
-  per_page?: number;
+  perPage?: number;
 }
 
 export const UpdatePlacementGroupRequest = Schema.Struct({
@@ -90,14 +90,14 @@ export const UpdatePlacementGroupRequest = Schema.Struct({
   });
 export type UpdatePlacementGroupRequest = typeof UpdatePlacementGroupRequest.Type;
 export const UpdatePlacementGroupResponse = Schema.Struct({
-    placement_group: Schema.Struct({
+    placementGroup: Schema.propertySignature(Schema.Struct({
       id: Schema.Int,
       name: Schema.String,
       labels: Schema.Record({ key: Schema.String, value: Schema.String }),
       type: Schema.Literal("spread"),
       created: Schema.String,
       servers: Schema.Array(Schema.Int),
-    }),
+    })).pipe(Schema.fromKey("placement_group")),
   });
 export type UpdatePlacementGroupResponse = typeof UpdatePlacementGroupResponse.Type;
 
@@ -133,7 +133,7 @@ export const makePlacementGroups = (http: HttpClient.HttpClient) => ({
     /** List Placement Groups */
     list: (query?: ListPlacementGroupsQuery): Effect.Effect<ListPlacementGroupsResponse, HetznerErrors> =>
       HttpClientRequest.get("/placement_groups").pipe(
-        HttpClientRequest.setUrlParams(toUrlParams(query)),
+        HttpClientRequest.setUrlParams(toUrlParams({ sort: query?.sort, name: query?.name, label_selector: query?.labelSelector, type: query?.type, page: query?.page, per_page: query?.perPage })),
         http.execute,
         Effect.flatMap(HttpClientResponse.schemaBodyJson(ListPlacementGroupsResponse)),
         Effect.catchAll(handleHetznerError),

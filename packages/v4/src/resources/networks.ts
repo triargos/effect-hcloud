@@ -35,10 +35,10 @@ export type AddNetworkRouteResponse = typeof AddNetworkRouteResponse.Type;
 
 export const AddNetworkSubnetRequest = Schema.Struct({
     type: Schema.Literals(["cloud", "server", "vswitch"]),
-    ip_range: Schema.optional(Schema.String),
-    network_zone: Schema.String,
-    vswitch_id: Schema.optional(Schema.Int),
-  });
+    ipRange: Schema.optional(Schema.String),
+    networkZone: Schema.String,
+    vswitchId: Schema.optional(Schema.Int),
+  }).pipe(Schema.encodeKeys({ ipRange: "ip_range", networkZone: "network_zone", vswitchId: "vswitch_id" }));
 export type AddNetworkSubnetRequest = typeof AddNetworkSubnetRequest.Type;
 export const AddNetworkSubnetResponse = Schema.Struct({
     action: Schema.Struct({
@@ -61,8 +61,8 @@ export const AddNetworkSubnetResponse = Schema.Struct({
 export type AddNetworkSubnetResponse = typeof AddNetworkSubnetResponse.Type;
 
 export const ChangeNetworkIpRangeRequest = Schema.Struct({
-    ip_range: Schema.String,
-  });
+    ipRange: Schema.String,
+  }).pipe(Schema.encodeKeys({ ipRange: "ip_range" }));
 export type ChangeNetworkIpRangeRequest = typeof ChangeNetworkIpRangeRequest.Type;
 export const ChangeNetworkIpRangeResponse = Schema.Struct({
     action: Schema.Struct({
@@ -110,46 +110,46 @@ export type ChangeNetworkProtectionResponse = typeof ChangeNetworkProtectionResp
 
 export const CreateNetworkRequest = Schema.Struct({
     name: Schema.String,
-    ip_range: Schema.String,
+    ipRange: Schema.String,
     labels: Schema.optional(Schema.Record(Schema.String, Schema.String)),
     subnets: Schema.optional(Schema.Array(Schema.Struct({
       type: Schema.Literals(["cloud", "server", "vswitch"]),
-      ip_range: Schema.optional(Schema.String),
-      network_zone: Schema.String,
-      vswitch_id: Schema.optional(Schema.Int),
-    }))),
+      ipRange: Schema.optional(Schema.String),
+      networkZone: Schema.String,
+      vswitchId: Schema.optional(Schema.Int),
+    }).pipe(Schema.encodeKeys({ ipRange: "ip_range", networkZone: "network_zone", vswitchId: "vswitch_id" })))),
     routes: Schema.optional(Schema.Array(Schema.Struct({
       destination: Schema.String,
       gateway: Schema.String,
     }))),
-    expose_routes_to_vswitch: Schema.optional(Schema.Boolean),
-  });
+    exposeRoutesToVswitch: Schema.optional(Schema.Boolean),
+  }).pipe(Schema.encodeKeys({ ipRange: "ip_range", exposeRoutesToVswitch: "expose_routes_to_vswitch" }));
 export type CreateNetworkRequest = typeof CreateNetworkRequest.Type;
 export const CreateNetworkResponse = Schema.Struct({
     network: Schema.optional(Schema.Struct({
       id: Schema.Int,
       name: Schema.String,
-      ip_range: Schema.String,
+      ipRange: Schema.String,
       subnets: Schema.Array(Schema.Struct({
         type: Schema.Literals(["cloud", "server", "vswitch"]),
-        ip_range: Schema.optional(Schema.String),
-        network_zone: Schema.String,
+        ipRange: Schema.optional(Schema.String),
+        networkZone: Schema.String,
         gateway: Schema.String,
-        vswitch_id: Schema.optional(Schema.NullOr(Schema.Int)),
-      })),
+        vswitchId: Schema.optional(Schema.NullOr(Schema.Int)),
+      }).pipe(Schema.encodeKeys({ ipRange: "ip_range", networkZone: "network_zone", vswitchId: "vswitch_id" }))),
       routes: Schema.Array(Schema.Struct({
         destination: Schema.String,
         gateway: Schema.String,
       })),
       servers: Schema.Array(Schema.Int),
-      load_balancers: Schema.optional(Schema.Array(Schema.Int)),
+      loadBalancers: Schema.optional(Schema.Array(Schema.Int)),
       protection: Schema.Struct({
         delete: Schema.Boolean,
       }),
       labels: Schema.Record(Schema.String, Schema.String),
       created: Schema.String,
-      expose_routes_to_vswitch: Schema.Boolean,
-    })),
+      exposeRoutesToVswitch: Schema.Boolean,
+    }).pipe(Schema.encodeKeys({ ipRange: "ip_range", loadBalancers: "load_balancers", exposeRoutesToVswitch: "expose_routes_to_vswitch" }))),
   });
 export type CreateNetworkResponse = typeof CreateNetworkResponse.Type;
 
@@ -179,8 +179,8 @@ export const DeleteNetworkRouteResponse = Schema.Struct({
 export type DeleteNetworkRouteResponse = typeof DeleteNetworkRouteResponse.Type;
 
 export const DeleteNetworkSubnetRequest = Schema.Struct({
-    ip_range: Schema.String,
-  });
+    ipRange: Schema.String,
+  }).pipe(Schema.encodeKeys({ ipRange: "ip_range" }));
 export type DeleteNetworkSubnetRequest = typeof DeleteNetworkSubnetRequest.Type;
 export const DeleteNetworkSubnetResponse = Schema.Struct({
     action: Schema.Struct({
@@ -206,27 +206,27 @@ export const GetNetworkResponse = Schema.Struct({
     network: Schema.optional(Schema.Struct({
       id: Schema.Int,
       name: Schema.String,
-      ip_range: Schema.String,
+      ipRange: Schema.String,
       subnets: Schema.Array(Schema.Struct({
         type: Schema.Literals(["cloud", "server", "vswitch"]),
-        ip_range: Schema.optional(Schema.String),
-        network_zone: Schema.String,
+        ipRange: Schema.optional(Schema.String),
+        networkZone: Schema.String,
         gateway: Schema.String,
-        vswitch_id: Schema.optional(Schema.NullOr(Schema.Int)),
-      })),
+        vswitchId: Schema.optional(Schema.NullOr(Schema.Int)),
+      }).pipe(Schema.encodeKeys({ ipRange: "ip_range", networkZone: "network_zone", vswitchId: "vswitch_id" }))),
       routes: Schema.Array(Schema.Struct({
         destination: Schema.String,
         gateway: Schema.String,
       })),
       servers: Schema.Array(Schema.Int),
-      load_balancers: Schema.optional(Schema.Array(Schema.Int)),
+      loadBalancers: Schema.optional(Schema.Array(Schema.Int)),
       protection: Schema.Struct({
         delete: Schema.Boolean,
       }),
       labels: Schema.Record(Schema.String, Schema.String),
       created: Schema.String,
-      expose_routes_to_vswitch: Schema.Boolean,
-    })),
+      exposeRoutesToVswitch: Schema.Boolean,
+    }).pipe(Schema.encodeKeys({ ipRange: "ip_range", loadBalancers: "load_balancers", exposeRoutesToVswitch: "expose_routes_to_vswitch" }))),
   });
 export type GetNetworkResponse = typeof GetNetworkResponse.Type;
 
@@ -274,45 +274,45 @@ export const ListNetworksResponse = Schema.Struct({
     networks: Schema.Array(Schema.Struct({
       id: Schema.Int,
       name: Schema.String,
-      ip_range: Schema.String,
+      ipRange: Schema.String,
       subnets: Schema.Array(Schema.Struct({
         type: Schema.Literals(["cloud", "server", "vswitch"]),
-        ip_range: Schema.optional(Schema.String),
-        network_zone: Schema.String,
+        ipRange: Schema.optional(Schema.String),
+        networkZone: Schema.String,
         gateway: Schema.String,
-        vswitch_id: Schema.optional(Schema.NullOr(Schema.Int)),
-      })),
+        vswitchId: Schema.optional(Schema.NullOr(Schema.Int)),
+      }).pipe(Schema.encodeKeys({ ipRange: "ip_range", networkZone: "network_zone", vswitchId: "vswitch_id" }))),
       routes: Schema.Array(Schema.Struct({
         destination: Schema.String,
         gateway: Schema.String,
       })),
       servers: Schema.Array(Schema.Int),
-      load_balancers: Schema.optional(Schema.Array(Schema.Int)),
+      loadBalancers: Schema.optional(Schema.Array(Schema.Int)),
       protection: Schema.Struct({
         delete: Schema.Boolean,
       }),
       labels: Schema.Record(Schema.String, Schema.String),
       created: Schema.String,
-      expose_routes_to_vswitch: Schema.Boolean,
-    })),
+      exposeRoutesToVswitch: Schema.Boolean,
+    }).pipe(Schema.encodeKeys({ ipRange: "ip_range", loadBalancers: "load_balancers", exposeRoutesToVswitch: "expose_routes_to_vswitch" }))),
     meta: Schema.Struct({
       pagination: Schema.Struct({
         page: Schema.Int,
-        per_page: Schema.Int,
-        previous_page: Schema.NullOr(Schema.Int),
-        next_page: Schema.NullOr(Schema.Int),
-        last_page: Schema.NullOr(Schema.Int),
-        total_entries: Schema.NullOr(Schema.Int),
-      }),
+        perPage: Schema.Int,
+        previousPage: Schema.NullOr(Schema.Int),
+        nextPage: Schema.NullOr(Schema.Int),
+        lastPage: Schema.NullOr(Schema.Int),
+        totalEntries: Schema.NullOr(Schema.Int),
+      }).pipe(Schema.encodeKeys({ perPage: "per_page", previousPage: "previous_page", nextPage: "next_page", lastPage: "last_page", totalEntries: "total_entries" })),
     }),
   });
 export type ListNetworksResponse = typeof ListNetworksResponse.Type;
 export interface ListNetworksQuery {
   sort?: ReadonlyArray<"id" | "id:asc" | "id:desc" | "name" | "name:asc" | "name:desc" | "created" | "created:asc" | "created:desc">;
   name?: string;
-  label_selector?: string;
+  labelSelector?: string;
   page?: number;
-  per_page?: number;
+  perPage?: number;
 }
 
 export const ListNetworkActionsResponse = Schema.Struct({
@@ -335,12 +335,12 @@ export const ListNetworkActionsResponse = Schema.Struct({
     meta: Schema.Struct({
       pagination: Schema.Struct({
         page: Schema.Int,
-        per_page: Schema.Int,
-        previous_page: Schema.NullOr(Schema.Int),
-        next_page: Schema.NullOr(Schema.Int),
-        last_page: Schema.NullOr(Schema.Int),
-        total_entries: Schema.NullOr(Schema.Int),
-      }),
+        perPage: Schema.Int,
+        previousPage: Schema.NullOr(Schema.Int),
+        nextPage: Schema.NullOr(Schema.Int),
+        lastPage: Schema.NullOr(Schema.Int),
+        totalEntries: Schema.NullOr(Schema.Int),
+      }).pipe(Schema.encodeKeys({ perPage: "per_page", previousPage: "previous_page", nextPage: "next_page", lastPage: "last_page", totalEntries: "total_entries" })),
     }),
   });
 export type ListNetworkActionsResponse = typeof ListNetworkActionsResponse.Type;
@@ -348,7 +348,7 @@ export interface ListNetworkActionsQuery {
   sort?: ReadonlyArray<"id" | "id:asc" | "id:desc" | "command" | "command:asc" | "command:desc" | "status" | "status:asc" | "status:desc" | "started" | "started:asc" | "started:desc" | "finished" | "finished:asc" | "finished:desc">;
   status?: ReadonlyArray<"running" | "success" | "error">;
   page?: number;
-  per_page?: number;
+  perPage?: number;
 }
 
 export const ListNetworksActionsResponse = Schema.Struct({
@@ -371,12 +371,12 @@ export const ListNetworksActionsResponse = Schema.Struct({
     meta: Schema.Struct({
       pagination: Schema.Struct({
         page: Schema.Int,
-        per_page: Schema.Int,
-        previous_page: Schema.NullOr(Schema.Int),
-        next_page: Schema.NullOr(Schema.Int),
-        last_page: Schema.NullOr(Schema.Int),
-        total_entries: Schema.NullOr(Schema.Int),
-      }),
+        perPage: Schema.Int,
+        previousPage: Schema.NullOr(Schema.Int),
+        nextPage: Schema.NullOr(Schema.Int),
+        lastPage: Schema.NullOr(Schema.Int),
+        totalEntries: Schema.NullOr(Schema.Int),
+      }).pipe(Schema.encodeKeys({ perPage: "per_page", previousPage: "previous_page", nextPage: "next_page", lastPage: "last_page", totalEntries: "total_entries" })),
     }),
   });
 export type ListNetworksActionsResponse = typeof ListNetworksActionsResponse.Type;
@@ -385,40 +385,40 @@ export interface ListNetworksActionsQuery {
   sort?: ReadonlyArray<"id" | "id:asc" | "id:desc" | "command" | "command:asc" | "command:desc" | "status" | "status:asc" | "status:desc" | "started" | "started:asc" | "started:desc" | "finished" | "finished:asc" | "finished:desc">;
   status?: ReadonlyArray<"running" | "success" | "error">;
   page?: number;
-  per_page?: number;
+  perPage?: number;
 }
 
 export const UpdateNetworkRequest = Schema.Struct({
     name: Schema.optional(Schema.String),
     labels: Schema.optional(Schema.Record(Schema.String, Schema.String)),
-    expose_routes_to_vswitch: Schema.optional(Schema.Boolean),
-  });
+    exposeRoutesToVswitch: Schema.optional(Schema.Boolean),
+  }).pipe(Schema.encodeKeys({ exposeRoutesToVswitch: "expose_routes_to_vswitch" }));
 export type UpdateNetworkRequest = typeof UpdateNetworkRequest.Type;
 export const UpdateNetworkResponse = Schema.Struct({
     network: Schema.optional(Schema.Struct({
       id: Schema.Int,
       name: Schema.String,
-      ip_range: Schema.String,
+      ipRange: Schema.String,
       subnets: Schema.Array(Schema.Struct({
         type: Schema.Literals(["cloud", "server", "vswitch"]),
-        ip_range: Schema.optional(Schema.String),
-        network_zone: Schema.String,
+        ipRange: Schema.optional(Schema.String),
+        networkZone: Schema.String,
         gateway: Schema.String,
-        vswitch_id: Schema.optional(Schema.NullOr(Schema.Int)),
-      })),
+        vswitchId: Schema.optional(Schema.NullOr(Schema.Int)),
+      }).pipe(Schema.encodeKeys({ ipRange: "ip_range", networkZone: "network_zone", vswitchId: "vswitch_id" }))),
       routes: Schema.Array(Schema.Struct({
         destination: Schema.String,
         gateway: Schema.String,
       })),
       servers: Schema.Array(Schema.Int),
-      load_balancers: Schema.optional(Schema.Array(Schema.Int)),
+      loadBalancers: Schema.optional(Schema.Array(Schema.Int)),
       protection: Schema.Struct({
         delete: Schema.Boolean,
       }),
       labels: Schema.Record(Schema.String, Schema.String),
       created: Schema.String,
-      expose_routes_to_vswitch: Schema.Boolean,
-    })),
+      exposeRoutesToVswitch: Schema.Boolean,
+    }).pipe(Schema.encodeKeys({ ipRange: "ip_range", loadBalancers: "load_balancers", exposeRoutesToVswitch: "expose_routes_to_vswitch" }))),
   });
 export type UpdateNetworkResponse = typeof UpdateNetworkResponse.Type;
 
@@ -512,8 +512,8 @@ export const makeNetworks = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Get an Action for a Network */
-    getAction: (id: number, action_id: number): Effect.Effect<GetNetworkActionResponse, HetznerErrors> =>
-      HttpClientRequest.get(`/networks/${id}/actions/${action_id}`).pipe(
+    getAction: (id: number, actionId: number): Effect.Effect<GetNetworkActionResponse, HetznerErrors> =>
+      HttpClientRequest.get(`/networks/${id}/actions/${actionId}`).pipe(
         http.execute,
         Effect.flatMap(decodeJson(GetNetworkActionResponse)),
         Effect.catch(handleHetznerError),
@@ -532,7 +532,7 @@ export const makeNetworks = (http: HttpClient.HttpClient) => ({
     /** List Networks */
     list: (query?: ListNetworksQuery): Effect.Effect<ListNetworksResponse, HetznerErrors> =>
       HttpClientRequest.get("/networks").pipe(
-        HttpClientRequest.setUrlParams(toUrlParams(query)),
+        HttpClientRequest.setUrlParams(toUrlParams({ sort: query?.sort, name: query?.name, label_selector: query?.labelSelector, page: query?.page, per_page: query?.perPage })),
         http.execute,
         Effect.flatMap(decodeJson(ListNetworksResponse)),
         Effect.catch(handleHetznerError),
@@ -542,7 +542,7 @@ export const makeNetworks = (http: HttpClient.HttpClient) => ({
     /** List Actions for a Network */
     listActions: (id: number, query?: ListNetworkActionsQuery): Effect.Effect<ListNetworkActionsResponse, HetznerErrors> =>
       HttpClientRequest.get(`/networks/${id}/actions`).pipe(
-        HttpClientRequest.setUrlParams(toUrlParams(query)),
+        HttpClientRequest.setUrlParams(toUrlParams({ sort: query?.sort, status: query?.status, page: query?.page, per_page: query?.perPage })),
         http.execute,
         Effect.flatMap(decodeJson(ListNetworkActionsResponse)),
         Effect.catch(handleHetznerError),
@@ -552,7 +552,7 @@ export const makeNetworks = (http: HttpClient.HttpClient) => ({
     /** List Actions */
     listNetworksActions: (query?: ListNetworksActionsQuery): Effect.Effect<ListNetworksActionsResponse, HetznerErrors> =>
       HttpClientRequest.get("/networks/actions").pipe(
-        HttpClientRequest.setUrlParams(toUrlParams(query)),
+        HttpClientRequest.setUrlParams(toUrlParams({ id: query?.id, sort: query?.sort, status: query?.status, page: query?.page, per_page: query?.perPage })),
         http.execute,
         Effect.flatMap(decodeJson(ListNetworksActionsResponse)),
         Effect.catch(handleHetznerError),

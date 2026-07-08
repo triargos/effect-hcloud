@@ -39,17 +39,17 @@ export const GetImageResponse = Schema.Struct({
       status: Schema.Literals(["available", "creating", "unavailable"]),
       name: Schema.NullOr(Schema.String),
       description: Schema.String,
-      image_size: Schema.NullOr(Schema.Number),
-      disk_size: Schema.Number,
+      imageSize: Schema.NullOr(Schema.Number),
+      diskSize: Schema.Number,
       created: Schema.String,
-      created_from: Schema.NullOr(Schema.Struct({
+      createdFrom: Schema.NullOr(Schema.Struct({
         id: Schema.Int,
         name: Schema.String,
       })),
-      bound_to: Schema.NullOr(Schema.Int),
-      os_flavor: Schema.Literals(["ubuntu", "centos", "debian", "fedora", "rocky", "alma", "opensuse", "unknown"]),
-      os_version: Schema.NullOr(Schema.String),
-      rapid_deploy: Schema.optional(Schema.Boolean),
+      boundTo: Schema.NullOr(Schema.Int),
+      osFlavor: Schema.Literals(["ubuntu", "centos", "debian", "fedora", "rocky", "alma", "opensuse", "unknown"]),
+      osVersion: Schema.NullOr(Schema.String),
+      rapidDeploy: Schema.optional(Schema.Boolean),
       protection: Schema.Struct({
         delete: Schema.Boolean,
       }),
@@ -57,7 +57,7 @@ export const GetImageResponse = Schema.Struct({
       deleted: Schema.NullOr(Schema.String),
       labels: Schema.Record(Schema.String, Schema.String),
       architecture: Schema.Literals(["x86", "arm"]),
-    })),
+    }).pipe(Schema.encodeKeys({ imageSize: "image_size", diskSize: "disk_size", createdFrom: "created_from", boundTo: "bound_to", osFlavor: "os_flavor", osVersion: "os_version", rapidDeploy: "rapid_deploy" }))),
   });
 export type GetImageResponse = typeof GetImageResponse.Type;
 
@@ -108,17 +108,17 @@ export const ListImagesResponse = Schema.Struct({
       status: Schema.Literals(["available", "creating", "unavailable"]),
       name: Schema.NullOr(Schema.String),
       description: Schema.String,
-      image_size: Schema.NullOr(Schema.Number),
-      disk_size: Schema.Number,
+      imageSize: Schema.NullOr(Schema.Number),
+      diskSize: Schema.Number,
       created: Schema.String,
-      created_from: Schema.NullOr(Schema.Struct({
+      createdFrom: Schema.NullOr(Schema.Struct({
         id: Schema.Int,
         name: Schema.String,
       })),
-      bound_to: Schema.NullOr(Schema.Int),
-      os_flavor: Schema.Literals(["ubuntu", "centos", "debian", "fedora", "rocky", "alma", "opensuse", "unknown"]),
-      os_version: Schema.NullOr(Schema.String),
-      rapid_deploy: Schema.optional(Schema.Boolean),
+      boundTo: Schema.NullOr(Schema.Int),
+      osFlavor: Schema.Literals(["ubuntu", "centos", "debian", "fedora", "rocky", "alma", "opensuse", "unknown"]),
+      osVersion: Schema.NullOr(Schema.String),
+      rapidDeploy: Schema.optional(Schema.Boolean),
       protection: Schema.Struct({
         delete: Schema.Boolean,
       }),
@@ -126,16 +126,16 @@ export const ListImagesResponse = Schema.Struct({
       deleted: Schema.NullOr(Schema.String),
       labels: Schema.Record(Schema.String, Schema.String),
       architecture: Schema.Literals(["x86", "arm"]),
-    })),
+    }).pipe(Schema.encodeKeys({ imageSize: "image_size", diskSize: "disk_size", createdFrom: "created_from", boundTo: "bound_to", osFlavor: "os_flavor", osVersion: "os_version", rapidDeploy: "rapid_deploy" }))),
     meta: Schema.Struct({
       pagination: Schema.Struct({
         page: Schema.Int,
-        per_page: Schema.Int,
-        previous_page: Schema.NullOr(Schema.Int),
-        next_page: Schema.NullOr(Schema.Int),
-        last_page: Schema.NullOr(Schema.Int),
-        total_entries: Schema.NullOr(Schema.Int),
-      }),
+        perPage: Schema.Int,
+        previousPage: Schema.NullOr(Schema.Int),
+        nextPage: Schema.NullOr(Schema.Int),
+        lastPage: Schema.NullOr(Schema.Int),
+        totalEntries: Schema.NullOr(Schema.Int),
+      }).pipe(Schema.encodeKeys({ perPage: "per_page", previousPage: "previous_page", nextPage: "next_page", lastPage: "last_page", totalEntries: "total_entries" })),
     }),
   });
 export type ListImagesResponse = typeof ListImagesResponse.Type;
@@ -143,13 +143,13 @@ export interface ListImagesQuery {
   sort?: ReadonlyArray<"id" | "id:asc" | "id:desc" | "name" | "name:asc" | "name:desc" | "created" | "created:asc" | "created:desc">;
   type?: ReadonlyArray<"system" | "app" | "snapshot" | "backup">;
   status?: ReadonlyArray<"available" | "creating" | "unavailable">;
-  bound_to?: ReadonlyArray<string>;
-  include_deprecated?: boolean;
+  boundTo?: ReadonlyArray<string>;
+  includeDeprecated?: boolean;
   name?: string;
-  label_selector?: string;
+  labelSelector?: string;
   architecture?: "x86" | "arm";
   page?: number;
-  per_page?: number;
+  perPage?: number;
 }
 
 export const ListImageActionsResponse = Schema.Struct({
@@ -172,12 +172,12 @@ export const ListImageActionsResponse = Schema.Struct({
     meta: Schema.Struct({
       pagination: Schema.Struct({
         page: Schema.Int,
-        per_page: Schema.Int,
-        previous_page: Schema.NullOr(Schema.Int),
-        next_page: Schema.NullOr(Schema.Int),
-        last_page: Schema.NullOr(Schema.Int),
-        total_entries: Schema.NullOr(Schema.Int),
-      }),
+        perPage: Schema.Int,
+        previousPage: Schema.NullOr(Schema.Int),
+        nextPage: Schema.NullOr(Schema.Int),
+        lastPage: Schema.NullOr(Schema.Int),
+        totalEntries: Schema.NullOr(Schema.Int),
+      }).pipe(Schema.encodeKeys({ perPage: "per_page", previousPage: "previous_page", nextPage: "next_page", lastPage: "last_page", totalEntries: "total_entries" })),
     }),
   });
 export type ListImageActionsResponse = typeof ListImageActionsResponse.Type;
@@ -185,7 +185,7 @@ export interface ListImageActionsQuery {
   sort?: ReadonlyArray<"id" | "id:asc" | "id:desc" | "command" | "command:asc" | "command:desc" | "status" | "status:asc" | "status:desc" | "started" | "started:asc" | "started:desc" | "finished" | "finished:asc" | "finished:desc">;
   status?: ReadonlyArray<"running" | "success" | "error">;
   page?: number;
-  per_page?: number;
+  perPage?: number;
 }
 
 export const ListImagesActionsResponse = Schema.Struct({
@@ -208,12 +208,12 @@ export const ListImagesActionsResponse = Schema.Struct({
     meta: Schema.Struct({
       pagination: Schema.Struct({
         page: Schema.Int,
-        per_page: Schema.Int,
-        previous_page: Schema.NullOr(Schema.Int),
-        next_page: Schema.NullOr(Schema.Int),
-        last_page: Schema.NullOr(Schema.Int),
-        total_entries: Schema.NullOr(Schema.Int),
-      }),
+        perPage: Schema.Int,
+        previousPage: Schema.NullOr(Schema.Int),
+        nextPage: Schema.NullOr(Schema.Int),
+        lastPage: Schema.NullOr(Schema.Int),
+        totalEntries: Schema.NullOr(Schema.Int),
+      }).pipe(Schema.encodeKeys({ perPage: "per_page", previousPage: "previous_page", nextPage: "next_page", lastPage: "last_page", totalEntries: "total_entries" })),
     }),
   });
 export type ListImagesActionsResponse = typeof ListImagesActionsResponse.Type;
@@ -222,7 +222,7 @@ export interface ListImagesActionsQuery {
   sort?: ReadonlyArray<"id" | "id:asc" | "id:desc" | "command" | "command:asc" | "command:desc" | "status" | "status:asc" | "status:desc" | "started" | "started:asc" | "started:desc" | "finished" | "finished:asc" | "finished:desc">;
   status?: ReadonlyArray<"running" | "success" | "error">;
   page?: number;
-  per_page?: number;
+  perPage?: number;
 }
 
 export const UpdateImageRequest = Schema.Struct({
@@ -238,17 +238,17 @@ export const UpdateImageResponse = Schema.Struct({
       status: Schema.Literals(["available", "creating", "unavailable"]),
       name: Schema.NullOr(Schema.String),
       description: Schema.String,
-      image_size: Schema.NullOr(Schema.Number),
-      disk_size: Schema.Number,
+      imageSize: Schema.NullOr(Schema.Number),
+      diskSize: Schema.Number,
       created: Schema.String,
-      created_from: Schema.NullOr(Schema.Struct({
+      createdFrom: Schema.NullOr(Schema.Struct({
         id: Schema.Int,
         name: Schema.String,
       })),
-      bound_to: Schema.NullOr(Schema.Int),
-      os_flavor: Schema.Literals(["ubuntu", "centos", "debian", "fedora", "rocky", "alma", "opensuse", "unknown"]),
-      os_version: Schema.NullOr(Schema.String),
-      rapid_deploy: Schema.optional(Schema.Boolean),
+      boundTo: Schema.NullOr(Schema.Int),
+      osFlavor: Schema.Literals(["ubuntu", "centos", "debian", "fedora", "rocky", "alma", "opensuse", "unknown"]),
+      osVersion: Schema.NullOr(Schema.String),
+      rapidDeploy: Schema.optional(Schema.Boolean),
       protection: Schema.Struct({
         delete: Schema.Boolean,
       }),
@@ -256,7 +256,7 @@ export const UpdateImageResponse = Schema.Struct({
       deleted: Schema.NullOr(Schema.String),
       labels: Schema.Record(Schema.String, Schema.String),
       architecture: Schema.Literals(["x86", "arm"]),
-    })),
+    }).pipe(Schema.encodeKeys({ imageSize: "image_size", diskSize: "disk_size", createdFrom: "created_from", boundTo: "bound_to", osFlavor: "os_flavor", osVersion: "os_version", rapidDeploy: "rapid_deploy" }))),
   });
 export type UpdateImageResponse = typeof UpdateImageResponse.Type;
 
@@ -290,8 +290,8 @@ export const makeImages = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Get an Action for an Image */
-    getAction: (id: number, action_id: number): Effect.Effect<GetImageActionResponse, HetznerErrors> =>
-      HttpClientRequest.get(`/images/${id}/actions/${action_id}`).pipe(
+    getAction: (id: number, actionId: number): Effect.Effect<GetImageActionResponse, HetznerErrors> =>
+      HttpClientRequest.get(`/images/${id}/actions/${actionId}`).pipe(
         http.execute,
         Effect.flatMap(decodeJson(GetImageActionResponse)),
         Effect.catch(handleHetznerError),
@@ -310,7 +310,7 @@ export const makeImages = (http: HttpClient.HttpClient) => ({
     /** List Images */
     list: (query?: ListImagesQuery): Effect.Effect<ListImagesResponse, HetznerErrors> =>
       HttpClientRequest.get("/images").pipe(
-        HttpClientRequest.setUrlParams(toUrlParams(query)),
+        HttpClientRequest.setUrlParams(toUrlParams({ sort: query?.sort, type: query?.type, status: query?.status, bound_to: query?.boundTo, include_deprecated: query?.includeDeprecated, name: query?.name, label_selector: query?.labelSelector, architecture: query?.architecture, page: query?.page, per_page: query?.perPage })),
         http.execute,
         Effect.flatMap(decodeJson(ListImagesResponse)),
         Effect.catch(handleHetznerError),
@@ -320,7 +320,7 @@ export const makeImages = (http: HttpClient.HttpClient) => ({
     /** List Actions for an Image */
     listActions: (id: number, query?: ListImageActionsQuery): Effect.Effect<ListImageActionsResponse, HetznerErrors> =>
       HttpClientRequest.get(`/images/${id}/actions`).pipe(
-        HttpClientRequest.setUrlParams(toUrlParams(query)),
+        HttpClientRequest.setUrlParams(toUrlParams({ sort: query?.sort, status: query?.status, page: query?.page, per_page: query?.perPage })),
         http.execute,
         Effect.flatMap(decodeJson(ListImageActionsResponse)),
         Effect.catch(handleHetznerError),
@@ -330,7 +330,7 @@ export const makeImages = (http: HttpClient.HttpClient) => ({
     /** List Actions */
     listImagesActions: (query?: ListImagesActionsQuery): Effect.Effect<ListImagesActionsResponse, HetznerErrors> =>
       HttpClientRequest.get("/images/actions").pipe(
-        HttpClientRequest.setUrlParams(toUrlParams(query)),
+        HttpClientRequest.setUrlParams(toUrlParams({ id: query?.id, sort: query?.sort, status: query?.status, page: query?.page, per_page: query?.perPage })),
         http.execute,
         Effect.flatMap(decodeJson(ListImagesActionsResponse)),
         Effect.catch(handleHetznerError),
