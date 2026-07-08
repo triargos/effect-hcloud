@@ -19,6 +19,21 @@ async function write(path: string, content: string) {
   await writeFile(path, content);
 }
 
+/**
+ * Write package.json while preserving the existing `version`. The version is owned
+ * by Changesets (v3) / set-v4-version.mjs (v4) — everything else is template-owned.
+ * Without this, regenerating (which the release workflow does before publishing)
+ * would revert a bumped version back to the template default, so nothing new ever
+ * publishes. Runs after any bump; the version field is the one thing generate must
+ * not clobber.
+ */
+async function writePackageJson(path: string, generated: string) {
+  const next = JSON.parse(generated) as { version: string };
+  const existing = await readFile(path, "utf8").catch(() => null);
+  if (existing) next.version = (JSON.parse(existing) as { version?: string }).version ?? next.version;
+  await write(path, JSON.stringify(next, null, 2) + "\n");
+}
+
 /** Files shared verbatim between the two targets (pure TS / dialect-agnostic Schema + build config). */
 async function writeShared(pkg: string, resources: ResourceIR[]) {
   await write(join(pkg, "src/resources/index.ts"), coreV3.resourcesIndexTs(resources));
@@ -41,7 +56,7 @@ async function emit(target: "v3" | "v4", resources: ResourceIR[]) {
   await writeShared(pkg, resources);
   await write(join(pkg, "src/errors.ts"), core.errorsTs);
   await write(join(pkg, "src/client.ts"), core.clientTs(resources));
-  await write(join(pkg, "package.json"), core.packageJson());
+  await writePackageJson(join(pkg, "package.json"), core.packageJson());
   if (target === "v4") await write(join(pkg, "src/internal/http.ts"), coreV4.internalHttpTs);
 
   const ops = resources.reduce((n, r) => n + r.operations.length, 0);

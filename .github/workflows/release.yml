@@ -36,9 +36,9 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm -C packages/v4 install --frozen-lockfile --ignore-workspace
 
-      # Guard: committed output must match the generator + vendored spec.
-      - run: pnpm generate
-      - run: git diff --exit-code packages/*/src
+      # Publish committed source as-is. The regen drift-check is CI's job (ci.yml);
+      # re-running `pnpm generate` here would rewrite package.json and fight the
+      # Changesets version bump.
       - run: pnpm typecheck
       - run: pnpm build
 
