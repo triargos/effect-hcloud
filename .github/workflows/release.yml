@@ -50,8 +50,18 @@ jobs:
           publish: pnpm run publish:v3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # No NPM_TOKEN — `pnpm publish` authenticates via the OIDC id-token.
+          # No NPM_TOKEN — publishing authenticates via the OIDC id-token.
 
+      # v4 mirrors the current v3 version (2.<minor>.<patch>-beta.0). Publish it
+      # only if that exact version isn't already on npm, so this is idempotent and
+      # self-healing — it publishes the first time a v3 release lifts the v4 version
+      # to a new value, and no-ops on unrelated pushes.
       - name: Publish v4 (next)
-        if: steps.changesets.outputs.published == 'true'
-        run: pnpm run publish:v4
+        run: |
+          node scripts/set-v4-version.mjs
+          VERSION="$(node -p "require('./packages/v4/package.json').version")"
+          if npm view "@triargos/effect-hcloud@${VERSION}" version >/dev/null 2>&1; then
+            echo "v4 ${VERSION} already published — skipping."
+          else
+            npm publish ./packages/v4
+          fi

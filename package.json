@@ -20,7 +20,7 @@
     "changeset": "changeset",
     "version": "changeset version",
     "publish:v3": "changeset publish",
-    "publish:v4": "node scripts/set-v4-version.mjs && pnpm -C packages/v4 publish --no-git-checks"
+    "publish:v4": "node scripts/set-v4-version.mjs && npm publish ./packages/v4"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.0",
