@@ -1,0 +1,26 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - run: npm install
+      - run: (cd packages/v4 && npm install)
+
+      # The generated output must be reproducible from the vendored spec.
+      - run: bun generator/src/generate.ts
+      - run: git diff --exit-code packages/*/src
+
+      - run: npm run typecheck
+      - run: npm run build

@@ -1,0 +1,27 @@
+{
+  "name": "effect-hcloud-workspace",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Generator + dual-target (Effect v3/v4) SDK for the Hetzner Cloud API, published as @triargos/effect-hcloud",
+  "workspaces": ["packages/v3"],
+  "scripts": {
+    "fetch-spec": "bun spec/fetch.ts",
+    "generate": "bun generator/src/generate.ts",
+    "typecheck": "npm run typecheck:v3 && npm run typecheck:v4",
+    "typecheck:v3": "cd packages/v3 && npm run typecheck",
+    "typecheck:v4": "cd packages/v4 && npm run typecheck",
+    "build": "npm run build:v3 && npm run build:v4",
+    "build:v3": "cd packages/v3 && npm run build",
+    "build:v4": "cd packages/v4 && npm run build",
+    "regen": "npm run fetch-spec && npm run generate && npm run typecheck",
+    "changeset": "changeset",
+    "version": "changeset version",
+    "publish:v3": "changeset publish",
+    "publish:v4": "node scripts/set-v4-version.mjs && cd packages/v4 && npm publish"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.27.0",
+    "typescript": "^5.9.3"
+  }
+}

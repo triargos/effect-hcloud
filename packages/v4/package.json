@@ -1,0 +1,50 @@
+{
+  "name": "@triargos/effect-hcloud",
+  "version": "2.0.0-beta.0",
+  "description": "Effect-native SDK for the Hetzner Cloud API (Effect v4), generated from the official OpenAPI spec.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "keywords": [
+    "hetzner",
+    "hcloud",
+    "effect",
+    "effect-ts",
+    "sdk",
+    "openapi"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/triargos/effect-hcloud.git",
+    "directory": "packages/v4"
+  },
+  "homepage": "https://github.com/triargos/effect-hcloud#readme",
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json",
+    "build": "tsc -p tsconfig.build.json"
+  },
+  "peerDependencies": {
+    "effect": "^4.0.0-beta.94"
+  },
+  "devDependencies": {
+    "effect": "4.0.0-beta.94",
+    "typescript": "^5.9.3"
+  },
+  "publishConfig": {
+    "access": "public",
+    "tag": "next",
+    "provenance": true
+  }
+}

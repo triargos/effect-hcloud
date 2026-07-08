@@ -1,0 +1,56 @@
+name: Release
+
+# Push to main:
+#  - if there are unreleased changesets → open/update a "Version Packages" PR
+#  - if there are none (i.e. that PR just merged) → publish v3 (latest) + v4 (next)
+on:
+  push:
+    branches: [main]
+
+concurrency: release-${{ github.ref }}
+
+permissions:
+  contents: write # changesets pushes the version PR + git tags
+  pull-requests: write # changesets opens the version PR
+  id-token: write # OIDC → npm trusted publishing + provenance (no NPM_TOKEN)
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: oven-sh/setup-bun@v2 # generator runs on bun (drift check)
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+
+      # Trusted (tokenless) publishing + provenance require a recent npm.
+      - run: npm install -g npm@latest
+
+      - run: npm install
+      - run: (cd packages/v4 && npm install)
+
+      # Guard: committed output must match the generator + vendored spec.
+      - run: bun generator/src/generate.ts
+      - run: git diff --exit-code packages/*/src
+      - run: npm run typecheck
+      - run: npm run build
+
+      - name: Version / publish v3 (latest)
+        id: changesets
+        uses: changesets/action@v1
+        with:
+          version: npm run version
+          publish: npm run publish:v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # No NPM_TOKEN — `npm publish` authenticates via the OIDC id-token.
+
+      - name: Publish v4 (next)
+        if: steps.changesets.outputs.published == 'true'
+        run: npm run publish:v4
