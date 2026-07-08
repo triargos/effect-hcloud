@@ -22,35 +22,36 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: oven-sh/setup-bun@v2 # generator runs on bun (drift check)
+      - uses: pnpm/action-setup@v4
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24 # runs the generator's .ts natively
+          cache: pnpm
           registry-url: https://registry.npmjs.org
 
       # Trusted (tokenless) publishing + provenance require a recent npm.
       - run: npm install -g npm@latest
 
-      - run: npm install
-      - run: (cd packages/v4 && npm install)
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm -C packages/v4 install --frozen-lockfile --ignore-workspace
 
       # Guard: committed output must match the generator + vendored spec.
-      - run: bun generator/src/generate.ts
+      - run: pnpm generate
       - run: git diff --exit-code packages/*/src
-      - run: npm run typecheck
-      - run: npm run build
+      - run: pnpm typecheck
+      - run: pnpm build
 
       - name: Version / publish v3 (latest)
         id: changesets
         uses: changesets/action@v1
         with:
-          version: npm run version
-          publish: npm run publish:v3
+          version: pnpm run version
+          publish: pnpm run publish:v3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # No NPM_TOKEN — `npm publish` authenticates via the OIDC id-token.
+          # No NPM_TOKEN — `pnpm publish` authenticates via the OIDC id-token.
 
       - name: Publish v4 (next)
         if: steps.changesets.outputs.published == 'true'
-        run: npm run publish:v4
+        run: pnpm run publish:v4

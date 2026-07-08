@@ -2,7 +2,7 @@
  * Orchestrator: vendored spec → IR → both emitted packages (packages/v3,
  * packages/v4) over the same IR. Reproducible: reads only spec/cloud.spec.json.
  */
-import { mkdir, rm, writeFile } from "node:fs/promises";
+import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { buildIR, type ResourceIR } from "./ir.ts";
 import { emitResource } from "./emit-resource.ts";
@@ -48,7 +48,7 @@ async function emit(target: "v3" | "v4", resources: ResourceIR[]) {
   console.log(`${target}: emitted ${resources.length} resources, ${ops} operations → packages/${target}/src`);
 }
 
-const spec = JSON.parse(await Bun.file(SPEC).text()) as OpenApiSpec;
+const spec = JSON.parse(await readFile(SPEC, "utf8")) as OpenApiSpec;
 const resources = buildIR(spec);
 await emit("v3", resources);
 await emit("v4", resources);

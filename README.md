@@ -84,17 +84,22 @@ packages/v3  packages/v4    identical `HetznerClient.servers.create` surface
 
 ## Development
 
+Tooling: **pnpm** (package manager) + **Node 24** (runs the generator's TypeScript
+natively — no bundler/transpiler). v4 lives under `packages/` but is intentionally *not* a
+workspace member (so Changesets never sees two same-named packages), so it installs
+standalone with `--ignore-workspace`; `pnpm bootstrap` does both.
+
 ```bash
-bun install                 # generator deps (bun)
-npm run fetch-spec          # re-vendor spec/cloud.spec.json from docs.hetzner.cloud
-npm run generate            # spec → packages/v3/src + packages/v4/src
-npm run typecheck           # tsc both packages (0 errors expected)
-npm run build               # tsc → packages/*/dist (runnable ESM + .d.ts)
-npm run regen               # fetch-spec + generate + typecheck
+pnpm bootstrap              # pnpm install (root + v3 workspace) + v4 (--ignore-workspace)
+pnpm fetch-spec             # re-vendor spec/cloud.spec.json from docs.hetzner.cloud
+pnpm generate               # spec → packages/v3/src + packages/v4/src  (node generate.ts)
+pnpm typecheck              # tsc both packages (0 errors expected)
+pnpm build                  # tsc → packages/*/dist (runnable ESM + .d.ts)
+pnpm regen                  # fetch-spec + generate + typecheck
 ```
 
 `packages/*/src` is fully generated — **edit the generator, not the output.** A spec bump is
-`npm run regen` followed by a diff of `packages/*/src`.
+`pnpm regen` followed by a diff of `packages/*/src`.
 
 ## Publishing
 
@@ -109,7 +114,7 @@ generator, so a v3 `1.4.2` release implies v4 `2.4.2-beta.<run>` (`scripts/set-v
 ### One-time npm setup (per the `@triargos/effect-hcloud` package)
 
 1. **Claim the name** with a first manual publish (trusted publishing can't bootstrap a
-   non-existent package): `cd packages/v3 && npm run build && npm publish` using a
+   non-existent package): `pnpm build:v3 && pnpm -C packages/v3 publish` using a
    short-lived granular automation token, then delete the token.
 2. On npmjs.com → the package → **Settings → Trusted Publisher → GitHub Actions**: set
    repository `triargos/effect-hcloud` and workflow `.github/workflows/release.yml`. One
@@ -121,13 +126,13 @@ generator, so a v3 `1.4.2` release implies v4 `2.4.2-beta.<run>` (`scripts/set-v
 - Push to `main` with a changeset → the [changesets action](https://github.com/changesets/action)
   opens a **"Version Packages"** PR (bumps v3, writes `CHANGELOG.md`).
 - Merge that PR → the workflow builds, then publishes **v3 → `latest`** (`changeset publish`)
-  and **v4 → `next`** (`set-v4-version.mjs` + `npm publish`). Both attach provenance via
+  and **v4 → `next`** (`set-v4-version.mjs` + `pnpm publish`). Both attach provenance via
   `publishConfig.provenance` + the job's `id-token: write`.
 
 Add a changeset for any spec/generator change:
 
 ```bash
-npm run changeset        # pick bump + write a summary → .changeset/*.md, commit it
+pnpm changeset           # pick bump + write a summary → .changeset/*.md, commit it
 ```
 
 Requirements the workflow already encodes: `permissions: id-token: write`, `npm@latest`

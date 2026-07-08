@@ -1,8 +1,10 @@
 /**
  * Downloads the official Hetzner Cloud OpenAPI spec and vendors it into the repo.
- * Run: `bun spec/fetch.ts`. The generator reads the vendored copy, never the network,
+ * Run: `pnpm fetch-spec`. The generator reads the vendored copy, never the network,
  * so generation is reproducible and CI can diff spec bumps.
  */
+import { writeFile } from "node:fs/promises";
+
 const SPEC_URL = "https://docs.hetzner.cloud/cloud.spec.json";
 const OUT = new URL("./cloud.spec.json", import.meta.url);
 
@@ -14,5 +16,5 @@ const json = JSON.parse(text) as { openapi?: string; info?: { title?: string } }
 if (!json.openapi || !json.info?.title?.includes("Hetzner")) {
   throw new Error(`Unexpected spec payload (openapi=${json.openapi}, title=${json.info?.title})`);
 }
-await Bun.write(OUT, JSON.stringify(json, null, 2) + "\n");
+await writeFile(OUT, JSON.stringify(json, null, 2) + "\n");
 console.log(`Vendored ${json.info.title} (OpenAPI ${json.openapi}) → spec/cloud.spec.json`);

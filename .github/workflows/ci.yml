@@ -10,17 +10,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: oven-sh/setup-bun@v2
+      - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24 # runs the generator's .ts natively (type stripping)
+          cache: pnpm
 
-      - run: npm install
-      - run: (cd packages/v4 && npm install)
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm -C packages/v4 install --frozen-lockfile --ignore-workspace
 
       # The generated output must be reproducible from the vendored spec.
-      - run: bun generator/src/generate.ts
+      - run: pnpm generate
       - run: git diff --exit-code packages/*/src
 
-      - run: npm run typecheck
-      - run: npm run build
+      - run: pnpm typecheck
+      - run: pnpm build

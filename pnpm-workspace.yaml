@@ -1,0 +1,5 @@
+# Only the v3 line is a workspace member (and thus Changesets-managed). v4 is a
+# standalone package published in lockstep, kept out so Changesets never sees two
+# packages with the same name (@triargos/effect-hcloud).
+packages:
+  - "packages/v3"
