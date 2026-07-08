@@ -55,7 +55,9 @@ trusted publishing (OIDC) + provenance — no `NPM_TOKEN`**.
 Both dirs publish to the single name `@triargos/effect-hcloud`, so only the v3 line is
 Changesets-managed (Changesets requires unique names, and its prerelease mode is
 workspace-global). v4 is versioned in **lockstep** — same spec + generator — so a v3 `1.4.2`
-release implies v4 `2.4.2-beta.<run>` (`scripts/set-v4-version.mjs`).
+release implies v4 `2.4.2-beta.0` (`scripts/set-v4-version.mjs`). The version field in each
+`package.json` is owned by the release tooling (Changesets for v3, `set-v4-version.mjs` for
+v4); `pnpm generate` preserves it rather than resetting it to the template default.
 
 ### One-time npm setup (per the `@triargos/effect-hcloud` package)
 
@@ -73,8 +75,10 @@ release implies v4 `2.4.2-beta.<run>` (`scripts/set-v4-version.mjs`).
 - Push to `main` with a changeset → the [changesets action](https://github.com/changesets/action)
   opens a **"Version Packages"** PR (bumps v3, writes `CHANGELOG.md`).
 - Merge that PR → the workflow builds, then publishes **v3 → `latest`** (`changeset publish`)
-  and **v4 → `next`** (`set-v4-version.mjs` + `pnpm publish`). Both attach provenance via
-  `publishConfig.provenance` + the job's `id-token: write`.
+  and **v4 → `next`** (`set-v4-version.mjs` + `npm publish`, skipped if that v4 version is
+  already on npm). Both attach provenance via `publishConfig.provenance` + the job's
+  `id-token: write`. (v4 uses `npm publish`, not `pnpm publish`, because pnpm mishandles
+  `provenance: true`.)
 
 Add a changeset for any spec/generator change:
 
