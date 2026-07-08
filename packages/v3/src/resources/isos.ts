@@ -4,7 +4,7 @@
 import { Effect, Schema } from "effect";
 import { HttpClientRequest, HttpClientResponse } from "@effect/platform";
 import type { HttpClient } from "@effect/platform";
-import { handleHetznerError, type HetznerError } from "../errors.js";
+import { handleHetznerError, type HetznerErrors } from "../errors.js";
 import { toUrlParams } from "../internal/url-params.js";
 
 
@@ -58,7 +58,7 @@ export interface ListIsosQuery {
 
 export const makeIsos = (http: HttpClient.HttpClient) => ({
     /** Get an ISO */
-    get: (id: number): Effect.Effect<GetIsoResponse, HetznerError> =>
+    get: (id: number): Effect.Effect<GetIsoResponse, HetznerErrors> =>
       HttpClientRequest.get(`/isos/${id}`).pipe(
         http.execute,
         Effect.flatMap(HttpClientResponse.schemaBodyJson(GetIsoResponse)),
@@ -67,7 +67,7 @@ export const makeIsos = (http: HttpClient.HttpClient) => ({
       ),
 
     /** List ISOs */
-    list: (query?: ListIsosQuery): Effect.Effect<ListIsosResponse, HetznerError> =>
+    list: (query?: ListIsosQuery): Effect.Effect<ListIsosResponse, HetznerErrors> =>
       HttpClientRequest.get("/isos").pipe(
         HttpClientRequest.setUrlParams(toUrlParams(query)),
         http.execute,

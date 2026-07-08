@@ -12,7 +12,7 @@ export const v3Profile: Profile = {
     `import { Effect, Schema } from "effect";\n` +
     `import { HttpClientRequest, HttpClientResponse } from "@effect/platform";\n` +
     `import type { HttpClient } from "@effect/platform";\n` +
-    `import { handleHetznerError, type HetznerError } from "../errors.js";\n` +
+    `import { handleHetznerError, type HetznerErrors } from "../errors.js";\n` +
     `import { toUrlParams } from "../internal/url-params.js";\n`,
   responseDecode: "HttpClientResponse.schemaBodyJson",
   catchAll: "Effect.catchAll",
@@ -23,7 +23,7 @@ export const v4Profile: Profile = {
   header:
     `import { Effect, Schema } from "effect";\n` +
     `import { HttpClient, HttpClientRequest } from "effect/unstable/http";\n` +
-    `import { handleHetznerError, type HetznerError } from "../errors.js";\n` +
+    `import { handleHetznerError, type HetznerErrors } from "../errors.js";\n` +
     `import { decodeJson } from "../internal/http.js";\n` +
     `import { toUrlParams } from "../internal/url-params.js";\n`,
   responseDecode: "decodeJson",

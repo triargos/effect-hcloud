@@ -3,7 +3,7 @@
  */
 import { Effect, Schema } from "effect";
 import { HttpClient, HttpClientRequest } from "effect/unstable/http";
-import { handleHetznerError, type HetznerError } from "../errors.js";
+import { handleHetznerError, type HetznerErrors } from "../errors.js";
 import { decodeJson } from "../internal/http.js";
 import { toUrlParams } from "../internal/url-params.js";
 
@@ -263,7 +263,7 @@ export type UpdateImageResponse = typeof UpdateImageResponse.Type;
 
 export const makeImages = (http: HttpClient.HttpClient) => ({
     /** Change Image Protection */
-    changeProtection: (id: number, body: ChangeImageProtectionRequest): Effect.Effect<ChangeImageProtectionResponse, HetznerError> =>
+    changeProtection: (id: number, body: ChangeImageProtectionRequest): Effect.Effect<ChangeImageProtectionResponse, HetznerErrors> =>
       HttpClientRequest.post(`/images/${id}/actions/change_protection`).pipe(
         HttpClientRequest.schemaBodyJson(ChangeImageProtectionRequest)(body),
         Effect.flatMap(http.execute),
@@ -273,7 +273,7 @@ export const makeImages = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Delete an Image */
-    delete: (id: number): Effect.Effect<void, HetznerError> =>
+    delete: (id: number): Effect.Effect<void, HetznerErrors> =>
       http.del(`/images/${id}`).pipe(
         Effect.asVoid,
         Effect.catch(handleHetznerError),
@@ -281,7 +281,7 @@ export const makeImages = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Get an Image */
-    get: (id: number): Effect.Effect<GetImageResponse, HetznerError> =>
+    get: (id: number): Effect.Effect<GetImageResponse, HetznerErrors> =>
       HttpClientRequest.get(`/images/${id}`).pipe(
         http.execute,
         Effect.flatMap(decodeJson(GetImageResponse)),
@@ -290,7 +290,7 @@ export const makeImages = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Get an Action for an Image */
-    getAction: (id: number, action_id: number): Effect.Effect<GetImageActionResponse, HetznerError> =>
+    getAction: (id: number, action_id: number): Effect.Effect<GetImageActionResponse, HetznerErrors> =>
       HttpClientRequest.get(`/images/${id}/actions/${action_id}`).pipe(
         http.execute,
         Effect.flatMap(decodeJson(GetImageActionResponse)),
@@ -299,7 +299,7 @@ export const makeImages = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Get an Action */
-    getImagesAction: (id: number): Effect.Effect<GetImagesActionResponse, HetznerError> =>
+    getImagesAction: (id: number): Effect.Effect<GetImagesActionResponse, HetznerErrors> =>
       HttpClientRequest.get(`/images/actions/${id}`).pipe(
         http.execute,
         Effect.flatMap(decodeJson(GetImagesActionResponse)),
@@ -308,7 +308,7 @@ export const makeImages = (http: HttpClient.HttpClient) => ({
       ),
 
     /** List Images */
-    list: (query?: ListImagesQuery): Effect.Effect<ListImagesResponse, HetznerError> =>
+    list: (query?: ListImagesQuery): Effect.Effect<ListImagesResponse, HetznerErrors> =>
       HttpClientRequest.get("/images").pipe(
         HttpClientRequest.setUrlParams(toUrlParams(query)),
         http.execute,
@@ -318,7 +318,7 @@ export const makeImages = (http: HttpClient.HttpClient) => ({
       ),
 
     /** List Actions for an Image */
-    listActions: (id: number, query?: ListImageActionsQuery): Effect.Effect<ListImageActionsResponse, HetznerError> =>
+    listActions: (id: number, query?: ListImageActionsQuery): Effect.Effect<ListImageActionsResponse, HetznerErrors> =>
       HttpClientRequest.get(`/images/${id}/actions`).pipe(
         HttpClientRequest.setUrlParams(toUrlParams(query)),
         http.execute,
@@ -328,7 +328,7 @@ export const makeImages = (http: HttpClient.HttpClient) => ({
       ),
 
     /** List Actions */
-    listImagesActions: (query?: ListImagesActionsQuery): Effect.Effect<ListImagesActionsResponse, HetznerError> =>
+    listImagesActions: (query?: ListImagesActionsQuery): Effect.Effect<ListImagesActionsResponse, HetznerErrors> =>
       HttpClientRequest.get("/images/actions").pipe(
         HttpClientRequest.setUrlParams(toUrlParams(query)),
         http.execute,
@@ -338,7 +338,7 @@ export const makeImages = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Update an Image */
-    update: (id: number, body: UpdateImageRequest): Effect.Effect<UpdateImageResponse, HetznerError> =>
+    update: (id: number, body: UpdateImageRequest): Effect.Effect<UpdateImageResponse, HetznerErrors> =>
       HttpClientRequest.put(`/images/${id}`).pipe(
         HttpClientRequest.schemaBodyJson(UpdateImageRequest)(body),
         Effect.flatMap(http.execute),

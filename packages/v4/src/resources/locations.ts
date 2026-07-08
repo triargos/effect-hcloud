@@ -3,7 +3,7 @@
  */
 import { Effect, Schema } from "effect";
 import { HttpClient, HttpClientRequest } from "effect/unstable/http";
-import { handleHetznerError, type HetznerError } from "../errors.js";
+import { handleHetznerError, type HetznerErrors } from "../errors.js";
 import { decodeJson } from "../internal/http.js";
 import { toUrlParams } from "../internal/url-params.js";
 
@@ -55,7 +55,7 @@ export interface ListLocationsQuery {
 
 export const makeLocations = (http: HttpClient.HttpClient) => ({
     /** Get a Location */
-    get: (id: number): Effect.Effect<GetLocationResponse, HetznerError> =>
+    get: (id: number): Effect.Effect<GetLocationResponse, HetznerErrors> =>
       HttpClientRequest.get(`/locations/${id}`).pipe(
         http.execute,
         Effect.flatMap(decodeJson(GetLocationResponse)),
@@ -64,7 +64,7 @@ export const makeLocations = (http: HttpClient.HttpClient) => ({
       ),
 
     /** List Locations */
-    list: (query?: ListLocationsQuery): Effect.Effect<ListLocationsResponse, HetznerError> =>
+    list: (query?: ListLocationsQuery): Effect.Effect<ListLocationsResponse, HetznerErrors> =>
       HttpClientRequest.get("/locations").pipe(
         HttpClientRequest.setUrlParams(toUrlParams(query)),
         http.execute,

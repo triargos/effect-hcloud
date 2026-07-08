@@ -3,7 +3,7 @@
  */
 import { Effect, Schema } from "effect";
 import { HttpClient, HttpClientRequest } from "effect/unstable/http";
-import { handleHetznerError, type HetznerError } from "../errors.js";
+import { handleHetznerError, type HetznerErrors } from "../errors.js";
 import { decodeJson } from "../internal/http.js";
 import { toUrlParams } from "../internal/url-params.js";
 
@@ -393,7 +393,7 @@ export type UpdateFloatingIpResponse = typeof UpdateFloatingIpResponse.Type;
 
 export const makeFloatingIps = (http: HttpClient.HttpClient) => ({
     /** Assign a Floating IP to a Server */
-    assign: (id: number, body: AssignFloatingIpRequest): Effect.Effect<AssignFloatingIpResponse, HetznerError> =>
+    assign: (id: number, body: AssignFloatingIpRequest): Effect.Effect<AssignFloatingIpResponse, HetznerErrors> =>
       HttpClientRequest.post(`/floating_ips/${id}/actions/assign`).pipe(
         HttpClientRequest.schemaBodyJson(AssignFloatingIpRequest)(body),
         Effect.flatMap(http.execute),
@@ -403,7 +403,7 @@ export const makeFloatingIps = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Change reverse DNS records for a Floating IP */
-    changeDnsPtr: (id: number, body: ChangeFloatingIpDnsPtrRequest): Effect.Effect<ChangeFloatingIpDnsPtrResponse, HetznerError> =>
+    changeDnsPtr: (id: number, body: ChangeFloatingIpDnsPtrRequest): Effect.Effect<ChangeFloatingIpDnsPtrResponse, HetznerErrors> =>
       HttpClientRequest.post(`/floating_ips/${id}/actions/change_dns_ptr`).pipe(
         HttpClientRequest.schemaBodyJson(ChangeFloatingIpDnsPtrRequest)(body),
         Effect.flatMap(http.execute),
@@ -413,7 +413,7 @@ export const makeFloatingIps = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Change Floating IP Protection */
-    changeProtection: (id: number, body: ChangeFloatingIpProtectionRequest): Effect.Effect<ChangeFloatingIpProtectionResponse, HetznerError> =>
+    changeProtection: (id: number, body: ChangeFloatingIpProtectionRequest): Effect.Effect<ChangeFloatingIpProtectionResponse, HetznerErrors> =>
       HttpClientRequest.post(`/floating_ips/${id}/actions/change_protection`).pipe(
         HttpClientRequest.schemaBodyJson(ChangeFloatingIpProtectionRequest)(body),
         Effect.flatMap(http.execute),
@@ -423,7 +423,7 @@ export const makeFloatingIps = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Create a Floating IP */
-    create: (body: CreateFloatingIpRequest): Effect.Effect<CreateFloatingIpResponse, HetznerError> =>
+    create: (body: CreateFloatingIpRequest): Effect.Effect<CreateFloatingIpResponse, HetznerErrors> =>
       HttpClientRequest.post("/floating_ips").pipe(
         HttpClientRequest.schemaBodyJson(CreateFloatingIpRequest)(body),
         Effect.flatMap(http.execute),
@@ -433,7 +433,7 @@ export const makeFloatingIps = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Delete a Floating IP */
-    delete: (id: number): Effect.Effect<void, HetznerError> =>
+    delete: (id: number): Effect.Effect<void, HetznerErrors> =>
       http.del(`/floating_ips/${id}`).pipe(
         Effect.asVoid,
         Effect.catch(handleHetznerError),
@@ -441,7 +441,7 @@ export const makeFloatingIps = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Get a Floating IP */
-    get: (id: number): Effect.Effect<GetFloatingIpResponse, HetznerError> =>
+    get: (id: number): Effect.Effect<GetFloatingIpResponse, HetznerErrors> =>
       HttpClientRequest.get(`/floating_ips/${id}`).pipe(
         http.execute,
         Effect.flatMap(decodeJson(GetFloatingIpResponse)),
@@ -450,7 +450,7 @@ export const makeFloatingIps = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Get an Action for a Floating IP */
-    getAction: (id: number, action_id: number): Effect.Effect<GetFloatingIpActionResponse, HetznerError> =>
+    getAction: (id: number, action_id: number): Effect.Effect<GetFloatingIpActionResponse, HetznerErrors> =>
       HttpClientRequest.get(`/floating_ips/${id}/actions/${action_id}`).pipe(
         http.execute,
         Effect.flatMap(decodeJson(GetFloatingIpActionResponse)),
@@ -459,7 +459,7 @@ export const makeFloatingIps = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Get an Action */
-    getFloatingIpsAction: (id: number): Effect.Effect<GetFloatingIpsActionResponse, HetznerError> =>
+    getFloatingIpsAction: (id: number): Effect.Effect<GetFloatingIpsActionResponse, HetznerErrors> =>
       HttpClientRequest.get(`/floating_ips/actions/${id}`).pipe(
         http.execute,
         Effect.flatMap(decodeJson(GetFloatingIpsActionResponse)),
@@ -468,7 +468,7 @@ export const makeFloatingIps = (http: HttpClient.HttpClient) => ({
       ),
 
     /** List Floating IPs */
-    list: (query?: ListFloatingIpsQuery): Effect.Effect<ListFloatingIpsResponse, HetznerError> =>
+    list: (query?: ListFloatingIpsQuery): Effect.Effect<ListFloatingIpsResponse, HetznerErrors> =>
       HttpClientRequest.get("/floating_ips").pipe(
         HttpClientRequest.setUrlParams(toUrlParams(query)),
         http.execute,
@@ -478,7 +478,7 @@ export const makeFloatingIps = (http: HttpClient.HttpClient) => ({
       ),
 
     /** List Actions for a Floating IP */
-    listActions: (id: number, query?: ListFloatingIpActionsQuery): Effect.Effect<ListFloatingIpActionsResponse, HetznerError> =>
+    listActions: (id: number, query?: ListFloatingIpActionsQuery): Effect.Effect<ListFloatingIpActionsResponse, HetznerErrors> =>
       HttpClientRequest.get(`/floating_ips/${id}/actions`).pipe(
         HttpClientRequest.setUrlParams(toUrlParams(query)),
         http.execute,
@@ -488,7 +488,7 @@ export const makeFloatingIps = (http: HttpClient.HttpClient) => ({
       ),
 
     /** List Actions */
-    listFloatingIpsActions: (query?: ListFloatingIpsActionsQuery): Effect.Effect<ListFloatingIpsActionsResponse, HetznerError> =>
+    listFloatingIpsActions: (query?: ListFloatingIpsActionsQuery): Effect.Effect<ListFloatingIpsActionsResponse, HetznerErrors> =>
       HttpClientRequest.get("/floating_ips/actions").pipe(
         HttpClientRequest.setUrlParams(toUrlParams(query)),
         http.execute,
@@ -498,7 +498,7 @@ export const makeFloatingIps = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Unassign a Floating IP */
-    unassign: (id: number): Effect.Effect<UnassignFloatingIpResponse, HetznerError> =>
+    unassign: (id: number): Effect.Effect<UnassignFloatingIpResponse, HetznerErrors> =>
       HttpClientRequest.post(`/floating_ips/${id}/actions/unassign`).pipe(
         http.execute,
         Effect.flatMap(decodeJson(UnassignFloatingIpResponse)),
@@ -507,7 +507,7 @@ export const makeFloatingIps = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Update a Floating IP */
-    update: (id: number, body: UpdateFloatingIpRequest): Effect.Effect<UpdateFloatingIpResponse, HetznerError> =>
+    update: (id: number, body: UpdateFloatingIpRequest): Effect.Effect<UpdateFloatingIpResponse, HetznerErrors> =>
       HttpClientRequest.put(`/floating_ips/${id}`).pipe(
         HttpClientRequest.schemaBodyJson(UpdateFloatingIpRequest)(body),
         Effect.flatMap(http.execute),

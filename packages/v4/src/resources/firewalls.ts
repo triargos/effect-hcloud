@@ -3,7 +3,7 @@
  */
 import { Effect, Schema } from "effect";
 import { HttpClient, HttpClientRequest } from "effect/unstable/http";
-import { handleHetznerError, type HetznerError } from "../errors.js";
+import { handleHetznerError, type HetznerErrors } from "../errors.js";
 import { decodeJson } from "../internal/http.js";
 import { toUrlParams } from "../internal/url-params.js";
 
@@ -411,7 +411,7 @@ export type UpdateFirewallResponse = typeof UpdateFirewallResponse.Type;
 
 export const makeFirewalls = (http: HttpClient.HttpClient) => ({
     /** Apply to Resources */
-    applyToResources: (id: number, body: ApplyFirewallToResourcesRequest): Effect.Effect<ApplyFirewallToResourcesResponse, HetznerError> =>
+    applyToResources: (id: number, body: ApplyFirewallToResourcesRequest): Effect.Effect<ApplyFirewallToResourcesResponse, HetznerErrors> =>
       HttpClientRequest.post(`/firewalls/${id}/actions/apply_to_resources`).pipe(
         HttpClientRequest.schemaBodyJson(ApplyFirewallToResourcesRequest)(body),
         Effect.flatMap(http.execute),
@@ -421,7 +421,7 @@ export const makeFirewalls = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Create a Firewall */
-    create: (body: CreateFirewallRequest): Effect.Effect<CreateFirewallResponse, HetznerError> =>
+    create: (body: CreateFirewallRequest): Effect.Effect<CreateFirewallResponse, HetznerErrors> =>
       HttpClientRequest.post("/firewalls").pipe(
         HttpClientRequest.schemaBodyJson(CreateFirewallRequest)(body),
         Effect.flatMap(http.execute),
@@ -431,7 +431,7 @@ export const makeFirewalls = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Delete a Firewall */
-    delete: (id: number): Effect.Effect<void, HetznerError> =>
+    delete: (id: number): Effect.Effect<void, HetznerErrors> =>
       http.del(`/firewalls/${id}`).pipe(
         Effect.asVoid,
         Effect.catch(handleHetznerError),
@@ -439,7 +439,7 @@ export const makeFirewalls = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Get a Firewall */
-    get: (id: number): Effect.Effect<GetFirewallResponse, HetznerError> =>
+    get: (id: number): Effect.Effect<GetFirewallResponse, HetznerErrors> =>
       HttpClientRequest.get(`/firewalls/${id}`).pipe(
         http.execute,
         Effect.flatMap(decodeJson(GetFirewallResponse)),
@@ -448,7 +448,7 @@ export const makeFirewalls = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Get an Action for a Firewall */
-    getAction: (id: number, action_id: number): Effect.Effect<GetFirewallActionResponse, HetznerError> =>
+    getAction: (id: number, action_id: number): Effect.Effect<GetFirewallActionResponse, HetznerErrors> =>
       HttpClientRequest.get(`/firewalls/${id}/actions/${action_id}`).pipe(
         http.execute,
         Effect.flatMap(decodeJson(GetFirewallActionResponse)),
@@ -457,7 +457,7 @@ export const makeFirewalls = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Get an Action */
-    getFirewallsAction: (id: number): Effect.Effect<GetFirewallsActionResponse, HetznerError> =>
+    getFirewallsAction: (id: number): Effect.Effect<GetFirewallsActionResponse, HetznerErrors> =>
       HttpClientRequest.get(`/firewalls/actions/${id}`).pipe(
         http.execute,
         Effect.flatMap(decodeJson(GetFirewallsActionResponse)),
@@ -466,7 +466,7 @@ export const makeFirewalls = (http: HttpClient.HttpClient) => ({
       ),
 
     /** List Firewalls */
-    list: (query?: ListFirewallsQuery): Effect.Effect<ListFirewallsResponse, HetznerError> =>
+    list: (query?: ListFirewallsQuery): Effect.Effect<ListFirewallsResponse, HetznerErrors> =>
       HttpClientRequest.get("/firewalls").pipe(
         HttpClientRequest.setUrlParams(toUrlParams(query)),
         http.execute,
@@ -476,7 +476,7 @@ export const makeFirewalls = (http: HttpClient.HttpClient) => ({
       ),
 
     /** List Actions for a Firewall */
-    listActions: (id: number, query?: ListFirewallActionsQuery): Effect.Effect<ListFirewallActionsResponse, HetznerError> =>
+    listActions: (id: number, query?: ListFirewallActionsQuery): Effect.Effect<ListFirewallActionsResponse, HetznerErrors> =>
       HttpClientRequest.get(`/firewalls/${id}/actions`).pipe(
         HttpClientRequest.setUrlParams(toUrlParams(query)),
         http.execute,
@@ -486,7 +486,7 @@ export const makeFirewalls = (http: HttpClient.HttpClient) => ({
       ),
 
     /** List Actions */
-    listFirewallsActions: (query?: ListFirewallsActionsQuery): Effect.Effect<ListFirewallsActionsResponse, HetznerError> =>
+    listFirewallsActions: (query?: ListFirewallsActionsQuery): Effect.Effect<ListFirewallsActionsResponse, HetznerErrors> =>
       HttpClientRequest.get("/firewalls/actions").pipe(
         HttpClientRequest.setUrlParams(toUrlParams(query)),
         http.execute,
@@ -496,7 +496,7 @@ export const makeFirewalls = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Remove from Resources */
-    removeFromResources: (id: number, body: RemoveFirewallFromResourcesRequest): Effect.Effect<RemoveFirewallFromResourcesResponse, HetznerError> =>
+    removeFromResources: (id: number, body: RemoveFirewallFromResourcesRequest): Effect.Effect<RemoveFirewallFromResourcesResponse, HetznerErrors> =>
       HttpClientRequest.post(`/firewalls/${id}/actions/remove_from_resources`).pipe(
         HttpClientRequest.schemaBodyJson(RemoveFirewallFromResourcesRequest)(body),
         Effect.flatMap(http.execute),
@@ -506,7 +506,7 @@ export const makeFirewalls = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Set Rules */
-    setRules: (id: number, body: SetFirewallRulesRequest): Effect.Effect<SetFirewallRulesResponse, HetznerError> =>
+    setRules: (id: number, body: SetFirewallRulesRequest): Effect.Effect<SetFirewallRulesResponse, HetznerErrors> =>
       HttpClientRequest.post(`/firewalls/${id}/actions/set_rules`).pipe(
         HttpClientRequest.schemaBodyJson(SetFirewallRulesRequest)(body),
         Effect.flatMap(http.execute),
@@ -516,7 +516,7 @@ export const makeFirewalls = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Update a Firewall */
-    update: (id: number, body: UpdateFirewallRequest): Effect.Effect<UpdateFirewallResponse, HetznerError> =>
+    update: (id: number, body: UpdateFirewallRequest): Effect.Effect<UpdateFirewallResponse, HetznerErrors> =>
       HttpClientRequest.put(`/firewalls/${id}`).pipe(
         HttpClientRequest.schemaBodyJson(UpdateFirewallRequest)(body),
         Effect.flatMap(http.execute),

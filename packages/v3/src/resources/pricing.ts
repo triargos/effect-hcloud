@@ -4,7 +4,7 @@
 import { Effect, Schema } from "effect";
 import { HttpClientRequest, HttpClientResponse } from "@effect/platform";
 import type { HttpClient } from "@effect/platform";
-import { handleHetznerError, type HetznerError } from "../errors.js";
+import { handleHetznerError, type HetznerErrors } from "../errors.js";
 import { toUrlParams } from "../internal/url-params.js";
 
 
@@ -104,7 +104,7 @@ export type GetPricingResponse = typeof GetPricingResponse.Type;
 
 export const makePricing = (http: HttpClient.HttpClient) => ({
     /** Get all prices */
-    get: (): Effect.Effect<GetPricingResponse, HetznerError> =>
+    get: (): Effect.Effect<GetPricingResponse, HetznerErrors> =>
       HttpClientRequest.get("/pricing").pipe(
         http.execute,
         Effect.flatMap(HttpClientResponse.schemaBodyJson(GetPricingResponse)),

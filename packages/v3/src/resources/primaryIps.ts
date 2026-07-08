@@ -4,7 +4,7 @@
 import { Effect, Schema } from "effect";
 import { HttpClientRequest, HttpClientResponse } from "@effect/platform";
 import type { HttpClient } from "@effect/platform";
-import { handleHetznerError, type HetznerError } from "../errors.js";
+import { handleHetznerError, type HetznerErrors } from "../errors.js";
 import { toUrlParams } from "../internal/url-params.js";
 
 
@@ -400,7 +400,7 @@ export type UpdatePrimaryIpResponse = typeof UpdatePrimaryIpResponse.Type;
 
 export const makePrimaryIps = (http: HttpClient.HttpClient) => ({
     /** Assign a Primary IP to a resource */
-    assign: (id: number, body: AssignPrimaryIpRequest): Effect.Effect<AssignPrimaryIpResponse, HetznerError> =>
+    assign: (id: number, body: AssignPrimaryIpRequest): Effect.Effect<AssignPrimaryIpResponse, HetznerErrors> =>
       HttpClientRequest.post(`/primary_ips/${id}/actions/assign`).pipe(
         HttpClientRequest.schemaBodyJson(AssignPrimaryIpRequest)(body),
         Effect.flatMap(http.execute),
@@ -410,7 +410,7 @@ export const makePrimaryIps = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Change reverse DNS records for a Primary IP */
-    changeDnsPtr: (id: number, body: ChangePrimaryIpDnsPtrRequest): Effect.Effect<ChangePrimaryIpDnsPtrResponse, HetznerError> =>
+    changeDnsPtr: (id: number, body: ChangePrimaryIpDnsPtrRequest): Effect.Effect<ChangePrimaryIpDnsPtrResponse, HetznerErrors> =>
       HttpClientRequest.post(`/primary_ips/${id}/actions/change_dns_ptr`).pipe(
         HttpClientRequest.schemaBodyJson(ChangePrimaryIpDnsPtrRequest)(body),
         Effect.flatMap(http.execute),
@@ -420,7 +420,7 @@ export const makePrimaryIps = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Change Primary IP Protection */
-    changeProtection: (id: number, body: ChangePrimaryIpProtectionRequest): Effect.Effect<ChangePrimaryIpProtectionResponse, HetznerError> =>
+    changeProtection: (id: number, body: ChangePrimaryIpProtectionRequest): Effect.Effect<ChangePrimaryIpProtectionResponse, HetznerErrors> =>
       HttpClientRequest.post(`/primary_ips/${id}/actions/change_protection`).pipe(
         HttpClientRequest.schemaBodyJson(ChangePrimaryIpProtectionRequest)(body),
         Effect.flatMap(http.execute),
@@ -430,7 +430,7 @@ export const makePrimaryIps = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Create a Primary IP */
-    create: (body: CreatePrimaryIpRequest): Effect.Effect<CreatePrimaryIpResponse, HetznerError> =>
+    create: (body: CreatePrimaryIpRequest): Effect.Effect<CreatePrimaryIpResponse, HetznerErrors> =>
       HttpClientRequest.post("/primary_ips").pipe(
         HttpClientRequest.schemaBodyJson(CreatePrimaryIpRequest)(body),
         Effect.flatMap(http.execute),
@@ -440,7 +440,7 @@ export const makePrimaryIps = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Delete a Primary IP */
-    delete: (id: number): Effect.Effect<void, HetznerError> =>
+    delete: (id: number): Effect.Effect<void, HetznerErrors> =>
       http.del(`/primary_ips/${id}`).pipe(
         Effect.asVoid,
         Effect.catchAll(handleHetznerError),
@@ -448,7 +448,7 @@ export const makePrimaryIps = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Get a Primary IP */
-    get: (id: number): Effect.Effect<GetPrimaryIpResponse, HetznerError> =>
+    get: (id: number): Effect.Effect<GetPrimaryIpResponse, HetznerErrors> =>
       HttpClientRequest.get(`/primary_ips/${id}`).pipe(
         http.execute,
         Effect.flatMap(HttpClientResponse.schemaBodyJson(GetPrimaryIpResponse)),
@@ -457,7 +457,7 @@ export const makePrimaryIps = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Get an Action for a Primary IP */
-    getAction: (id: number, action_id: number): Effect.Effect<GetPrimaryIpActionResponse, HetznerError> =>
+    getAction: (id: number, action_id: number): Effect.Effect<GetPrimaryIpActionResponse, HetznerErrors> =>
       HttpClientRequest.get(`/primary_ips/${id}/actions/${action_id}`).pipe(
         http.execute,
         Effect.flatMap(HttpClientResponse.schemaBodyJson(GetPrimaryIpActionResponse)),
@@ -466,7 +466,7 @@ export const makePrimaryIps = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Get an Action */
-    getPrimaryIpsAction: (id: number): Effect.Effect<GetPrimaryIpsActionResponse, HetznerError> =>
+    getPrimaryIpsAction: (id: number): Effect.Effect<GetPrimaryIpsActionResponse, HetznerErrors> =>
       HttpClientRequest.get(`/primary_ips/actions/${id}`).pipe(
         http.execute,
         Effect.flatMap(HttpClientResponse.schemaBodyJson(GetPrimaryIpsActionResponse)),
@@ -475,7 +475,7 @@ export const makePrimaryIps = (http: HttpClient.HttpClient) => ({
       ),
 
     /** List Primary IPs */
-    list: (query?: ListPrimaryIpsQuery): Effect.Effect<ListPrimaryIpsResponse, HetznerError> =>
+    list: (query?: ListPrimaryIpsQuery): Effect.Effect<ListPrimaryIpsResponse, HetznerErrors> =>
       HttpClientRequest.get("/primary_ips").pipe(
         HttpClientRequest.setUrlParams(toUrlParams(query)),
         http.execute,
@@ -485,7 +485,7 @@ export const makePrimaryIps = (http: HttpClient.HttpClient) => ({
       ),
 
     /** List Actions for a Primary IP */
-    listActions: (id: number, query?: ListPrimaryIpActionsQuery): Effect.Effect<ListPrimaryIpActionsResponse, HetznerError> =>
+    listActions: (id: number, query?: ListPrimaryIpActionsQuery): Effect.Effect<ListPrimaryIpActionsResponse, HetznerErrors> =>
       HttpClientRequest.get(`/primary_ips/${id}/actions`).pipe(
         HttpClientRequest.setUrlParams(toUrlParams(query)),
         http.execute,
@@ -495,7 +495,7 @@ export const makePrimaryIps = (http: HttpClient.HttpClient) => ({
       ),
 
     /** List Actions */
-    listPrimaryIpsActions: (query?: ListPrimaryIpsActionsQuery): Effect.Effect<ListPrimaryIpsActionsResponse, HetznerError> =>
+    listPrimaryIpsActions: (query?: ListPrimaryIpsActionsQuery): Effect.Effect<ListPrimaryIpsActionsResponse, HetznerErrors> =>
       HttpClientRequest.get("/primary_ips/actions").pipe(
         HttpClientRequest.setUrlParams(toUrlParams(query)),
         http.execute,
@@ -505,7 +505,7 @@ export const makePrimaryIps = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Unassign a Primary IP from a resource */
-    unassign: (id: number): Effect.Effect<UnassignPrimaryIpResponse, HetznerError> =>
+    unassign: (id: number): Effect.Effect<UnassignPrimaryIpResponse, HetznerErrors> =>
       HttpClientRequest.post(`/primary_ips/${id}/actions/unassign`).pipe(
         http.execute,
         Effect.flatMap(HttpClientResponse.schemaBodyJson(UnassignPrimaryIpResponse)),
@@ -514,7 +514,7 @@ export const makePrimaryIps = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Update a Primary IP */
-    update: (id: number, body: UpdatePrimaryIpRequest): Effect.Effect<UpdatePrimaryIpResponse, HetznerError> =>
+    update: (id: number, body: UpdatePrimaryIpRequest): Effect.Effect<UpdatePrimaryIpResponse, HetznerErrors> =>
       HttpClientRequest.put(`/primary_ips/${id}`).pipe(
         HttpClientRequest.schemaBodyJson(UpdatePrimaryIpRequest)(body),
         Effect.flatMap(http.execute),

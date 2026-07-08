@@ -3,7 +3,7 @@
  */
 import { Effect, Schema } from "effect";
 import { HttpClient, HttpClientRequest } from "effect/unstable/http";
-import { handleHetznerError, type HetznerError } from "../errors.js";
+import { handleHetznerError, type HetznerErrors } from "../errors.js";
 import { decodeJson } from "../internal/http.js";
 import { toUrlParams } from "../internal/url-params.js";
 
@@ -304,7 +304,7 @@ export type UpdateCertificateResponse = typeof UpdateCertificateResponse.Type;
 
 export const makeCertificates = (http: HttpClient.HttpClient) => ({
     /** Create a Certificate */
-    create: (body: CreateCertificateRequest): Effect.Effect<CreateCertificateResponse, HetznerError> =>
+    create: (body: CreateCertificateRequest): Effect.Effect<CreateCertificateResponse, HetznerErrors> =>
       HttpClientRequest.post("/certificates").pipe(
         HttpClientRequest.schemaBodyJson(CreateCertificateRequest)(body),
         Effect.flatMap(http.execute),
@@ -314,7 +314,7 @@ export const makeCertificates = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Delete a Certificate */
-    delete: (id: number): Effect.Effect<void, HetznerError> =>
+    delete: (id: number): Effect.Effect<void, HetznerErrors> =>
       http.del(`/certificates/${id}`).pipe(
         Effect.asVoid,
         Effect.catch(handleHetznerError),
@@ -322,7 +322,7 @@ export const makeCertificates = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Get a Certificate */
-    get: (id: number): Effect.Effect<GetCertificateResponse, HetznerError> =>
+    get: (id: number): Effect.Effect<GetCertificateResponse, HetznerErrors> =>
       HttpClientRequest.get(`/certificates/${id}`).pipe(
         http.execute,
         Effect.flatMap(decodeJson(GetCertificateResponse)),
@@ -331,7 +331,7 @@ export const makeCertificates = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Get an Action for a Certificate */
-    getAction: (id: number, action_id: number): Effect.Effect<GetCertificateActionResponse, HetznerError> =>
+    getAction: (id: number, action_id: number): Effect.Effect<GetCertificateActionResponse, HetznerErrors> =>
       HttpClientRequest.get(`/certificates/${id}/actions/${action_id}`).pipe(
         http.execute,
         Effect.flatMap(decodeJson(GetCertificateActionResponse)),
@@ -340,7 +340,7 @@ export const makeCertificates = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Get an Action */
-    getCertificatesAction: (id: number): Effect.Effect<GetCertificatesActionResponse, HetznerError> =>
+    getCertificatesAction: (id: number): Effect.Effect<GetCertificatesActionResponse, HetznerErrors> =>
       HttpClientRequest.get(`/certificates/actions/${id}`).pipe(
         http.execute,
         Effect.flatMap(decodeJson(GetCertificatesActionResponse)),
@@ -349,7 +349,7 @@ export const makeCertificates = (http: HttpClient.HttpClient) => ({
       ),
 
     /** List Certificates */
-    list: (query?: ListCertificatesQuery): Effect.Effect<ListCertificatesResponse, HetznerError> =>
+    list: (query?: ListCertificatesQuery): Effect.Effect<ListCertificatesResponse, HetznerErrors> =>
       HttpClientRequest.get("/certificates").pipe(
         HttpClientRequest.setUrlParams(toUrlParams(query)),
         http.execute,
@@ -359,7 +359,7 @@ export const makeCertificates = (http: HttpClient.HttpClient) => ({
       ),
 
     /** List Actions for a Certificate */
-    listActions: (id: number, query?: ListCertificateActionsQuery): Effect.Effect<ListCertificateActionsResponse, HetznerError> =>
+    listActions: (id: number, query?: ListCertificateActionsQuery): Effect.Effect<ListCertificateActionsResponse, HetznerErrors> =>
       HttpClientRequest.get(`/certificates/${id}/actions`).pipe(
         HttpClientRequest.setUrlParams(toUrlParams(query)),
         http.execute,
@@ -369,7 +369,7 @@ export const makeCertificates = (http: HttpClient.HttpClient) => ({
       ),
 
     /** List Actions */
-    listCertificatesActions: (query?: ListCertificatesActionsQuery): Effect.Effect<ListCertificatesActionsResponse, HetznerError> =>
+    listCertificatesActions: (query?: ListCertificatesActionsQuery): Effect.Effect<ListCertificatesActionsResponse, HetznerErrors> =>
       HttpClientRequest.get("/certificates/actions").pipe(
         HttpClientRequest.setUrlParams(toUrlParams(query)),
         http.execute,
@@ -379,7 +379,7 @@ export const makeCertificates = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Retry Issuance or Renewal */
-    retry: (id: number): Effect.Effect<RetryCertificateResponse, HetznerError> =>
+    retry: (id: number): Effect.Effect<RetryCertificateResponse, HetznerErrors> =>
       HttpClientRequest.post(`/certificates/${id}/actions/retry`).pipe(
         http.execute,
         Effect.flatMap(decodeJson(RetryCertificateResponse)),
@@ -388,7 +388,7 @@ export const makeCertificates = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Update a Certificate */
-    update: (id: number, body: UpdateCertificateRequest): Effect.Effect<UpdateCertificateResponse, HetznerError> =>
+    update: (id: number, body: UpdateCertificateRequest): Effect.Effect<UpdateCertificateResponse, HetznerErrors> =>
       HttpClientRequest.put(`/certificates/${id}`).pipe(
         HttpClientRequest.schemaBodyJson(UpdateCertificateRequest)(body),
         Effect.flatMap(http.execute),

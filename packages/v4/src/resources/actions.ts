@@ -3,7 +3,7 @@
  */
 import { Effect, Schema } from "effect";
 import { HttpClient, HttpClientRequest } from "effect/unstable/http";
-import { handleHetznerError, type HetznerError } from "../errors.js";
+import { handleHetznerError, type HetznerErrors } from "../errors.js";
 import { decodeJson } from "../internal/http.js";
 import { toUrlParams } from "../internal/url-params.js";
 
@@ -54,7 +54,7 @@ export interface GetActionsQuery {
 
 export const makeActions = (http: HttpClient.HttpClient) => ({
     /** Get an Action */
-    get: (id: number): Effect.Effect<GetActionResponse, HetznerError> =>
+    get: (id: number): Effect.Effect<GetActionResponse, HetznerErrors> =>
       HttpClientRequest.get(`/actions/${id}`).pipe(
         http.execute,
         Effect.flatMap(decodeJson(GetActionResponse)),
@@ -63,7 +63,7 @@ export const makeActions = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Get multiple Actions */
-    getActions: (query?: GetActionsQuery): Effect.Effect<GetActionsResponse, HetznerError> =>
+    getActions: (query?: GetActionsQuery): Effect.Effect<GetActionsResponse, HetznerErrors> =>
       HttpClientRequest.get("/actions").pipe(
         HttpClientRequest.setUrlParams(toUrlParams(query)),
         http.execute,

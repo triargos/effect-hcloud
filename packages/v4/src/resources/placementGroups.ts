@@ -3,7 +3,7 @@
  */
 import { Effect, Schema } from "effect";
 import { HttpClient, HttpClientRequest } from "effect/unstable/http";
-import { handleHetznerError, type HetznerError } from "../errors.js";
+import { handleHetznerError, type HetznerErrors } from "../errors.js";
 import { decodeJson } from "../internal/http.js";
 import { toUrlParams } from "../internal/url-params.js";
 
@@ -104,7 +104,7 @@ export type UpdatePlacementGroupResponse = typeof UpdatePlacementGroupResponse.T
 
 export const makePlacementGroups = (http: HttpClient.HttpClient) => ({
     /** Create a PlacementGroup */
-    create: (body: CreatePlacementGroupRequest): Effect.Effect<CreatePlacementGroupResponse, HetznerError> =>
+    create: (body: CreatePlacementGroupRequest): Effect.Effect<CreatePlacementGroupResponse, HetznerErrors> =>
       HttpClientRequest.post("/placement_groups").pipe(
         HttpClientRequest.schemaBodyJson(CreatePlacementGroupRequest)(body),
         Effect.flatMap(http.execute),
@@ -114,7 +114,7 @@ export const makePlacementGroups = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Delete a PlacementGroup */
-    delete: (id: number): Effect.Effect<void, HetznerError> =>
+    delete: (id: number): Effect.Effect<void, HetznerErrors> =>
       http.del(`/placement_groups/${id}`).pipe(
         Effect.asVoid,
         Effect.catch(handleHetznerError),
@@ -122,7 +122,7 @@ export const makePlacementGroups = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Get a PlacementGroup */
-    get: (id: number): Effect.Effect<GetPlacementGroupResponse, HetznerError> =>
+    get: (id: number): Effect.Effect<GetPlacementGroupResponse, HetznerErrors> =>
       HttpClientRequest.get(`/placement_groups/${id}`).pipe(
         http.execute,
         Effect.flatMap(decodeJson(GetPlacementGroupResponse)),
@@ -131,7 +131,7 @@ export const makePlacementGroups = (http: HttpClient.HttpClient) => ({
       ),
 
     /** List Placement Groups */
-    list: (query?: ListPlacementGroupsQuery): Effect.Effect<ListPlacementGroupsResponse, HetznerError> =>
+    list: (query?: ListPlacementGroupsQuery): Effect.Effect<ListPlacementGroupsResponse, HetznerErrors> =>
       HttpClientRequest.get("/placement_groups").pipe(
         HttpClientRequest.setUrlParams(toUrlParams(query)),
         http.execute,
@@ -141,7 +141,7 @@ export const makePlacementGroups = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Update a PlacementGroup */
-    update: (id: number, body: UpdatePlacementGroupRequest): Effect.Effect<UpdatePlacementGroupResponse, HetznerError> =>
+    update: (id: number, body: UpdatePlacementGroupRequest): Effect.Effect<UpdatePlacementGroupResponse, HetznerErrors> =>
       HttpClientRequest.put(`/placement_groups/${id}`).pipe(
         HttpClientRequest.schemaBodyJson(UpdatePlacementGroupRequest)(body),
         Effect.flatMap(http.execute),

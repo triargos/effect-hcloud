@@ -3,7 +3,7 @@
  */
 import { Effect, Schema } from "effect";
 import { HttpClient, HttpClientRequest } from "effect/unstable/http";
-import { handleHetznerError, type HetznerError } from "../errors.js";
+import { handleHetznerError, type HetznerErrors } from "../errors.js";
 import { decodeJson } from "../internal/http.js";
 import { toUrlParams } from "../internal/url-params.js";
 
@@ -120,7 +120,7 @@ export interface ListServerTypesQuery {
 
 export const makeServerTypes = (http: HttpClient.HttpClient) => ({
     /** Get a Server Type */
-    get: (id: number): Effect.Effect<GetServerTypeResponse, HetznerError> =>
+    get: (id: number): Effect.Effect<GetServerTypeResponse, HetznerErrors> =>
       HttpClientRequest.get(`/server_types/${id}`).pipe(
         http.execute,
         Effect.flatMap(decodeJson(GetServerTypeResponse)),
@@ -129,7 +129,7 @@ export const makeServerTypes = (http: HttpClient.HttpClient) => ({
       ),
 
     /** List Server Types */
-    list: (query?: ListServerTypesQuery): Effect.Effect<ListServerTypesResponse, HetznerError> =>
+    list: (query?: ListServerTypesQuery): Effect.Effect<ListServerTypesResponse, HetznerErrors> =>
       HttpClientRequest.get("/server_types").pipe(
         HttpClientRequest.setUrlParams(toUrlParams(query)),
         http.execute,

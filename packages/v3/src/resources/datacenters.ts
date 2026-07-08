@@ -4,7 +4,7 @@
 import { Effect, Schema } from "effect";
 import { HttpClientRequest, HttpClientResponse } from "@effect/platform";
 import type { HttpClient } from "@effect/platform";
-import { handleHetznerError, type HetznerError } from "../errors.js";
+import { handleHetznerError, type HetznerErrors } from "../errors.js";
 import { toUrlParams } from "../internal/url-params.js";
 
 
@@ -76,7 +76,7 @@ export interface ListDatacentersQuery {
 
 export const makeDatacenters = (http: HttpClient.HttpClient) => ({
     /** Get a Data Center */
-    get: (id: number): Effect.Effect<GetDatacenterResponse, HetznerError> =>
+    get: (id: number): Effect.Effect<GetDatacenterResponse, HetznerErrors> =>
       HttpClientRequest.get(`/datacenters/${id}`).pipe(
         http.execute,
         Effect.flatMap(HttpClientResponse.schemaBodyJson(GetDatacenterResponse)),
@@ -85,7 +85,7 @@ export const makeDatacenters = (http: HttpClient.HttpClient) => ({
       ),
 
     /** List Data Centers */
-    list: (query?: ListDatacentersQuery): Effect.Effect<ListDatacentersResponse, HetznerError> =>
+    list: (query?: ListDatacentersQuery): Effect.Effect<ListDatacentersResponse, HetznerErrors> =>
       HttpClientRequest.get("/datacenters").pipe(
         HttpClientRequest.setUrlParams(toUrlParams(query)),
         http.execute,

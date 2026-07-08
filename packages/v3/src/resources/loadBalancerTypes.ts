@@ -4,7 +4,7 @@
 import { Effect, Schema } from "effect";
 import { HttpClientRequest, HttpClientResponse } from "@effect/platform";
 import type { HttpClient } from "@effect/platform";
-import { handleHetznerError, type HetznerError } from "../errors.js";
+import { handleHetznerError, type HetznerErrors } from "../errors.js";
 import { toUrlParams } from "../internal/url-params.js";
 
 
@@ -94,7 +94,7 @@ export interface ListLoadBalancerTypesQuery {
 
 export const makeLoadBalancerTypes = (http: HttpClient.HttpClient) => ({
     /** Get a Load Balancer Type */
-    get: (id: number): Effect.Effect<GetLoadBalancerTypeResponse, HetznerError> =>
+    get: (id: number): Effect.Effect<GetLoadBalancerTypeResponse, HetznerErrors> =>
       HttpClientRequest.get(`/load_balancer_types/${id}`).pipe(
         http.execute,
         Effect.flatMap(HttpClientResponse.schemaBodyJson(GetLoadBalancerTypeResponse)),
@@ -103,7 +103,7 @@ export const makeLoadBalancerTypes = (http: HttpClient.HttpClient) => ({
       ),
 
     /** List Load Balancer Types */
-    list: (query?: ListLoadBalancerTypesQuery): Effect.Effect<ListLoadBalancerTypesResponse, HetznerError> =>
+    list: (query?: ListLoadBalancerTypesQuery): Effect.Effect<ListLoadBalancerTypesResponse, HetznerErrors> =>
       HttpClientRequest.get("/load_balancer_types").pipe(
         HttpClientRequest.setUrlParams(toUrlParams(query)),
         http.execute,

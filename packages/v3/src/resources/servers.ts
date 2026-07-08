@@ -4,7 +4,7 @@
 import { Effect, Schema } from "effect";
 import { HttpClientRequest, HttpClientResponse } from "@effect/platform";
 import type { HttpClient } from "@effect/platform";
-import { handleHetznerError, type HetznerError } from "../errors.js";
+import { handleHetznerError, type HetznerErrors } from "../errors.js";
 import { toUrlParams } from "../internal/url-params.js";
 
 
@@ -1383,7 +1383,7 @@ export type UpdateServerResponse = typeof UpdateServerResponse.Type;
 
 export const makeServers = (http: HttpClient.HttpClient) => ({
     /** Add a Server to a Placement Group */
-    addToPlacementGroup: (id: number, body: AddServerToPlacementGroupRequest): Effect.Effect<AddServerToPlacementGroupResponse, HetznerError> =>
+    addToPlacementGroup: (id: number, body: AddServerToPlacementGroupRequest): Effect.Effect<AddServerToPlacementGroupResponse, HetznerErrors> =>
       HttpClientRequest.post(`/servers/${id}/actions/add_to_placement_group`).pipe(
         HttpClientRequest.schemaBodyJson(AddServerToPlacementGroupRequest)(body),
         Effect.flatMap(http.execute),
@@ -1393,7 +1393,7 @@ export const makeServers = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Attach an ISO to a Server */
-    attachIso: (id: number, body: AttachServerIsoRequest): Effect.Effect<AttachServerIsoResponse, HetznerError> =>
+    attachIso: (id: number, body: AttachServerIsoRequest): Effect.Effect<AttachServerIsoResponse, HetznerErrors> =>
       HttpClientRequest.post(`/servers/${id}/actions/attach_iso`).pipe(
         HttpClientRequest.schemaBodyJson(AttachServerIsoRequest)(body),
         Effect.flatMap(http.execute),
@@ -1403,7 +1403,7 @@ export const makeServers = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Attach a Server to a Network */
-    attachToNetwork: (id: number, body: AttachServerToNetworkRequest): Effect.Effect<AttachServerToNetworkResponse, HetznerError> =>
+    attachToNetwork: (id: number, body: AttachServerToNetworkRequest): Effect.Effect<AttachServerToNetworkResponse, HetznerErrors> =>
       HttpClientRequest.post(`/servers/${id}/actions/attach_to_network`).pipe(
         HttpClientRequest.schemaBodyJson(AttachServerToNetworkRequest)(body),
         Effect.flatMap(http.execute),
@@ -1413,7 +1413,7 @@ export const makeServers = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Change alias IPs of a Network */
-    changeAliasIps: (id: number, body: ChangeServerAliasIpsRequest): Effect.Effect<ChangeServerAliasIpsResponse, HetznerError> =>
+    changeAliasIps: (id: number, body: ChangeServerAliasIpsRequest): Effect.Effect<ChangeServerAliasIpsResponse, HetznerErrors> =>
       HttpClientRequest.post(`/servers/${id}/actions/change_alias_ips`).pipe(
         HttpClientRequest.schemaBodyJson(ChangeServerAliasIpsRequest)(body),
         Effect.flatMap(http.execute),
@@ -1423,7 +1423,7 @@ export const makeServers = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Change reverse DNS entry for this Server */
-    changeDnsPtr: (id: number, body: ChangeServerDnsPtrRequest): Effect.Effect<ChangeServerDnsPtrResponse, HetznerError> =>
+    changeDnsPtr: (id: number, body: ChangeServerDnsPtrRequest): Effect.Effect<ChangeServerDnsPtrResponse, HetznerErrors> =>
       HttpClientRequest.post(`/servers/${id}/actions/change_dns_ptr`).pipe(
         HttpClientRequest.schemaBodyJson(ChangeServerDnsPtrRequest)(body),
         Effect.flatMap(http.execute),
@@ -1433,7 +1433,7 @@ export const makeServers = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Change Server Protection */
-    changeProtection: (id: number, body: ChangeServerProtectionRequest): Effect.Effect<ChangeServerProtectionResponse, HetznerError> =>
+    changeProtection: (id: number, body: ChangeServerProtectionRequest): Effect.Effect<ChangeServerProtectionResponse, HetznerErrors> =>
       HttpClientRequest.post(`/servers/${id}/actions/change_protection`).pipe(
         HttpClientRequest.schemaBodyJson(ChangeServerProtectionRequest)(body),
         Effect.flatMap(http.execute),
@@ -1443,7 +1443,7 @@ export const makeServers = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Change the Type of a Server */
-    changeType: (id: number, body: ChangeServerTypeRequest): Effect.Effect<ChangeServerTypeResponse, HetznerError> =>
+    changeType: (id: number, body: ChangeServerTypeRequest): Effect.Effect<ChangeServerTypeResponse, HetznerErrors> =>
       HttpClientRequest.post(`/servers/${id}/actions/change_type`).pipe(
         HttpClientRequest.schemaBodyJson(ChangeServerTypeRequest)(body),
         Effect.flatMap(http.execute),
@@ -1453,7 +1453,7 @@ export const makeServers = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Create a Server */
-    create: (body: CreateServerRequest): Effect.Effect<CreateServerResponse, HetznerError> =>
+    create: (body: CreateServerRequest): Effect.Effect<CreateServerResponse, HetznerErrors> =>
       HttpClientRequest.post("/servers").pipe(
         HttpClientRequest.schemaBodyJson(CreateServerRequest)(body),
         Effect.flatMap(http.execute),
@@ -1463,7 +1463,7 @@ export const makeServers = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Create Image from a Server */
-    createImage: (id: number, body: CreateServerImageRequest): Effect.Effect<CreateServerImageResponse, HetznerError> =>
+    createImage: (id: number, body: CreateServerImageRequest): Effect.Effect<CreateServerImageResponse, HetznerErrors> =>
       HttpClientRequest.post(`/servers/${id}/actions/create_image`).pipe(
         HttpClientRequest.schemaBodyJson(CreateServerImageRequest)(body),
         Effect.flatMap(http.execute),
@@ -1473,7 +1473,7 @@ export const makeServers = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Delete a Server */
-    delete: (id: number): Effect.Effect<DeleteServerResponse, HetznerError> =>
+    delete: (id: number): Effect.Effect<DeleteServerResponse, HetznerErrors> =>
       http.del(`/servers/${id}`).pipe(
         Effect.flatMap(HttpClientResponse.schemaBodyJson(DeleteServerResponse)),
         Effect.catchAll(handleHetznerError),
@@ -1481,7 +1481,7 @@ export const makeServers = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Detach a Server from a Network */
-    detachFromNetwork: (id: number, body: DetachServerFromNetworkRequest): Effect.Effect<DetachServerFromNetworkResponse, HetznerError> =>
+    detachFromNetwork: (id: number, body: DetachServerFromNetworkRequest): Effect.Effect<DetachServerFromNetworkResponse, HetznerErrors> =>
       HttpClientRequest.post(`/servers/${id}/actions/detach_from_network`).pipe(
         HttpClientRequest.schemaBodyJson(DetachServerFromNetworkRequest)(body),
         Effect.flatMap(http.execute),
@@ -1491,7 +1491,7 @@ export const makeServers = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Detach an ISO from a Server */
-    detachIso: (id: number): Effect.Effect<DetachServerIsoResponse, HetznerError> =>
+    detachIso: (id: number): Effect.Effect<DetachServerIsoResponse, HetznerErrors> =>
       HttpClientRequest.post(`/servers/${id}/actions/detach_iso`).pipe(
         http.execute,
         Effect.flatMap(HttpClientResponse.schemaBodyJson(DetachServerIsoResponse)),
@@ -1500,7 +1500,7 @@ export const makeServers = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Disable Backups for a Server */
-    disableBackup: (id: number): Effect.Effect<DisableServerBackupResponse, HetznerError> =>
+    disableBackup: (id: number): Effect.Effect<DisableServerBackupResponse, HetznerErrors> =>
       HttpClientRequest.post(`/servers/${id}/actions/disable_backup`).pipe(
         http.execute,
         Effect.flatMap(HttpClientResponse.schemaBodyJson(DisableServerBackupResponse)),
@@ -1509,7 +1509,7 @@ export const makeServers = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Disable Rescue Mode for a Server */
-    disableRescue: (id: number): Effect.Effect<DisableServerRescueResponse, HetznerError> =>
+    disableRescue: (id: number): Effect.Effect<DisableServerRescueResponse, HetznerErrors> =>
       HttpClientRequest.post(`/servers/${id}/actions/disable_rescue`).pipe(
         http.execute,
         Effect.flatMap(HttpClientResponse.schemaBodyJson(DisableServerRescueResponse)),
@@ -1518,7 +1518,7 @@ export const makeServers = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Enable and Configure Backups for a Server */
-    enableBackup: (id: number): Effect.Effect<EnableServerBackupResponse, HetznerError> =>
+    enableBackup: (id: number): Effect.Effect<EnableServerBackupResponse, HetznerErrors> =>
       HttpClientRequest.post(`/servers/${id}/actions/enable_backup`).pipe(
         http.execute,
         Effect.flatMap(HttpClientResponse.schemaBodyJson(EnableServerBackupResponse)),
@@ -1527,7 +1527,7 @@ export const makeServers = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Enable Rescue Mode for a Server */
-    enableRescue: (id: number, body: EnableServerRescueRequest): Effect.Effect<EnableServerRescueResponse, HetznerError> =>
+    enableRescue: (id: number, body: EnableServerRescueRequest): Effect.Effect<EnableServerRescueResponse, HetznerErrors> =>
       HttpClientRequest.post(`/servers/${id}/actions/enable_rescue`).pipe(
         HttpClientRequest.schemaBodyJson(EnableServerRescueRequest)(body),
         Effect.flatMap(http.execute),
@@ -1537,7 +1537,7 @@ export const makeServers = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Get a Server */
-    get: (id: number): Effect.Effect<GetServerResponse, HetznerError> =>
+    get: (id: number): Effect.Effect<GetServerResponse, HetznerErrors> =>
       HttpClientRequest.get(`/servers/${id}`).pipe(
         http.execute,
         Effect.flatMap(HttpClientResponse.schemaBodyJson(GetServerResponse)),
@@ -1546,7 +1546,7 @@ export const makeServers = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Get an Action for a Server */
-    getAction: (id: number, action_id: number): Effect.Effect<GetServerActionResponse, HetznerError> =>
+    getAction: (id: number, action_id: number): Effect.Effect<GetServerActionResponse, HetznerErrors> =>
       HttpClientRequest.get(`/servers/${id}/actions/${action_id}`).pipe(
         http.execute,
         Effect.flatMap(HttpClientResponse.schemaBodyJson(GetServerActionResponse)),
@@ -1555,7 +1555,7 @@ export const makeServers = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Get Metrics for a Server */
-    getMetrics: (id: number, query?: GetServerMetricsQuery): Effect.Effect<GetServerMetricsResponse, HetznerError> =>
+    getMetrics: (id: number, query?: GetServerMetricsQuery): Effect.Effect<GetServerMetricsResponse, HetznerErrors> =>
       HttpClientRequest.get(`/servers/${id}/metrics`).pipe(
         HttpClientRequest.setUrlParams(toUrlParams(query)),
         http.execute,
@@ -1565,7 +1565,7 @@ export const makeServers = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Get an Action */
-    getServersAction: (id: number): Effect.Effect<GetServersActionResponse, HetznerError> =>
+    getServersAction: (id: number): Effect.Effect<GetServersActionResponse, HetznerErrors> =>
       HttpClientRequest.get(`/servers/actions/${id}`).pipe(
         http.execute,
         Effect.flatMap(HttpClientResponse.schemaBodyJson(GetServersActionResponse)),
@@ -1574,7 +1574,7 @@ export const makeServers = (http: HttpClient.HttpClient) => ({
       ),
 
     /** List Servers */
-    list: (query?: ListServersQuery): Effect.Effect<ListServersResponse, HetznerError> =>
+    list: (query?: ListServersQuery): Effect.Effect<ListServersResponse, HetznerErrors> =>
       HttpClientRequest.get("/servers").pipe(
         HttpClientRequest.setUrlParams(toUrlParams(query)),
         http.execute,
@@ -1584,7 +1584,7 @@ export const makeServers = (http: HttpClient.HttpClient) => ({
       ),
 
     /** List Actions for a Server */
-    listActions: (id: number, query?: ListServerActionsQuery): Effect.Effect<ListServerActionsResponse, HetznerError> =>
+    listActions: (id: number, query?: ListServerActionsQuery): Effect.Effect<ListServerActionsResponse, HetznerErrors> =>
       HttpClientRequest.get(`/servers/${id}/actions`).pipe(
         HttpClientRequest.setUrlParams(toUrlParams(query)),
         http.execute,
@@ -1594,7 +1594,7 @@ export const makeServers = (http: HttpClient.HttpClient) => ({
       ),
 
     /** List Actions */
-    listServersActions: (query?: ListServersActionsQuery): Effect.Effect<ListServersActionsResponse, HetznerError> =>
+    listServersActions: (query?: ListServersActionsQuery): Effect.Effect<ListServersActionsResponse, HetznerErrors> =>
       HttpClientRequest.get("/servers/actions").pipe(
         HttpClientRequest.setUrlParams(toUrlParams(query)),
         http.execute,
@@ -1604,7 +1604,7 @@ export const makeServers = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Power off a Server */
-    powerOff: (id: number): Effect.Effect<PowerOffServerResponse, HetznerError> =>
+    powerOff: (id: number): Effect.Effect<PowerOffServerResponse, HetznerErrors> =>
       HttpClientRequest.post(`/servers/${id}/actions/poweroff`).pipe(
         http.execute,
         Effect.flatMap(HttpClientResponse.schemaBodyJson(PowerOffServerResponse)),
@@ -1613,7 +1613,7 @@ export const makeServers = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Power on a Server */
-    powerOn: (id: number): Effect.Effect<PowerOnServerResponse, HetznerError> =>
+    powerOn: (id: number): Effect.Effect<PowerOnServerResponse, HetznerErrors> =>
       HttpClientRequest.post(`/servers/${id}/actions/poweron`).pipe(
         http.execute,
         Effect.flatMap(HttpClientResponse.schemaBodyJson(PowerOnServerResponse)),
@@ -1622,7 +1622,7 @@ export const makeServers = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Soft-reboot a Server */
-    reboot: (id: number): Effect.Effect<RebootServerResponse, HetznerError> =>
+    reboot: (id: number): Effect.Effect<RebootServerResponse, HetznerErrors> =>
       HttpClientRequest.post(`/servers/${id}/actions/reboot`).pipe(
         http.execute,
         Effect.flatMap(HttpClientResponse.schemaBodyJson(RebootServerResponse)),
@@ -1631,7 +1631,7 @@ export const makeServers = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Rebuild a Server from an Image */
-    rebuild: (id: number, body: RebuildServerRequest): Effect.Effect<RebuildServerResponse, HetznerError> =>
+    rebuild: (id: number, body: RebuildServerRequest): Effect.Effect<RebuildServerResponse, HetznerErrors> =>
       HttpClientRequest.post(`/servers/${id}/actions/rebuild`).pipe(
         HttpClientRequest.schemaBodyJson(RebuildServerRequest)(body),
         Effect.flatMap(http.execute),
@@ -1641,7 +1641,7 @@ export const makeServers = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Remove from Placement Group */
-    removeFromPlacementGroup: (id: number): Effect.Effect<RemoveServerFromPlacementGroupResponse, HetznerError> =>
+    removeFromPlacementGroup: (id: number): Effect.Effect<RemoveServerFromPlacementGroupResponse, HetznerErrors> =>
       HttpClientRequest.post(`/servers/${id}/actions/remove_from_placement_group`).pipe(
         http.execute,
         Effect.flatMap(HttpClientResponse.schemaBodyJson(RemoveServerFromPlacementGroupResponse)),
@@ -1650,7 +1650,7 @@ export const makeServers = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Request Console for a Server */
-    requestConsole: (id: number): Effect.Effect<RequestServerConsoleResponse, HetznerError> =>
+    requestConsole: (id: number): Effect.Effect<RequestServerConsoleResponse, HetznerErrors> =>
       HttpClientRequest.post(`/servers/${id}/actions/request_console`).pipe(
         http.execute,
         Effect.flatMap(HttpClientResponse.schemaBodyJson(RequestServerConsoleResponse)),
@@ -1659,7 +1659,7 @@ export const makeServers = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Reset a Server */
-    reset: (id: number): Effect.Effect<ResetServerResponse, HetznerError> =>
+    reset: (id: number): Effect.Effect<ResetServerResponse, HetznerErrors> =>
       HttpClientRequest.post(`/servers/${id}/actions/reset`).pipe(
         http.execute,
         Effect.flatMap(HttpClientResponse.schemaBodyJson(ResetServerResponse)),
@@ -1668,7 +1668,7 @@ export const makeServers = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Reset root Password of a Server */
-    resetPassword: (id: number): Effect.Effect<ResetServerPasswordResponse, HetznerError> =>
+    resetPassword: (id: number): Effect.Effect<ResetServerPasswordResponse, HetznerErrors> =>
       HttpClientRequest.post(`/servers/${id}/actions/reset_password`).pipe(
         http.execute,
         Effect.flatMap(HttpClientResponse.schemaBodyJson(ResetServerPasswordResponse)),
@@ -1677,7 +1677,7 @@ export const makeServers = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Shutdown a Server */
-    shutdown: (id: number): Effect.Effect<ShutdownServerResponse, HetznerError> =>
+    shutdown: (id: number): Effect.Effect<ShutdownServerResponse, HetznerErrors> =>
       HttpClientRequest.post(`/servers/${id}/actions/shutdown`).pipe(
         http.execute,
         Effect.flatMap(HttpClientResponse.schemaBodyJson(ShutdownServerResponse)),
@@ -1686,7 +1686,7 @@ export const makeServers = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Update a Server */
-    update: (id: number, body: UpdateServerRequest): Effect.Effect<UpdateServerResponse, HetznerError> =>
+    update: (id: number, body: UpdateServerRequest): Effect.Effect<UpdateServerResponse, HetznerErrors> =>
       HttpClientRequest.put(`/servers/${id}`).pipe(
         HttpClientRequest.schemaBodyJson(UpdateServerRequest)(body),
         Effect.flatMap(http.execute),

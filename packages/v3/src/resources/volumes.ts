@@ -4,7 +4,7 @@
 import { Effect, Schema } from "effect";
 import { HttpClientRequest, HttpClientResponse } from "@effect/platform";
 import type { HttpClient } from "@effect/platform";
-import { handleHetznerError, type HetznerError } from "../errors.js";
+import { handleHetznerError, type HetznerErrors } from "../errors.js";
 import { toUrlParams } from "../internal/url-params.js";
 
 
@@ -394,7 +394,7 @@ export type UpdateVolumeResponse = typeof UpdateVolumeResponse.Type;
 
 export const makeVolumes = (http: HttpClient.HttpClient) => ({
     /** Attach Volume to a Server */
-    attach: (id: number, body: AttachVolumeRequest): Effect.Effect<AttachVolumeResponse, HetznerError> =>
+    attach: (id: number, body: AttachVolumeRequest): Effect.Effect<AttachVolumeResponse, HetznerErrors> =>
       HttpClientRequest.post(`/volumes/${id}/actions/attach`).pipe(
         HttpClientRequest.schemaBodyJson(AttachVolumeRequest)(body),
         Effect.flatMap(http.execute),
@@ -404,7 +404,7 @@ export const makeVolumes = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Change Volume Protection */
-    changeProtection: (id: number, body: ChangeVolumeProtectionRequest): Effect.Effect<ChangeVolumeProtectionResponse, HetznerError> =>
+    changeProtection: (id: number, body: ChangeVolumeProtectionRequest): Effect.Effect<ChangeVolumeProtectionResponse, HetznerErrors> =>
       HttpClientRequest.post(`/volumes/${id}/actions/change_protection`).pipe(
         HttpClientRequest.schemaBodyJson(ChangeVolumeProtectionRequest)(body),
         Effect.flatMap(http.execute),
@@ -414,7 +414,7 @@ export const makeVolumes = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Create a Volume */
-    create: (body: CreateVolumeRequest): Effect.Effect<CreateVolumeResponse, HetznerError> =>
+    create: (body: CreateVolumeRequest): Effect.Effect<CreateVolumeResponse, HetznerErrors> =>
       HttpClientRequest.post("/volumes").pipe(
         HttpClientRequest.schemaBodyJson(CreateVolumeRequest)(body),
         Effect.flatMap(http.execute),
@@ -424,7 +424,7 @@ export const makeVolumes = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Delete a Volume */
-    delete: (id: number): Effect.Effect<void, HetznerError> =>
+    delete: (id: number): Effect.Effect<void, HetznerErrors> =>
       http.del(`/volumes/${id}`).pipe(
         Effect.asVoid,
         Effect.catchAll(handleHetznerError),
@@ -432,7 +432,7 @@ export const makeVolumes = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Detach Volume */
-    detach: (id: number): Effect.Effect<DetachVolumeResponse, HetznerError> =>
+    detach: (id: number): Effect.Effect<DetachVolumeResponse, HetznerErrors> =>
       HttpClientRequest.post(`/volumes/${id}/actions/detach`).pipe(
         http.execute,
         Effect.flatMap(HttpClientResponse.schemaBodyJson(DetachVolumeResponse)),
@@ -441,7 +441,7 @@ export const makeVolumes = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Get a Volume */
-    get: (id: number): Effect.Effect<GetVolumeResponse, HetznerError> =>
+    get: (id: number): Effect.Effect<GetVolumeResponse, HetznerErrors> =>
       HttpClientRequest.get(`/volumes/${id}`).pipe(
         http.execute,
         Effect.flatMap(HttpClientResponse.schemaBodyJson(GetVolumeResponse)),
@@ -450,7 +450,7 @@ export const makeVolumes = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Get an Action for a Volume */
-    getAction: (id: number, action_id: number): Effect.Effect<GetVolumeActionResponse, HetznerError> =>
+    getAction: (id: number, action_id: number): Effect.Effect<GetVolumeActionResponse, HetznerErrors> =>
       HttpClientRequest.get(`/volumes/${id}/actions/${action_id}`).pipe(
         http.execute,
         Effect.flatMap(HttpClientResponse.schemaBodyJson(GetVolumeActionResponse)),
@@ -459,7 +459,7 @@ export const makeVolumes = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Get an Action */
-    getVolumesAction: (id: number): Effect.Effect<GetVolumesActionResponse, HetznerError> =>
+    getVolumesAction: (id: number): Effect.Effect<GetVolumesActionResponse, HetznerErrors> =>
       HttpClientRequest.get(`/volumes/actions/${id}`).pipe(
         http.execute,
         Effect.flatMap(HttpClientResponse.schemaBodyJson(GetVolumesActionResponse)),
@@ -468,7 +468,7 @@ export const makeVolumes = (http: HttpClient.HttpClient) => ({
       ),
 
     /** List Volumes */
-    list: (query?: ListVolumesQuery): Effect.Effect<ListVolumesResponse, HetznerError> =>
+    list: (query?: ListVolumesQuery): Effect.Effect<ListVolumesResponse, HetznerErrors> =>
       HttpClientRequest.get("/volumes").pipe(
         HttpClientRequest.setUrlParams(toUrlParams(query)),
         http.execute,
@@ -478,7 +478,7 @@ export const makeVolumes = (http: HttpClient.HttpClient) => ({
       ),
 
     /** List Actions for a Volume */
-    listActions: (id: number, query?: ListVolumeActionsQuery): Effect.Effect<ListVolumeActionsResponse, HetznerError> =>
+    listActions: (id: number, query?: ListVolumeActionsQuery): Effect.Effect<ListVolumeActionsResponse, HetznerErrors> =>
       HttpClientRequest.get(`/volumes/${id}/actions`).pipe(
         HttpClientRequest.setUrlParams(toUrlParams(query)),
         http.execute,
@@ -488,7 +488,7 @@ export const makeVolumes = (http: HttpClient.HttpClient) => ({
       ),
 
     /** List Actions */
-    listVolumesActions: (query?: ListVolumesActionsQuery): Effect.Effect<ListVolumesActionsResponse, HetznerError> =>
+    listVolumesActions: (query?: ListVolumesActionsQuery): Effect.Effect<ListVolumesActionsResponse, HetznerErrors> =>
       HttpClientRequest.get("/volumes/actions").pipe(
         HttpClientRequest.setUrlParams(toUrlParams(query)),
         http.execute,
@@ -498,7 +498,7 @@ export const makeVolumes = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Resize Volume */
-    resize: (id: number, body: ResizeVolumeRequest): Effect.Effect<ResizeVolumeResponse, HetznerError> =>
+    resize: (id: number, body: ResizeVolumeRequest): Effect.Effect<ResizeVolumeResponse, HetznerErrors> =>
       HttpClientRequest.post(`/volumes/${id}/actions/resize`).pipe(
         HttpClientRequest.schemaBodyJson(ResizeVolumeRequest)(body),
         Effect.flatMap(http.execute),
@@ -508,7 +508,7 @@ export const makeVolumes = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Update a Volume */
-    update: (id: number, body: UpdateVolumeRequest): Effect.Effect<UpdateVolumeResponse, HetznerError> =>
+    update: (id: number, body: UpdateVolumeRequest): Effect.Effect<UpdateVolumeResponse, HetznerErrors> =>
       HttpClientRequest.put(`/volumes/${id}`).pipe(
         HttpClientRequest.schemaBodyJson(UpdateVolumeRequest)(body),
         Effect.flatMap(http.execute),

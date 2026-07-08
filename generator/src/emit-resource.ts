@@ -83,7 +83,7 @@ function emitMethod(resource: ResourceIR, op: OperationIR, p: Profile): string {
   const body = pipeSteps(op, span, p)
     .map((s) => `      ${s}`)
     .join("\n");
-  return doc + `    ${op.methodName}: (${methodArgs(op)}): Effect.Effect<${returnType(op)}, HetznerError> =>\n` + body + `,`;
+  return doc + `    ${op.methodName}: (${methodArgs(op)}): Effect.Effect<${returnType(op)}, HetznerErrors> =>\n` + body + `,`;
 }
 
 function emitSchemas(op: OperationIR, d: Dialect): string {

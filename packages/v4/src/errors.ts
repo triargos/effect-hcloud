@@ -1,9 +1,9 @@
 /**
  * The Hetzner Cloud error model (Effect v4). Every API failure is a
  * `{ error: { code, message, details } }` envelope; `handleHetznerError` decodes it
- * into one typed error per documented code and falls back to `UnknownHetznerError`.
- * Response-decode and transport failures surface as typed errors, so every
- * method's error channel is exactly `HetznerError`.
+ * into one typed error per documented code, and collapses anything unmapped
+ * (unknown code, decode failure, transport failure) to the generic `HetznerError`
+ * with the underlying value in `cause`. So every method's error channel is `HetznerErrors`.
  */
 import { Effect, Schema } from "effect";
 import type { HttpClientResponse } from "effect/unstable/http";
@@ -32,25 +32,19 @@ export class RateLimitError extends Schema.TaggedErrorClass<RateLimitError>()("R
 export class MaintenanceError extends Schema.TaggedErrorClass<MaintenanceError>()("MaintenanceError", errorFields) {}
 export class ServiceError extends Schema.TaggedErrorClass<ServiceError>()("ServiceError", errorFields) {}
 
-/** An API error whose `code` we don't model yet — the `code` is preserved verbatim. */
-export class UnknownHetznerError extends Schema.TaggedErrorClass<UnknownHetznerError>()("UnknownHetznerError", {
-  code: Schema.String,
+/**
+ * Every failure that isn't a recognized API error code — an unmapped code, a
+ * response body that didn't decode, or a transport failure — collapses to this.
+ * The underlying value (platform error, raw body, or `{ code, details, status }`)
+ * is preserved in `cause`.
+ */
+export class HetznerError extends Schema.TaggedErrorClass<HetznerError>()("HetznerError", {
   message: Schema.String,
-  details: Schema.optional(Schema.Unknown),
-  status: Schema.optional(Schema.Number),
+  cause: Schema.Defect(),
 }) {}
 
-/** The server's success response did not match the generated schema. */
-export class HetznerParseError extends Schema.TaggedErrorClass<HetznerParseError>()("HetznerParseError", {
-  message: Schema.String,
-}) {}
-
-/** The request never produced an HTTP response (network / body-encoding failure). */
-export class HetznerTransportError extends Schema.TaggedErrorClass<HetznerTransportError>()("HetznerTransportError", {
-  message: Schema.String,
-}) {}
-
-export type HetznerError =
+/** The error channel of every client method: a typed API error, or the generic `HetznerError`. */
+export type HetznerErrors =
   | InvalidInputError
   | UnauthorizedError
   | ForbiddenError
@@ -64,13 +58,11 @@ export type HetznerError =
   | RateLimitError
   | MaintenanceError
   | ServiceError
-  | UnknownHetznerError
-  | HetznerParseError
-  | HetznerTransportError;
+  | HetznerError;
 
 type Payload = { message: string; details?: unknown };
 
-const CODE_MAP: Record<string, (p: Payload) => HetznerError> = {
+const CODE_MAP: Record<string, (p: Payload) => HetznerErrors> = {
   invalid_input: (p) => new InvalidInputError(p),
   unauthorized: (p) => new UnauthorizedError(p),
   forbidden: (p) => new ForbiddenError(p),
@@ -94,26 +86,27 @@ const messageOf = (e: unknown): string =>
 
 /**
  * Map any platform-level failure (HttpClientError / SchemaError / HttpBodyError)
- * to a typed HetznerError. Used as `Effect.catch(handleHetznerError)`.
+ * to a typed `HetznerErrors`. Used as `Effect.catch(handleHetznerError)`.
  */
-export const handleHetznerError = (error: unknown): Effect.Effect<never, HetznerError> => {
+export const handleHetznerError = (error: unknown): Effect.Effect<never, HetznerErrors> => {
   if (isTagged(error, "HttpClientError")) {
     const response =
       "response" in error ? (error as { response?: HttpClientResponse.HttpClientResponse }).response : undefined;
     const message = messageOf(error);
-    if (!response) return Effect.fail(new HetznerTransportError({ message }));
+    if (!response) return Effect.fail(new HetznerError({ message, cause: error }));
     const status = response.status;
     return decodeJson(ErrorEnvelope)(response).pipe(
       Effect.matchEffect({
-        onFailure: () =>
-          Effect.fail(new UnknownHetznerError({ code: "unparseable_response", message, status })),
+        onFailure: () => Effect.fail(new HetznerError({ message, cause: error })),
         onSuccess: (decoded) => {
           const { code, message: m, details } = decoded.error;
           const make = CODE_MAP[code];
-          return Effect.fail(make ? make({ message: m, details }) : new UnknownHetznerError({ code, message: m, details, status }));
+          return Effect.fail(
+            make ? make({ message: m, details }) : new HetznerError({ message: m, cause: { code, details, status } }),
+          );
         },
       }),
     );
   }
-  return Effect.fail(new HetznerParseError({ message: `Failed to decode Hetzner response: ${messageOf(error)}` }));
+  return Effect.fail(new HetznerError({ message: `Failed to decode Hetzner response: ${messageOf(error)}`, cause: error }));
 };

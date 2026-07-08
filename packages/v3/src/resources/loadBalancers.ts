@@ -4,7 +4,7 @@
 import { Effect, Schema } from "effect";
 import { HttpClientRequest, HttpClientResponse } from "@effect/platform";
 import type { HttpClient } from "@effect/platform";
-import { handleHetznerError, type HetznerError } from "../errors.js";
+import { handleHetznerError, type HetznerErrors } from "../errors.js";
 import { toUrlParams } from "../internal/url-params.js";
 
 
@@ -1397,7 +1397,7 @@ export type UpdateLoadBalancerServiceResponse = typeof UpdateLoadBalancerService
 
 export const makeLoadBalancers = (http: HttpClient.HttpClient) => ({
     /** Add Service */
-    addService: (id: number, body: AddLoadBalancerServiceRequest): Effect.Effect<AddLoadBalancerServiceResponse, HetznerError> =>
+    addService: (id: number, body: AddLoadBalancerServiceRequest): Effect.Effect<AddLoadBalancerServiceResponse, HetznerErrors> =>
       HttpClientRequest.post(`/load_balancers/${id}/actions/add_service`).pipe(
         HttpClientRequest.schemaBodyJson(AddLoadBalancerServiceRequest)(body),
         Effect.flatMap(http.execute),
@@ -1407,7 +1407,7 @@ export const makeLoadBalancers = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Add Target */
-    addTarget: (id: number, body: AddLoadBalancerTargetRequest): Effect.Effect<AddLoadBalancerTargetResponse, HetznerError> =>
+    addTarget: (id: number, body: AddLoadBalancerTargetRequest): Effect.Effect<AddLoadBalancerTargetResponse, HetznerErrors> =>
       HttpClientRequest.post(`/load_balancers/${id}/actions/add_target`).pipe(
         HttpClientRequest.schemaBodyJson(AddLoadBalancerTargetRequest)(body),
         Effect.flatMap(http.execute),
@@ -1417,7 +1417,7 @@ export const makeLoadBalancers = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Attach a Load Balancer to a Network */
-    attachToNetwork: (id: number, body: AttachLoadBalancerToNetworkRequest): Effect.Effect<AttachLoadBalancerToNetworkResponse, HetznerError> =>
+    attachToNetwork: (id: number, body: AttachLoadBalancerToNetworkRequest): Effect.Effect<AttachLoadBalancerToNetworkResponse, HetznerErrors> =>
       HttpClientRequest.post(`/load_balancers/${id}/actions/attach_to_network`).pipe(
         HttpClientRequest.schemaBodyJson(AttachLoadBalancerToNetworkRequest)(body),
         Effect.flatMap(http.execute),
@@ -1427,7 +1427,7 @@ export const makeLoadBalancers = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Change Algorithm */
-    changeAlgorithm: (id: number, body: ChangeLoadBalancerAlgorithmRequest): Effect.Effect<ChangeLoadBalancerAlgorithmResponse, HetznerError> =>
+    changeAlgorithm: (id: number, body: ChangeLoadBalancerAlgorithmRequest): Effect.Effect<ChangeLoadBalancerAlgorithmResponse, HetznerErrors> =>
       HttpClientRequest.post(`/load_balancers/${id}/actions/change_algorithm`).pipe(
         HttpClientRequest.schemaBodyJson(ChangeLoadBalancerAlgorithmRequest)(body),
         Effect.flatMap(http.execute),
@@ -1437,7 +1437,7 @@ export const makeLoadBalancers = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Change reverse DNS entry for this Load Balancer */
-    changeDnsPtr: (id: number, body: ChangeLoadBalancerDnsPtrRequest): Effect.Effect<ChangeLoadBalancerDnsPtrResponse, HetznerError> =>
+    changeDnsPtr: (id: number, body: ChangeLoadBalancerDnsPtrRequest): Effect.Effect<ChangeLoadBalancerDnsPtrResponse, HetznerErrors> =>
       HttpClientRequest.post(`/load_balancers/${id}/actions/change_dns_ptr`).pipe(
         HttpClientRequest.schemaBodyJson(ChangeLoadBalancerDnsPtrRequest)(body),
         Effect.flatMap(http.execute),
@@ -1447,7 +1447,7 @@ export const makeLoadBalancers = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Change Load Balancer Protection */
-    changeProtection: (id: number, body: ChangeLoadBalancerProtectionRequest): Effect.Effect<ChangeLoadBalancerProtectionResponse, HetznerError> =>
+    changeProtection: (id: number, body: ChangeLoadBalancerProtectionRequest): Effect.Effect<ChangeLoadBalancerProtectionResponse, HetznerErrors> =>
       HttpClientRequest.post(`/load_balancers/${id}/actions/change_protection`).pipe(
         HttpClientRequest.schemaBodyJson(ChangeLoadBalancerProtectionRequest)(body),
         Effect.flatMap(http.execute),
@@ -1457,7 +1457,7 @@ export const makeLoadBalancers = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Change the Type of a Load Balancer */
-    changeType: (id: number, body: ChangeLoadBalancerTypeRequest): Effect.Effect<ChangeLoadBalancerTypeResponse, HetznerError> =>
+    changeType: (id: number, body: ChangeLoadBalancerTypeRequest): Effect.Effect<ChangeLoadBalancerTypeResponse, HetznerErrors> =>
       HttpClientRequest.post(`/load_balancers/${id}/actions/change_type`).pipe(
         HttpClientRequest.schemaBodyJson(ChangeLoadBalancerTypeRequest)(body),
         Effect.flatMap(http.execute),
@@ -1467,7 +1467,7 @@ export const makeLoadBalancers = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Create a Load Balancer */
-    create: (body: CreateLoadBalancerRequest): Effect.Effect<CreateLoadBalancerResponse, HetznerError> =>
+    create: (body: CreateLoadBalancerRequest): Effect.Effect<CreateLoadBalancerResponse, HetznerErrors> =>
       HttpClientRequest.post("/load_balancers").pipe(
         HttpClientRequest.schemaBodyJson(CreateLoadBalancerRequest)(body),
         Effect.flatMap(http.execute),
@@ -1477,7 +1477,7 @@ export const makeLoadBalancers = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Delete a Load Balancer */
-    delete: (id: number): Effect.Effect<void, HetznerError> =>
+    delete: (id: number): Effect.Effect<void, HetznerErrors> =>
       http.del(`/load_balancers/${id}`).pipe(
         Effect.asVoid,
         Effect.catchAll(handleHetznerError),
@@ -1485,7 +1485,7 @@ export const makeLoadBalancers = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Delete Service */
-    deleteService: (id: number, body: DeleteLoadBalancerServiceRequest): Effect.Effect<DeleteLoadBalancerServiceResponse, HetznerError> =>
+    deleteService: (id: number, body: DeleteLoadBalancerServiceRequest): Effect.Effect<DeleteLoadBalancerServiceResponse, HetznerErrors> =>
       HttpClientRequest.post(`/load_balancers/${id}/actions/delete_service`).pipe(
         HttpClientRequest.schemaBodyJson(DeleteLoadBalancerServiceRequest)(body),
         Effect.flatMap(http.execute),
@@ -1495,7 +1495,7 @@ export const makeLoadBalancers = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Detach a Load Balancer from a Network */
-    detachFromNetwork: (id: number, body: DetachLoadBalancerFromNetworkRequest): Effect.Effect<DetachLoadBalancerFromNetworkResponse, HetznerError> =>
+    detachFromNetwork: (id: number, body: DetachLoadBalancerFromNetworkRequest): Effect.Effect<DetachLoadBalancerFromNetworkResponse, HetznerErrors> =>
       HttpClientRequest.post(`/load_balancers/${id}/actions/detach_from_network`).pipe(
         HttpClientRequest.schemaBodyJson(DetachLoadBalancerFromNetworkRequest)(body),
         Effect.flatMap(http.execute),
@@ -1505,7 +1505,7 @@ export const makeLoadBalancers = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Disable the public interface of a Load Balancer */
-    disablePublicInterface: (id: number): Effect.Effect<DisableLoadBalancerPublicInterfaceResponse, HetznerError> =>
+    disablePublicInterface: (id: number): Effect.Effect<DisableLoadBalancerPublicInterfaceResponse, HetznerErrors> =>
       HttpClientRequest.post(`/load_balancers/${id}/actions/disable_public_interface`).pipe(
         http.execute,
         Effect.flatMap(HttpClientResponse.schemaBodyJson(DisableLoadBalancerPublicInterfaceResponse)),
@@ -1514,7 +1514,7 @@ export const makeLoadBalancers = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Enable the public interface of a Load Balancer */
-    enablePublicInterface: (id: number): Effect.Effect<EnableLoadBalancerPublicInterfaceResponse, HetznerError> =>
+    enablePublicInterface: (id: number): Effect.Effect<EnableLoadBalancerPublicInterfaceResponse, HetznerErrors> =>
       HttpClientRequest.post(`/load_balancers/${id}/actions/enable_public_interface`).pipe(
         http.execute,
         Effect.flatMap(HttpClientResponse.schemaBodyJson(EnableLoadBalancerPublicInterfaceResponse)),
@@ -1523,7 +1523,7 @@ export const makeLoadBalancers = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Get a Load Balancer */
-    get: (id: number): Effect.Effect<GetLoadBalancerResponse, HetznerError> =>
+    get: (id: number): Effect.Effect<GetLoadBalancerResponse, HetznerErrors> =>
       HttpClientRequest.get(`/load_balancers/${id}`).pipe(
         http.execute,
         Effect.flatMap(HttpClientResponse.schemaBodyJson(GetLoadBalancerResponse)),
@@ -1532,7 +1532,7 @@ export const makeLoadBalancers = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Get an Action for a Load Balancer */
-    getAction: (id: number, action_id: number): Effect.Effect<GetLoadBalancerActionResponse, HetznerError> =>
+    getAction: (id: number, action_id: number): Effect.Effect<GetLoadBalancerActionResponse, HetznerErrors> =>
       HttpClientRequest.get(`/load_balancers/${id}/actions/${action_id}`).pipe(
         http.execute,
         Effect.flatMap(HttpClientResponse.schemaBodyJson(GetLoadBalancerActionResponse)),
@@ -1541,7 +1541,7 @@ export const makeLoadBalancers = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Get an Action */
-    getLoadBalancersAction: (id: number): Effect.Effect<GetLoadBalancersActionResponse, HetznerError> =>
+    getLoadBalancersAction: (id: number): Effect.Effect<GetLoadBalancersActionResponse, HetznerErrors> =>
       HttpClientRequest.get(`/load_balancers/actions/${id}`).pipe(
         http.execute,
         Effect.flatMap(HttpClientResponse.schemaBodyJson(GetLoadBalancersActionResponse)),
@@ -1550,7 +1550,7 @@ export const makeLoadBalancers = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Get Metrics for a LoadBalancer */
-    getMetrics: (id: number, query?: GetLoadBalancerMetricsQuery): Effect.Effect<GetLoadBalancerMetricsResponse, HetznerError> =>
+    getMetrics: (id: number, query?: GetLoadBalancerMetricsQuery): Effect.Effect<GetLoadBalancerMetricsResponse, HetznerErrors> =>
       HttpClientRequest.get(`/load_balancers/${id}/metrics`).pipe(
         HttpClientRequest.setUrlParams(toUrlParams(query)),
         http.execute,
@@ -1560,7 +1560,7 @@ export const makeLoadBalancers = (http: HttpClient.HttpClient) => ({
       ),
 
     /** List Load Balancers */
-    list: (query?: ListLoadBalancersQuery): Effect.Effect<ListLoadBalancersResponse, HetznerError> =>
+    list: (query?: ListLoadBalancersQuery): Effect.Effect<ListLoadBalancersResponse, HetznerErrors> =>
       HttpClientRequest.get("/load_balancers").pipe(
         HttpClientRequest.setUrlParams(toUrlParams(query)),
         http.execute,
@@ -1570,7 +1570,7 @@ export const makeLoadBalancers = (http: HttpClient.HttpClient) => ({
       ),
 
     /** List Actions for a Load Balancer */
-    listActions: (id: number, query?: ListLoadBalancerActionsQuery): Effect.Effect<ListLoadBalancerActionsResponse, HetznerError> =>
+    listActions: (id: number, query?: ListLoadBalancerActionsQuery): Effect.Effect<ListLoadBalancerActionsResponse, HetznerErrors> =>
       HttpClientRequest.get(`/load_balancers/${id}/actions`).pipe(
         HttpClientRequest.setUrlParams(toUrlParams(query)),
         http.execute,
@@ -1580,7 +1580,7 @@ export const makeLoadBalancers = (http: HttpClient.HttpClient) => ({
       ),
 
     /** List Actions */
-    listLoadBalancersActions: (query?: ListLoadBalancersActionsQuery): Effect.Effect<ListLoadBalancersActionsResponse, HetznerError> =>
+    listLoadBalancersActions: (query?: ListLoadBalancersActionsQuery): Effect.Effect<ListLoadBalancersActionsResponse, HetznerErrors> =>
       HttpClientRequest.get("/load_balancers/actions").pipe(
         HttpClientRequest.setUrlParams(toUrlParams(query)),
         http.execute,
@@ -1590,7 +1590,7 @@ export const makeLoadBalancers = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Remove Target */
-    removeTarget: (id: number, body: RemoveLoadBalancerTargetRequest): Effect.Effect<RemoveLoadBalancerTargetResponse, HetznerError> =>
+    removeTarget: (id: number, body: RemoveLoadBalancerTargetRequest): Effect.Effect<RemoveLoadBalancerTargetResponse, HetznerErrors> =>
       HttpClientRequest.post(`/load_balancers/${id}/actions/remove_target`).pipe(
         HttpClientRequest.schemaBodyJson(RemoveLoadBalancerTargetRequest)(body),
         Effect.flatMap(http.execute),
@@ -1600,7 +1600,7 @@ export const makeLoadBalancers = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Update a Load Balancer */
-    update: (id: number, body: UpdateLoadBalancerRequest): Effect.Effect<UpdateLoadBalancerResponse, HetznerError> =>
+    update: (id: number, body: UpdateLoadBalancerRequest): Effect.Effect<UpdateLoadBalancerResponse, HetznerErrors> =>
       HttpClientRequest.put(`/load_balancers/${id}`).pipe(
         HttpClientRequest.schemaBodyJson(UpdateLoadBalancerRequest)(body),
         Effect.flatMap(http.execute),
@@ -1610,7 +1610,7 @@ export const makeLoadBalancers = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Update Service */
-    updateService: (id: number, body: UpdateLoadBalancerServiceRequest): Effect.Effect<UpdateLoadBalancerServiceResponse, HetznerError> =>
+    updateService: (id: number, body: UpdateLoadBalancerServiceRequest): Effect.Effect<UpdateLoadBalancerServiceResponse, HetznerErrors> =>
       HttpClientRequest.post(`/load_balancers/${id}/actions/update_service`).pipe(
         HttpClientRequest.schemaBodyJson(UpdateLoadBalancerServiceRequest)(body),
         Effect.flatMap(http.execute),

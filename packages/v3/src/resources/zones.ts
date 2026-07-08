@@ -4,7 +4,7 @@
 import { Effect, Schema } from "effect";
 import { HttpClientRequest, HttpClientResponse } from "@effect/platform";
 import type { HttpClient } from "@effect/platform";
-import { handleHetznerError, type HetznerError } from "../errors.js";
+import { handleHetznerError, type HetznerErrors } from "../errors.js";
 import { toUrlParams } from "../internal/url-params.js";
 
 
@@ -834,7 +834,7 @@ export type UpdateZoneRrsetRecordsResponse = typeof UpdateZoneRrsetRecordsRespon
 
 export const makeZones = (http: HttpClient.HttpClient) => ({
     /** Add Records to an RRSet */
-    addRrsetRecords: (id_or_name: string, rr_name: string, rr_type: string, body: AddZoneRrsetRecordsRequest): Effect.Effect<AddZoneRrsetRecordsResponse, HetznerError> =>
+    addRrsetRecords: (id_or_name: string, rr_name: string, rr_type: string, body: AddZoneRrsetRecordsRequest): Effect.Effect<AddZoneRrsetRecordsResponse, HetznerErrors> =>
       HttpClientRequest.post(`/zones/${id_or_name}/rrsets/${rr_name}/${rr_type}/actions/add_records`).pipe(
         HttpClientRequest.schemaBodyJson(AddZoneRrsetRecordsRequest)(body),
         Effect.flatMap(http.execute),
@@ -844,7 +844,7 @@ export const makeZones = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Change a Zone's Primary Nameservers */
-    changePrimaryNameservers: (id_or_name: string, body: ChangeZonePrimaryNameserversRequest): Effect.Effect<ChangeZonePrimaryNameserversResponse, HetznerError> =>
+    changePrimaryNameservers: (id_or_name: string, body: ChangeZonePrimaryNameserversRequest): Effect.Effect<ChangeZonePrimaryNameserversResponse, HetznerErrors> =>
       HttpClientRequest.post(`/zones/${id_or_name}/actions/change_primary_nameservers`).pipe(
         HttpClientRequest.schemaBodyJson(ChangeZonePrimaryNameserversRequest)(body),
         Effect.flatMap(http.execute),
@@ -854,7 +854,7 @@ export const makeZones = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Change a Zone's Protection */
-    changeProtection: (id_or_name: string, body: ChangeZoneProtectionRequest): Effect.Effect<ChangeZoneProtectionResponse, HetznerError> =>
+    changeProtection: (id_or_name: string, body: ChangeZoneProtectionRequest): Effect.Effect<ChangeZoneProtectionResponse, HetznerErrors> =>
       HttpClientRequest.post(`/zones/${id_or_name}/actions/change_protection`).pipe(
         HttpClientRequest.schemaBodyJson(ChangeZoneProtectionRequest)(body),
         Effect.flatMap(http.execute),
@@ -864,7 +864,7 @@ export const makeZones = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Change an RRSet's Protection */
-    changeRrsetProtection: (id_or_name: string, rr_name: string, rr_type: string, body: ChangeZoneRrsetProtectionRequest): Effect.Effect<ChangeZoneRrsetProtectionResponse, HetznerError> =>
+    changeRrsetProtection: (id_or_name: string, rr_name: string, rr_type: string, body: ChangeZoneRrsetProtectionRequest): Effect.Effect<ChangeZoneRrsetProtectionResponse, HetznerErrors> =>
       HttpClientRequest.post(`/zones/${id_or_name}/rrsets/${rr_name}/${rr_type}/actions/change_protection`).pipe(
         HttpClientRequest.schemaBodyJson(ChangeZoneRrsetProtectionRequest)(body),
         Effect.flatMap(http.execute),
@@ -874,7 +874,7 @@ export const makeZones = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Change an RRSet's TTL */
-    changeRrsetTtl: (id_or_name: string, rr_name: string, rr_type: string, body: ChangeZoneRrsetTtlRequest): Effect.Effect<ChangeZoneRrsetTtlResponse, HetznerError> =>
+    changeRrsetTtl: (id_or_name: string, rr_name: string, rr_type: string, body: ChangeZoneRrsetTtlRequest): Effect.Effect<ChangeZoneRrsetTtlResponse, HetznerErrors> =>
       HttpClientRequest.post(`/zones/${id_or_name}/rrsets/${rr_name}/${rr_type}/actions/change_ttl`).pipe(
         HttpClientRequest.schemaBodyJson(ChangeZoneRrsetTtlRequest)(body),
         Effect.flatMap(http.execute),
@@ -884,7 +884,7 @@ export const makeZones = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Change a Zone's Default TTL */
-    changeTtl: (id_or_name: string, body: ChangeZoneTtlRequest): Effect.Effect<ChangeZoneTtlResponse, HetznerError> =>
+    changeTtl: (id_or_name: string, body: ChangeZoneTtlRequest): Effect.Effect<ChangeZoneTtlResponse, HetznerErrors> =>
       HttpClientRequest.post(`/zones/${id_or_name}/actions/change_ttl`).pipe(
         HttpClientRequest.schemaBodyJson(ChangeZoneTtlRequest)(body),
         Effect.flatMap(http.execute),
@@ -894,7 +894,7 @@ export const makeZones = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Create a Zone */
-    create: (body: CreateZoneRequest): Effect.Effect<CreateZoneResponse, HetznerError> =>
+    create: (body: CreateZoneRequest): Effect.Effect<CreateZoneResponse, HetznerErrors> =>
       HttpClientRequest.post("/zones").pipe(
         HttpClientRequest.schemaBodyJson(CreateZoneRequest)(body),
         Effect.flatMap(http.execute),
@@ -904,7 +904,7 @@ export const makeZones = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Create an RRSet */
-    createRrset: (id_or_name: string, body: CreateZoneRrsetRequest): Effect.Effect<CreateZoneRrsetResponse, HetznerError> =>
+    createRrset: (id_or_name: string, body: CreateZoneRrsetRequest): Effect.Effect<CreateZoneRrsetResponse, HetznerErrors> =>
       HttpClientRequest.post(`/zones/${id_or_name}/rrsets`).pipe(
         HttpClientRequest.schemaBodyJson(CreateZoneRrsetRequest)(body),
         Effect.flatMap(http.execute),
@@ -914,7 +914,7 @@ export const makeZones = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Delete a Zone */
-    delete: (id_or_name: string): Effect.Effect<DeleteZoneResponse, HetznerError> =>
+    delete: (id_or_name: string): Effect.Effect<DeleteZoneResponse, HetznerErrors> =>
       http.del(`/zones/${id_or_name}`).pipe(
         Effect.flatMap(HttpClientResponse.schemaBodyJson(DeleteZoneResponse)),
         Effect.catchAll(handleHetznerError),
@@ -922,7 +922,7 @@ export const makeZones = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Delete an RRSet */
-    deleteRrset: (id_or_name: string, rr_name: string, rr_type: string): Effect.Effect<DeleteZoneRrsetResponse, HetznerError> =>
+    deleteRrset: (id_or_name: string, rr_name: string, rr_type: string): Effect.Effect<DeleteZoneRrsetResponse, HetznerErrors> =>
       http.del(`/zones/${id_or_name}/rrsets/${rr_name}/${rr_type}`).pipe(
         Effect.flatMap(HttpClientResponse.schemaBodyJson(DeleteZoneRrsetResponse)),
         Effect.catchAll(handleHetznerError),
@@ -930,7 +930,7 @@ export const makeZones = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Get a Zone */
-    get: (id_or_name: string): Effect.Effect<GetZoneResponse, HetznerError> =>
+    get: (id_or_name: string): Effect.Effect<GetZoneResponse, HetznerErrors> =>
       HttpClientRequest.get(`/zones/${id_or_name}`).pipe(
         http.execute,
         Effect.flatMap(HttpClientResponse.schemaBodyJson(GetZoneResponse)),
@@ -939,7 +939,7 @@ export const makeZones = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Get an Action for a Zone */
-    getAction: (id_or_name: string, action_id: number): Effect.Effect<GetZoneActionResponse, HetznerError> =>
+    getAction: (id_or_name: string, action_id: number): Effect.Effect<GetZoneActionResponse, HetznerErrors> =>
       HttpClientRequest.get(`/zones/${id_or_name}/actions/${action_id}`).pipe(
         http.execute,
         Effect.flatMap(HttpClientResponse.schemaBodyJson(GetZoneActionResponse)),
@@ -948,7 +948,7 @@ export const makeZones = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Get an RRSet */
-    getRrset: (id_or_name: string, rr_name: string, rr_type: string): Effect.Effect<GetZoneRrsetResponse, HetznerError> =>
+    getRrset: (id_or_name: string, rr_name: string, rr_type: string): Effect.Effect<GetZoneRrsetResponse, HetznerErrors> =>
       HttpClientRequest.get(`/zones/${id_or_name}/rrsets/${rr_name}/${rr_type}`).pipe(
         http.execute,
         Effect.flatMap(HttpClientResponse.schemaBodyJson(GetZoneRrsetResponse)),
@@ -957,7 +957,7 @@ export const makeZones = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Export a Zone file */
-    getZonefile: (id_or_name: string): Effect.Effect<GetZoneZonefileResponse, HetznerError> =>
+    getZonefile: (id_or_name: string): Effect.Effect<GetZoneZonefileResponse, HetznerErrors> =>
       HttpClientRequest.get(`/zones/${id_or_name}/zonefile`).pipe(
         http.execute,
         Effect.flatMap(HttpClientResponse.schemaBodyJson(GetZoneZonefileResponse)),
@@ -966,7 +966,7 @@ export const makeZones = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Get an Action */
-    getZonesAction: (id: number): Effect.Effect<GetZonesActionResponse, HetznerError> =>
+    getZonesAction: (id: number): Effect.Effect<GetZonesActionResponse, HetznerErrors> =>
       HttpClientRequest.get(`/zones/actions/${id}`).pipe(
         http.execute,
         Effect.flatMap(HttpClientResponse.schemaBodyJson(GetZonesActionResponse)),
@@ -975,7 +975,7 @@ export const makeZones = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Import a Zone file */
-    importZonefile: (id_or_name: string, body: ImportZoneZonefileRequest): Effect.Effect<ImportZoneZonefileResponse, HetznerError> =>
+    importZonefile: (id_or_name: string, body: ImportZoneZonefileRequest): Effect.Effect<ImportZoneZonefileResponse, HetznerErrors> =>
       HttpClientRequest.post(`/zones/${id_or_name}/actions/import_zonefile`).pipe(
         HttpClientRequest.schemaBodyJson(ImportZoneZonefileRequest)(body),
         Effect.flatMap(http.execute),
@@ -985,7 +985,7 @@ export const makeZones = (http: HttpClient.HttpClient) => ({
       ),
 
     /** List Zones */
-    list: (query?: ListZonesQuery): Effect.Effect<ListZonesResponse, HetznerError> =>
+    list: (query?: ListZonesQuery): Effect.Effect<ListZonesResponse, HetznerErrors> =>
       HttpClientRequest.get("/zones").pipe(
         HttpClientRequest.setUrlParams(toUrlParams(query)),
         http.execute,
@@ -995,7 +995,7 @@ export const makeZones = (http: HttpClient.HttpClient) => ({
       ),
 
     /** List Actions for a Zone */
-    listActions: (id_or_name: string, query?: ListZoneActionsQuery): Effect.Effect<ListZoneActionsResponse, HetznerError> =>
+    listActions: (id_or_name: string, query?: ListZoneActionsQuery): Effect.Effect<ListZoneActionsResponse, HetznerErrors> =>
       HttpClientRequest.get(`/zones/${id_or_name}/actions`).pipe(
         HttpClientRequest.setUrlParams(toUrlParams(query)),
         http.execute,
@@ -1005,7 +1005,7 @@ export const makeZones = (http: HttpClient.HttpClient) => ({
       ),
 
     /** List RRSets */
-    listRrsets: (id_or_name: string, query?: ListZoneRrsetsQuery): Effect.Effect<ListZoneRrsetsResponse, HetznerError> =>
+    listRrsets: (id_or_name: string, query?: ListZoneRrsetsQuery): Effect.Effect<ListZoneRrsetsResponse, HetznerErrors> =>
       HttpClientRequest.get(`/zones/${id_or_name}/rrsets`).pipe(
         HttpClientRequest.setUrlParams(toUrlParams(query)),
         http.execute,
@@ -1015,7 +1015,7 @@ export const makeZones = (http: HttpClient.HttpClient) => ({
       ),
 
     /** List Actions */
-    listZonesActions: (query?: ListZonesActionsQuery): Effect.Effect<ListZonesActionsResponse, HetznerError> =>
+    listZonesActions: (query?: ListZonesActionsQuery): Effect.Effect<ListZonesActionsResponse, HetznerErrors> =>
       HttpClientRequest.get("/zones/actions").pipe(
         HttpClientRequest.setUrlParams(toUrlParams(query)),
         http.execute,
@@ -1025,7 +1025,7 @@ export const makeZones = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Remove Records from an RRSet */
-    removeRrsetRecords: (id_or_name: string, rr_name: string, rr_type: string, body: RemoveZoneRrsetRecordsRequest): Effect.Effect<RemoveZoneRrsetRecordsResponse, HetznerError> =>
+    removeRrsetRecords: (id_or_name: string, rr_name: string, rr_type: string, body: RemoveZoneRrsetRecordsRequest): Effect.Effect<RemoveZoneRrsetRecordsResponse, HetznerErrors> =>
       HttpClientRequest.post(`/zones/${id_or_name}/rrsets/${rr_name}/${rr_type}/actions/remove_records`).pipe(
         HttpClientRequest.schemaBodyJson(RemoveZoneRrsetRecordsRequest)(body),
         Effect.flatMap(http.execute),
@@ -1035,7 +1035,7 @@ export const makeZones = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Set Records of an RRSet */
-    setRrsetRecords: (id_or_name: string, rr_name: string, rr_type: string, body: SetZoneRrsetRecordsRequest): Effect.Effect<SetZoneRrsetRecordsResponse, HetznerError> =>
+    setRrsetRecords: (id_or_name: string, rr_name: string, rr_type: string, body: SetZoneRrsetRecordsRequest): Effect.Effect<SetZoneRrsetRecordsResponse, HetznerErrors> =>
       HttpClientRequest.post(`/zones/${id_or_name}/rrsets/${rr_name}/${rr_type}/actions/set_records`).pipe(
         HttpClientRequest.schemaBodyJson(SetZoneRrsetRecordsRequest)(body),
         Effect.flatMap(http.execute),
@@ -1045,7 +1045,7 @@ export const makeZones = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Update a Zone */
-    update: (id_or_name: string, body: UpdateZoneRequest): Effect.Effect<UpdateZoneResponse, HetznerError> =>
+    update: (id_or_name: string, body: UpdateZoneRequest): Effect.Effect<UpdateZoneResponse, HetznerErrors> =>
       HttpClientRequest.put(`/zones/${id_or_name}`).pipe(
         HttpClientRequest.schemaBodyJson(UpdateZoneRequest)(body),
         Effect.flatMap(http.execute),
@@ -1055,7 +1055,7 @@ export const makeZones = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Update an RRSet */
-    updateRrset: (id_or_name: string, rr_name: string, rr_type: string, body: UpdateZoneRrsetRequest): Effect.Effect<UpdateZoneRrsetResponse, HetznerError> =>
+    updateRrset: (id_or_name: string, rr_name: string, rr_type: string, body: UpdateZoneRrsetRequest): Effect.Effect<UpdateZoneRrsetResponse, HetznerErrors> =>
       HttpClientRequest.put(`/zones/${id_or_name}/rrsets/${rr_name}/${rr_type}`).pipe(
         HttpClientRequest.schemaBodyJson(UpdateZoneRrsetRequest)(body),
         Effect.flatMap(http.execute),
@@ -1065,7 +1065,7 @@ export const makeZones = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Update Records of an RRSet */
-    updateRrsetRecords: (id_or_name: string, rr_name: string, rr_type: string, body: UpdateZoneRrsetRecordsRequest): Effect.Effect<UpdateZoneRrsetRecordsResponse, HetznerError> =>
+    updateRrsetRecords: (id_or_name: string, rr_name: string, rr_type: string, body: UpdateZoneRrsetRecordsRequest): Effect.Effect<UpdateZoneRrsetRecordsResponse, HetznerErrors> =>
       HttpClientRequest.post(`/zones/${id_or_name}/rrsets/${rr_name}/${rr_type}/actions/update_records`).pipe(
         HttpClientRequest.schemaBodyJson(UpdateZoneRrsetRecordsRequest)(body),
         Effect.flatMap(http.execute),

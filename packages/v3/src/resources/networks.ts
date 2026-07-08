@@ -4,7 +4,7 @@
 import { Effect, Schema } from "effect";
 import { HttpClientRequest, HttpClientResponse } from "@effect/platform";
 import type { HttpClient } from "@effect/platform";
-import { handleHetznerError, type HetznerError } from "../errors.js";
+import { handleHetznerError, type HetznerErrors } from "../errors.js";
 import { toUrlParams } from "../internal/url-params.js";
 
 
@@ -425,7 +425,7 @@ export type UpdateNetworkResponse = typeof UpdateNetworkResponse.Type;
 
 export const makeNetworks = (http: HttpClient.HttpClient) => ({
     /** Add a route to a Network */
-    addRoute: (id: number, body: AddNetworkRouteRequest): Effect.Effect<AddNetworkRouteResponse, HetznerError> =>
+    addRoute: (id: number, body: AddNetworkRouteRequest): Effect.Effect<AddNetworkRouteResponse, HetznerErrors> =>
       HttpClientRequest.post(`/networks/${id}/actions/add_route`).pipe(
         HttpClientRequest.schemaBodyJson(AddNetworkRouteRequest)(body),
         Effect.flatMap(http.execute),
@@ -435,7 +435,7 @@ export const makeNetworks = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Add a subnet to a Network */
-    addSubnet: (id: number, body: AddNetworkSubnetRequest): Effect.Effect<AddNetworkSubnetResponse, HetznerError> =>
+    addSubnet: (id: number, body: AddNetworkSubnetRequest): Effect.Effect<AddNetworkSubnetResponse, HetznerErrors> =>
       HttpClientRequest.post(`/networks/${id}/actions/add_subnet`).pipe(
         HttpClientRequest.schemaBodyJson(AddNetworkSubnetRequest)(body),
         Effect.flatMap(http.execute),
@@ -445,7 +445,7 @@ export const makeNetworks = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Change IP range of a Network */
-    changeIpRange: (id: number, body: ChangeNetworkIpRangeRequest): Effect.Effect<ChangeNetworkIpRangeResponse, HetznerError> =>
+    changeIpRange: (id: number, body: ChangeNetworkIpRangeRequest): Effect.Effect<ChangeNetworkIpRangeResponse, HetznerErrors> =>
       HttpClientRequest.post(`/networks/${id}/actions/change_ip_range`).pipe(
         HttpClientRequest.schemaBodyJson(ChangeNetworkIpRangeRequest)(body),
         Effect.flatMap(http.execute),
@@ -455,7 +455,7 @@ export const makeNetworks = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Change Network Protection */
-    changeProtection: (id: number, body: ChangeNetworkProtectionRequest): Effect.Effect<ChangeNetworkProtectionResponse, HetznerError> =>
+    changeProtection: (id: number, body: ChangeNetworkProtectionRequest): Effect.Effect<ChangeNetworkProtectionResponse, HetznerErrors> =>
       HttpClientRequest.post(`/networks/${id}/actions/change_protection`).pipe(
         HttpClientRequest.schemaBodyJson(ChangeNetworkProtectionRequest)(body),
         Effect.flatMap(http.execute),
@@ -465,7 +465,7 @@ export const makeNetworks = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Create a Network */
-    create: (body: CreateNetworkRequest): Effect.Effect<CreateNetworkResponse, HetznerError> =>
+    create: (body: CreateNetworkRequest): Effect.Effect<CreateNetworkResponse, HetznerErrors> =>
       HttpClientRequest.post("/networks").pipe(
         HttpClientRequest.schemaBodyJson(CreateNetworkRequest)(body),
         Effect.flatMap(http.execute),
@@ -475,7 +475,7 @@ export const makeNetworks = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Delete a Network */
-    delete: (id: number): Effect.Effect<void, HetznerError> =>
+    delete: (id: number): Effect.Effect<void, HetznerErrors> =>
       http.del(`/networks/${id}`).pipe(
         Effect.asVoid,
         Effect.catchAll(handleHetznerError),
@@ -483,7 +483,7 @@ export const makeNetworks = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Delete a route from a Network */
-    deleteRoute: (id: number, body: DeleteNetworkRouteRequest): Effect.Effect<DeleteNetworkRouteResponse, HetznerError> =>
+    deleteRoute: (id: number, body: DeleteNetworkRouteRequest): Effect.Effect<DeleteNetworkRouteResponse, HetznerErrors> =>
       HttpClientRequest.post(`/networks/${id}/actions/delete_route`).pipe(
         HttpClientRequest.schemaBodyJson(DeleteNetworkRouteRequest)(body),
         Effect.flatMap(http.execute),
@@ -493,7 +493,7 @@ export const makeNetworks = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Delete a subnet from a Network */
-    deleteSubnet: (id: number, body: DeleteNetworkSubnetRequest): Effect.Effect<DeleteNetworkSubnetResponse, HetznerError> =>
+    deleteSubnet: (id: number, body: DeleteNetworkSubnetRequest): Effect.Effect<DeleteNetworkSubnetResponse, HetznerErrors> =>
       HttpClientRequest.post(`/networks/${id}/actions/delete_subnet`).pipe(
         HttpClientRequest.schemaBodyJson(DeleteNetworkSubnetRequest)(body),
         Effect.flatMap(http.execute),
@@ -503,7 +503,7 @@ export const makeNetworks = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Get a Network */
-    get: (id: number): Effect.Effect<GetNetworkResponse, HetznerError> =>
+    get: (id: number): Effect.Effect<GetNetworkResponse, HetznerErrors> =>
       HttpClientRequest.get(`/networks/${id}`).pipe(
         http.execute,
         Effect.flatMap(HttpClientResponse.schemaBodyJson(GetNetworkResponse)),
@@ -512,7 +512,7 @@ export const makeNetworks = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Get an Action for a Network */
-    getAction: (id: number, action_id: number): Effect.Effect<GetNetworkActionResponse, HetznerError> =>
+    getAction: (id: number, action_id: number): Effect.Effect<GetNetworkActionResponse, HetznerErrors> =>
       HttpClientRequest.get(`/networks/${id}/actions/${action_id}`).pipe(
         http.execute,
         Effect.flatMap(HttpClientResponse.schemaBodyJson(GetNetworkActionResponse)),
@@ -521,7 +521,7 @@ export const makeNetworks = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Get an Action */
-    getNetworksAction: (id: number): Effect.Effect<GetNetworksActionResponse, HetznerError> =>
+    getNetworksAction: (id: number): Effect.Effect<GetNetworksActionResponse, HetznerErrors> =>
       HttpClientRequest.get(`/networks/actions/${id}`).pipe(
         http.execute,
         Effect.flatMap(HttpClientResponse.schemaBodyJson(GetNetworksActionResponse)),
@@ -530,7 +530,7 @@ export const makeNetworks = (http: HttpClient.HttpClient) => ({
       ),
 
     /** List Networks */
-    list: (query?: ListNetworksQuery): Effect.Effect<ListNetworksResponse, HetznerError> =>
+    list: (query?: ListNetworksQuery): Effect.Effect<ListNetworksResponse, HetznerErrors> =>
       HttpClientRequest.get("/networks").pipe(
         HttpClientRequest.setUrlParams(toUrlParams(query)),
         http.execute,
@@ -540,7 +540,7 @@ export const makeNetworks = (http: HttpClient.HttpClient) => ({
       ),
 
     /** List Actions for a Network */
-    listActions: (id: number, query?: ListNetworkActionsQuery): Effect.Effect<ListNetworkActionsResponse, HetznerError> =>
+    listActions: (id: number, query?: ListNetworkActionsQuery): Effect.Effect<ListNetworkActionsResponse, HetznerErrors> =>
       HttpClientRequest.get(`/networks/${id}/actions`).pipe(
         HttpClientRequest.setUrlParams(toUrlParams(query)),
         http.execute,
@@ -550,7 +550,7 @@ export const makeNetworks = (http: HttpClient.HttpClient) => ({
       ),
 
     /** List Actions */
-    listNetworksActions: (query?: ListNetworksActionsQuery): Effect.Effect<ListNetworksActionsResponse, HetznerError> =>
+    listNetworksActions: (query?: ListNetworksActionsQuery): Effect.Effect<ListNetworksActionsResponse, HetznerErrors> =>
       HttpClientRequest.get("/networks/actions").pipe(
         HttpClientRequest.setUrlParams(toUrlParams(query)),
         http.execute,
@@ -560,7 +560,7 @@ export const makeNetworks = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Update a Network */
-    update: (id: number, body: UpdateNetworkRequest): Effect.Effect<UpdateNetworkResponse, HetznerError> =>
+    update: (id: number, body: UpdateNetworkRequest): Effect.Effect<UpdateNetworkResponse, HetznerErrors> =>
       HttpClientRequest.put(`/networks/${id}`).pipe(
         HttpClientRequest.schemaBodyJson(UpdateNetworkRequest)(body),
         Effect.flatMap(http.execute),

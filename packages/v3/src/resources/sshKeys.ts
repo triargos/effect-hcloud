@@ -4,7 +4,7 @@
 import { Effect, Schema } from "effect";
 import { HttpClientRequest, HttpClientResponse } from "@effect/platform";
 import type { HttpClient } from "@effect/platform";
-import { handleHetznerError, type HetznerError } from "../errors.js";
+import { handleHetznerError, type HetznerErrors } from "../errors.js";
 import { toUrlParams } from "../internal/url-params.js";
 
 
@@ -88,7 +88,7 @@ export type UpdateSshKeyResponse = typeof UpdateSshKeyResponse.Type;
 
 export const makeSshKeys = (http: HttpClient.HttpClient) => ({
     /** Create an SSH key */
-    create: (body: CreateSshKeyRequest): Effect.Effect<CreateSshKeyResponse, HetznerError> =>
+    create: (body: CreateSshKeyRequest): Effect.Effect<CreateSshKeyResponse, HetznerErrors> =>
       HttpClientRequest.post("/ssh_keys").pipe(
         HttpClientRequest.schemaBodyJson(CreateSshKeyRequest)(body),
         Effect.flatMap(http.execute),
@@ -98,7 +98,7 @@ export const makeSshKeys = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Delete an SSH key */
-    delete: (id: number): Effect.Effect<void, HetznerError> =>
+    delete: (id: number): Effect.Effect<void, HetznerErrors> =>
       http.del(`/ssh_keys/${id}`).pipe(
         Effect.asVoid,
         Effect.catchAll(handleHetznerError),
@@ -106,7 +106,7 @@ export const makeSshKeys = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Get a SSH key */
-    get: (id: number): Effect.Effect<GetSshKeyResponse, HetznerError> =>
+    get: (id: number): Effect.Effect<GetSshKeyResponse, HetznerErrors> =>
       HttpClientRequest.get(`/ssh_keys/${id}`).pipe(
         http.execute,
         Effect.flatMap(HttpClientResponse.schemaBodyJson(GetSshKeyResponse)),
@@ -115,7 +115,7 @@ export const makeSshKeys = (http: HttpClient.HttpClient) => ({
       ),
 
     /** List SSH keys */
-    list: (query?: ListSshKeysQuery): Effect.Effect<ListSshKeysResponse, HetznerError> =>
+    list: (query?: ListSshKeysQuery): Effect.Effect<ListSshKeysResponse, HetznerErrors> =>
       HttpClientRequest.get("/ssh_keys").pipe(
         HttpClientRequest.setUrlParams(toUrlParams(query)),
         http.execute,
@@ -125,7 +125,7 @@ export const makeSshKeys = (http: HttpClient.HttpClient) => ({
       ),
 
     /** Update an SSH key */
-    update: (id: number, body: UpdateSshKeyRequest): Effect.Effect<UpdateSshKeyResponse, HetznerError> =>
+    update: (id: number, body: UpdateSshKeyRequest): Effect.Effect<UpdateSshKeyResponse, HetznerErrors> =>
       HttpClientRequest.put(`/ssh_keys/${id}`).pipe(
         HttpClientRequest.schemaBodyJson(UpdateSshKeyRequest)(body),
         Effect.flatMap(http.execute),
